@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Chess.Gui", "Chess.Gui\Chess.Gui.csproj", "{F39EDD68-97D3-446D-96DC-86E7191D1C68}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Math3d", "Math3d\Math3d.csproj", "{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raytracer", "RayTracer\Raytracer.csproj", "{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F39EDD68-97D3-446D-96DC-86E7191D1C68}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F39EDD68-97D3-446D-96DC-86E7191D1C68}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F39EDD68-97D3-446D-96DC-86E7191D1C68}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F39EDD68-97D3-446D-96DC-86E7191D1C68}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
