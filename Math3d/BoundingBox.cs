@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using OpenTK;
+using ObjLoader.Loader.Data.VertexData;
 
 namespace Math3d
 {
-    class BoundingBox
+    public class BoundingBox
     {
-        public double MinX { get; set; }
-        public double MinY { get; set; }
-        public double MinZ { get; set; }
-        public double MaxX { get; set; }
-        public double MaxY { get; set; }
-        public double MaxZ { get; set; }
+        public float MinX { get; set; }
+        public float MinY { get; set; }
+        public float MinZ { get; set; }
+        public float MaxX { get; set; }
+        public float MaxY { get; set; }
+        public float MaxZ { get; set; }
 
-        BoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ)
+        BoundingBox(float minX, float minY, float minZ, float maxX, float maxY, float maxZ)
         {
             MinX = minX;
             MinY = minY;
@@ -26,10 +26,10 @@ namespace Math3d
             MaxZ = maxZ;
         }
 
-        public static BoundingBox FromVertices(Vector3d[] vertices)
+        public static BoundingBox FromVertices(IList<Vertex> vertices)
         {
-            double minX = double.MaxValue, minY = double.MaxValue, minZ = double.MaxValue;
-            double maxX = double.MinValue, maxY = double.MinValue, maxZ = double.MinValue;
+            float minX = float.MaxValue, minY = float.MaxValue, minZ = float.MaxValue;
+            float maxX = float.MinValue, maxY = float.MinValue, maxZ = float.MinValue;
             foreach (var vertex in vertices)
             {
                 minX = Math.Min(minX, vertex.X);

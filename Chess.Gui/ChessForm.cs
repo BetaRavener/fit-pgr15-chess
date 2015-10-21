@@ -6,45 +6,77 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Chess.Gui
 {
-    public partial class ChessForm : Form
+    public partial class ChessForm : Form, IProgress<Tuple<int, int>>
     {
         private Raytracer.Raytracer _raytracer;
-        private bool _needRedraw;
+        private CancellationTokenSource _cancelSource;
+        private SynchronizationContext _synchronizationContext;
+        private bool _resized;
 
         public ChessForm()
         {
             InitializeComponent();
             _raytracer = new Raytracer.Raytracer();
-            _raytracer.Resize(RenderView.Width, RenderView.Height);
-            Redraw();
-        }
-
-        private void RenderView_Paint(object sender, PaintEventArgs e)
-        {
-            if (!_needRedraw)
-                return;
-
-            var oldImg = RenderView.Image;
-            RenderView.Image = _raytracer.RenderImage();
-            oldImg?.Dispose();
-            _needRedraw = false;
+            _resized = true;
+            _synchronizationContext = SynchronizationContext.Current;
         }
 
         private void RenderView_Resize(object sender, EventArgs e)
         {
-            var control = (Control)sender;
-            _raytracer.Resize(control.Size.Width, control.Size.Height);
-            Redraw();
+            _resized = true;
         }
 
-        public void Redraw()
+        private Image Redraw()
         {
-            _needRedraw = true;
+            var img = _raytracer.RenderImage(_cancelSource.Token, Report);
+            return !_cancelSource.Token.IsCancellationRequested ? img : null;
+        }
+
+        private async void RenderButton_Click(object sender, EventArgs e)
+        {
+            if (_cancelSource == null)
+            {
+                RenderButton.Text = "Cancel";
+                _cancelSource = new CancellationTokenSource();
+
+                _raytracer.Resize(RenderView.Width, RenderView.Height);
+                _resized = false;
+
+                Image img = null;
+                await Task.Run(() => img = Redraw(), _cancelSource.Token);
+
+                if (img != null)
+                {
+                    var oldImg = RenderView.Image;
+                    RenderView.Image = img;
+                    oldImg?.Dispose();
+                    Refresh();
+                }
+
+                _cancelSource = null;
+                RenderProgressBar.Value = RenderProgressBar.Minimum;
+                RenderButton.Text = "Render";
+            }
+            else
+            {
+                _cancelSource.Cancel();
+            }
+        }
+
+        public void Report(Tuple<int, int> value)
+        {
+            _synchronizationContext.Post((@object) =>
+            {
+                var valMax = (Tuple<int, int>)@object;
+                RenderProgressBar.Value = valMax.Item1;
+                RenderProgressBar.Maximum = valMax.Item2;
+            }, value);
         }
     }
 }
