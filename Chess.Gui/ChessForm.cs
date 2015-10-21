@@ -45,6 +45,7 @@ namespace Chess.Gui
                 RenderButton.Text = "Cancel";
                 _cancelSource = new CancellationTokenSource();
 
+                _raytracer.NumberOfThreads = (int)ThreadsNumber.Value;
                 _raytracer.Resize(RenderView.Width, RenderView.Height);
                 _resized = false;
 

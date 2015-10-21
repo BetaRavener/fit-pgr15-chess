@@ -61,14 +61,23 @@ namespace Raytracer
             get { return (1.0f/_heightInPixels)*NearPlaneHeight; }
         }
 
+        public int NumberOfThreads { get; set; }
 
         public Raytracer()
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera {Position = new Vector3(0, 70, -200)};
+            _camera = new Camera {Position = new Vector3(0, 70, -150)};
+            var viewVector = Vector3.Subtract(Vector3.Zero, _camera.Position);
+            viewVector.Normalize();
+            var upVector = Vector3.Cross(viewVector, _camera.RightVector);
+            _camera.ViewVector = viewVector;
+            _camera.UpVector = upVector;
+
             _lightSource = new LightSource {Position = new Vector3(0, 100, 5)};
             _sceneObjects = new List<SceneObject> {SceneObject.LoadFromFile("models/teapot")};
+
+            NumberOfThreads = 1;
         }
 
         public void Resize(int widthInPixels, int heightInPixels)
@@ -119,7 +128,7 @@ namespace Raytracer
             return pixelColor;
         }
 
-        public Bitmap RenderImage(CancellationToken cancelToken, Action<Tuple<int,int>> reportFunc)
+        public Bitmap RenderImage(CancellationToken cancelToken, Action<Tuple<int, int>> reportFunc)
         {
             const int componentsPerPixel = 4;
             var sourceImg = new Bitmap(_widthInPixels, _heightInPixels, PixelFormat.Format32bppArgb);
@@ -128,9 +137,6 @@ namespace Raytracer
             if (image.ColorComponents != componentsPerPixel)
                 throw new InvalidOperationException("The bitmap doesn't have 3 components, check system!");
 
-            var x = 0;
-            var y = 0;
-            
             var rightIncrement = Vector3.Multiply(Eye.RightVector, PixelSize);
             var rightIncrementHalf = Vector3.Multiply(rightIncrement, 0.5f);
             var downIncrement = Vector3.Multiply(Eye.UpVector, -PixelSize);
@@ -139,19 +145,15 @@ namespace Raytracer
             var nearPlaneWidthtHalf = NearPlaneWidth*0.5f;
 
             // (0,0) in pixels is top left corner
-            var firstPixelCenter = Vector3.Add(Vector3.Add(Eye.Position, Vector3.Multiply(Eye.UpVector, nearPlaneHeightHalf)),
-                                         Vector3.Multiply(Eye.RightVector, -nearPlaneWidthtHalf));
+            var firstPixelCenter =
+                Vector3.Add(Vector3.Add(Eye.Position, Vector3.Multiply(Eye.UpVector, nearPlaneHeightHalf)),
+                    Vector3.Multiply(Eye.RightVector, -nearPlaneWidthtHalf));
 
             // Move the plane at NearPlaneDist from eye
             firstPixelCenter = Vector3.Add(firstPixelCenter, Vector3.Multiply(Eye.ViewVector, NearPlaneDist));
 
             // Move half pixel from top left to its center
             firstPixelCenter = Vector3.Add(Vector3.Add(firstPixelCenter, rightIncrementHalf), downIncrementHalf);
-            
-
-            var pixelCenter = new Vector3(firstPixelCenter);
-
-            var ray = new Ray(Eye.Position, Vector3.Zero);
 
             //TODO: Possible optimization - overload Add operation to add another vector to already
             //TODO: existing instance instead of creating new one
@@ -159,29 +161,55 @@ namespace Raytracer
             //TODO: Possible optimization - generate rays into list, precompute values like dirfrac and use this list
             //TODO: for next renering.. The list only needs to change if camera has changed
 
-            var totalComponents = _widthInPixels * _heightInPixels * componentsPerPixel;
-            for (var i = 0; i < totalComponents && !cancelToken.IsCancellationRequested; i+= componentsPerPixel)
+            var totalPixels = _widthInPixels*_heightInPixels;
+            var progressLock = new Object();
+            var progress = 0;
+
+            var options = new ParallelOptions();
+            options.MaxDegreeOfParallelism = NumberOfThreads;
+
+#if PARALLEL
+            Parallel.For(0, totalPixels, options, (i, loopState) =>
+#else
+            for (var i = 0; i < totalPixels; i++)
+#endif
             {
+
+                if (cancelToken.IsCancellationRequested)
+                {
+#if PARALLEL
+                    loopState.Stop();
+#else
+                    break;
+#endif
+                }
+                var x = i%_widthInPixels;
+                var y = i/_widthInPixels;
+                var component = i*componentsPerPixel;
+
+                var pixelCenter = new Vector3(firstPixelCenter);
+                pixelCenter = Vector3.Add(pixelCenter, Vector3.Multiply(rightIncrement, x));
+                pixelCenter = Vector3.Add(pixelCenter, Vector3.Multiply(downIncrement, y));
                 var direction = Vector3.Subtract(pixelCenter, Eye.Position);
                 direction.Normalize();
-                ray.Direction = direction;
+                var ray = new Ray(Eye.Position, direction);
 
                 var color = TraceRay(ray);
 
-                image.EfficientSetPixel(i, color.R, color.G, color.B);
+#if PARALLEL
+                lock (progressLock)
+                {
+#endif
+                    image.EfficientSetPixel(component, color.R, color.G, color.B);
+                    progress++;
+                    reportFunc(new Tuple<int, int>(progress, totalPixels));
 
-                reportFunc(new Tuple<int, int>(i, totalComponents));
-
-                x++;
-                pixelCenter = Vector3.Add(pixelCenter, rightIncrement);
-                if (x != _widthInPixels) continue;
-
-                y++;
-                firstPixelCenter = Vector3.Add(firstPixelCenter, downIncrement);
-
-                x = 0;
-                pixelCenter = new Vector3(firstPixelCenter);
+#if PARALLEL
+                }
+            });
+#else
             }
+#endif
             image.UnlockBits();
             return sourceImg;
         }
