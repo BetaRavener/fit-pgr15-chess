@@ -18,5 +18,11 @@ namespace RayTracer
             Position = Vector3.Zero;
             Color = Vector3.One;
         }
+
+        public LightSource(int x, int y, int z)
+        {
+            Position = new Vector3(x, y, z);
+            Color = Vector3.One;
+        }
     }
 }

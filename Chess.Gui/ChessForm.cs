@@ -9,6 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenTK;
+using RayTracer;
 
 namespace Chess.Gui
 {
@@ -47,6 +49,9 @@ namespace Chess.Gui
 
                 _raytracer.NumberOfThreads = (int)ThreadsNumber.Value;
                 _raytracer.Resize(RenderView.Width, RenderView.Height);
+
+                _raytracer.Light = new LightSource(Int32.Parse(lightX.Text), Int32.Parse(lightY.Text), Int32.Parse(lightZ.Text));
+                _raytracer.Eye = new Camera(Int32.Parse(cameraX.Text), Int32.Parse(cameraY.Text), Int32.Parse(cameraZ.Text));
                 _resized = false;
 
                 Image img = null;
@@ -78,6 +83,31 @@ namespace Chess.Gui
                 RenderProgressBar.Value = valMax.Item1;
                 RenderProgressBar.Maximum = valMax.Item2;
             }, value);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label2_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

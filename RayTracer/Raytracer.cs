@@ -24,21 +24,25 @@ namespace Raytracer
         private LightSource _lightSource;
         private Camera _camera;
         private List<SceneObject> _sceneObjects;
-        
+
+        public Vector3 LightPosition {get; set; }
+
 
         private static Color Background
         {
             get { return Color.MidnightBlue; }
         }
 
-        Camera Eye
+        public Camera Eye
         {
             get { return _camera; }
+            set { _camera = value; }
         }
 
-        LightSource Light
+        public LightSource Light
         {
             get { return _lightSource;}
+            set { _lightSource = value; }
         }
 
         float Ratio
@@ -67,15 +71,9 @@ namespace Raytracer
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera {Position = new Vector3(0, 70, -150)};
-            var viewVector = Vector3.Subtract(Vector3.Zero, _camera.Position);
-            viewVector.Normalize();
-            var upVector = Vector3.Cross(viewVector, _camera.RightVector);
-            _camera.ViewVector = viewVector;
-            _camera.UpVector = upVector;
-
-            _lightSource = new LightSource {Position = new Vector3(0, 100, 5)};
-            _sceneObjects = new List<SceneObject> {SceneObject.LoadFromFile("models/teapot")};
+            _camera = new Camera(0, 70, -150);
+            _lightSource = new LightSource(0, 100, 5);
+            _sceneObjects = new List<SceneObject> {SceneObject.LoadFromFile("models/teapot")};            
 
             NumberOfThreads = 1;
         }
