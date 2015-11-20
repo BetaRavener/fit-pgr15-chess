@@ -54,15 +54,38 @@ namespace Chess.Gui
                 _raytracer.Eye = new Camera(Int32.Parse(cameraX.Text), Int32.Parse(cameraY.Text), Int32.Parse(cameraZ.Text));
                 _resized = false;
 
-                Image img = null;
-                await Task.Run(() => img = Redraw(), _cancelSource.Token);
+                //Image img = null;
+                //await Task.Run(() => img = Redraw(), _cancelSource.Token);
 
-                if (img != null)
+                //if (img != null)
+                //{
+                //    var oldImg = RenderView.Image;
+                //    RenderView.Image = img;
+                //    oldImg?.Dispose();
+                //    Refresh();
+                //}
+
+                while (!_cancelSource.IsCancellationRequested)
                 {
-                    var oldImg = RenderView.Image;
-                    RenderView.Image = img;
-                    oldImg?.Dispose();
-                    Refresh();
+                    DateTime begin = DateTime.UtcNow;
+
+                    Image img = null;
+                    await Task.Run(() => img = Redraw(), _cancelSource.Token);
+
+                    if (img != null)
+                    {
+                        var oldImg = RenderView.Image;
+                        RenderView.Image = img;
+                        oldImg?.Dispose();
+                        Refresh();
+                    }
+                    DateTime end = DateTime.UtcNow;
+                    var elapsed = (end - begin).TotalMilliseconds;
+
+                    FPSlabel.Text = (1000.0 / elapsed).ToString("#.##");
+
+                    if (elapsed < 30)
+                        await Task.Delay((int)(30 - elapsed));                    
                 }
 
                 _cancelSource = null;
@@ -106,6 +129,11 @@ namespace Chess.Gui
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }

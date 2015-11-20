@@ -5,11 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
 
-namespace Math3d
+namespace RayMath
 {
     public static class Operations
     {
-        private const float Epsilon = 0.000001f;
+        private const double Epsilon = 0.000001f;
 
         /// <summary>
         /// 
@@ -20,7 +20,7 @@ namespace Math3d
         /// <returns></returns>
         /// <author>zacharmarz</author>
         /// <link>http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms</link>
-        public static bool Intersects(this Ray ray, BoundingBox bb, out float distance)
+        public static bool Intersects(this Ray ray, BoundingBox bb, out double distance)
         {
             var origin = ray.Origin;
             var dirfrac = ray.Dirfrac;
@@ -63,19 +63,19 @@ namespace Math3d
         /// <param name="distance"></param>
         /// <returns></returns>
         /// <link>https://en.m.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm</link>
-        public static bool Intersects(this Ray ray, Triangle tri, out float distance)
+        public static bool Intersects(this Ray ray, Triangle tri, out double distance)
         {
             // Initialize distance to max in case there's no intersection
-            distance = float.MaxValue;
+            distance = double.MaxValue;
 
             //Find vectors for two edges sharing V1
-            var e1 = Vector3.Subtract(tri.V2, tri.V1);
-            var e2 = Vector3.Subtract(tri.V3, tri.V1);
+            var e1 = Vector3d.Subtract(tri.V2, tri.V1);
+            var e2 = Vector3d.Subtract(tri.V3, tri.V1);
 
             //Begin calculating determinant - also used to calculate u parameter
-            var P = Vector3.Cross(ray.Direction, e2);
+            var P = Vector3d.Cross(ray.Direction, e2);
             //if determinant is near zero, ray lies in plane of triangle
-            var det = Vector3.Dot(e1, P);
+            var det = Vector3d.Dot(e1, P);
             //NOT CULLING
             if (det > -Epsilon && det < Epsilon)
                 return false;
@@ -83,23 +83,23 @@ namespace Math3d
             var invDet = 1.0f / det;
 
             //calculate distance from V1 to ray origin
-            var T = Vector3.Subtract(ray.Origin, tri.V1);
+            var T = Vector3d.Subtract(ray.Origin, tri.V1);
 
             //Calculate u parameter and test bound
-            var u = Vector3.Dot(T, P) * invDet;
+            var u = Vector3d.Dot(T, P) * invDet;
             //The intersection lies outside of the triangle
             if (u < 0.0f || u > 1.0f)
                 return false;
 
             //Prepare to test v parameter
-            var Q = Vector3.Cross(T, e1);
+            var Q = Vector3d.Cross(T, e1);
 
             //Calculate V parameter and test bound
-            var v = Vector3.Dot(ray.Direction, Q) * invDet;
+            var v = Vector3d.Dot(ray.Direction, Q) * invDet;
             //The intersection lies outside of the triangle
             if (v < 0.0f || u + v > 1.0f) return false;
 
-            var t = Vector3.Dot(e2, Q) * invDet;
+            var t = Vector3d.Dot(e2, Q) * invDet;
 
             if (t > Epsilon)
             { //ray intersection

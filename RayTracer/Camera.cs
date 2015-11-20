@@ -9,29 +9,30 @@ namespace RayTracer
 {
     public class Camera
     {
-        public Vector3 Position { get; set; }
-        public Vector3 ViewVector { get; set; }
-        public Vector3 UpVector { get; set; }
-        public Vector3 RightVector { get; set; }
+        public Vector3d Position { get; set; }
+        public Vector3d ViewVector { get; set; }
+        public Vector3d UpVector { get; set; }
+        public Vector3d RightVector { get; set; }
 
         public Camera()
         {
-            Position = Vector3.Zero;
-            ViewVector = new Vector3(0,0,1);
-            UpVector = new Vector3(0,1,0);
-            RightVector = new Vector3(1,0,0);
+            Position = Vector3d.Zero;
+            ViewVector = new Vector3d(0,0,1);
+            UpVector = new Vector3d(0,1,0);
+            RightVector = new Vector3d(1,0,0);
         }
 
         public Camera(int x, int y, int z)
         {
-            Position = new Vector3(x, y, z);
-            RightVector = new Vector3(1, 0, 0);
+            Position = new Vector3d(x, y, z);
+            UpVector = new Vector3d(0, -1, 0);
 
-            var viewVector = Vector3.Subtract(Vector3.Zero, Position);
+            var viewVector = Vector3d.Subtract(Vector3d.Zero, Position);
             viewVector.Normalize();
             ViewVector = viewVector;
 
-            UpVector = Vector3.Cross(ViewVector, new Vector3(1, 0, 0));        
+            RightVector = Vector3d.Cross(ViewVector, UpVector);
+            UpVector = Vector3d.Cross(ViewVector, RightVector);        
         }
     }
 }
