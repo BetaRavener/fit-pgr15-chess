@@ -16,7 +16,7 @@ namespace RayMath
         public double MaxY { get; set; }
         public double MaxZ { get; set; }
 
-        BoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ)
+        public BoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ)
         {
             MinX = minX;
             MinY = minY;

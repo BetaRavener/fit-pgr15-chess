@@ -13,6 +13,7 @@ namespace RayMath
     {
         private Vector3d _dir;
         private Vector3d _dirfrac;
+        private double _dirDot;
 
         public Vector3d Origin { get; set; }
 
@@ -23,17 +24,24 @@ namespace RayMath
             {
                 _dir = value;
                 _dirfrac = new Vector3d(1.0f / _dir.X, 1.0f / _dir.Y, 1.0f / _dir.Z);
+                _dirDot = Vector3d.Dot(_dir, _dir);
             }
         }
 
+        public int Component { get; private set; }
+
         public Vector3d Dirfrac { get { return _dirfrac; } }
 
-        public Ray(Vector3d origin, Vector3d direction, bool normalize = true)
+        public double DirDot { get { return _dirDot; } }
+
+        public Ray(Vector3d origin, Vector3d direction, bool normalize = true, int component = -1)
         {
             Origin = origin;
             Direction = direction;
             if (normalize)
                 Direction.Normalize();
+
+            Component = component;
         }
 
         public Vector3d PointAt(double t)

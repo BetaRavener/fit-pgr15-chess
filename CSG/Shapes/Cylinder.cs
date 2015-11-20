@@ -8,6 +8,9 @@ using RayMath;
 
 namespace CSG.Shapes
 {
+    /// <summary>
+    /// Represents a prametric cylinder.
+    /// </summary>
     public class Cylinder : Shape
     {
         public Vector3d Start { get; protected set; }
@@ -21,16 +24,21 @@ namespace CSG.Shapes
             Radius = radius;
         }
 
-        public override Ranges<Shape> Intersect(Ray ray)
+        /// <summary>
+        /// Find set of intersection spans between ray and cylinder.
+        /// </summary>
+        /// <param name="ray">Tracing ray.</param>
+        /// <returns>Intersection spans.</returns>
+        public override RangesShape Intersect(Ray ray)
         {
-            Ranges<Shape> ranges = new Ranges<Shape>();
+            RangesShape ranges = new RangesShape();
             
             var b = ray.Direction;
             var c = ray.Origin - Start;
             var d = Direction;
 
             double bd = Vector3d.Dot(b, d);
-            double b2 = Vector3d.Dot(b, b);
+            double b2 = ray.DirDot;
             double cb = Vector3d.Dot(c, b);
             double cd = Vector3d.Dot(c, d);
             double c2 = Vector3d.Dot(c, c);
@@ -46,11 +54,16 @@ namespace CSG.Shapes
                 double sD = Math.Sqrt(D);
                 double t1 = (-B - sD) / (2 * A);
                 double t2 = (-B + sD) / (2 * A);
-                ranges.Add(new Range<Shape>(t1, t2, this, this));
+                ranges.Add(new RangeShape(t1, t2, this, this));
             }
             return ranges;
         }
 
+        /// <summary>
+        /// Find surface normal for cylinder at specified position.
+        /// </summary>
+        /// <param name="pos">Position at cylinder surface.</param>
+        /// <returns>Surface normal vector.</returns>
         public override Vector3d Normal(Vector3d pos)
         {
             var proj = Start + ((pos - Start) * Direction) * Direction;

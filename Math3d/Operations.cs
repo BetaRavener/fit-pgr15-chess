@@ -12,12 +12,12 @@ namespace RayMath
         private const double Epsilon = 0.000001f;
 
         /// <summary>
-        /// 
+        /// Finds intersection between ray and axis-aligned bounding box.
         /// </summary>
-        /// <param name="ray"></param>
-        /// <param name="bb"></param>
-        /// <param name="distance"></param>
-        /// <returns></returns>
+        /// <param name="ray">Tracing ray.</param>
+        /// <param name="bb">Bounding box.</param>
+        /// <param name="distance">Filled with correct distance from origin along ray to intersection.</param>
+        /// <returns>True if intersecting.</returns>
         /// <author>zacharmarz</author>
         /// <link>http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms</link>
         public static bool Intersects(this Ray ray, BoundingBox bb, out double distance)
