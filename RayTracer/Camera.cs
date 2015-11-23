@@ -17,9 +17,9 @@ namespace RayTracer
         public Camera()
         {
             Position = Vector3d.Zero;
-            ViewVector = new Vector3d(0,0,1);
-            UpVector = new Vector3d(0,1,0);
-            RightVector = new Vector3d(1,0,0);
+            ViewVector = Vector3d.UnitZ;
+            UpVector = Vector3d.UnitY;
+            RightVector = Vector3d.UnitX;
         }
 
         public Camera(int x, int y, int z)
