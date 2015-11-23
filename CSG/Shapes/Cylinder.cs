@@ -15,14 +15,17 @@ namespace CSG.Shapes
     {
         public Vector3d Start { get; protected set; }
         public Vector3d Direction { get; protected set; }
-        public double Radius { get; protected set; }
+        public double Radius { get; protected set; }   
+        public double Height { get; set; }
 
-        public Cylinder(Vector3d start, Vector3d dir, double radius)
+        public Cylinder(Vector3d start, Vector3d dir, double radius, Vector3d color) : base(color)
         {
             Start = start;
             Direction = Vector3d.Normalize(dir);
             Radius = radius;
+            Height = 999; // TODO
         }
+
 
         /// <summary>
         /// Find set of intersection spans between ray and cylinder.

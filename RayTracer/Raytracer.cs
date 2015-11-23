@@ -2,15 +2,14 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using System.Net.Mime;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using RayMath;
-using OpenTK;
-using RayTracer;
+using CSG;
 using CSG.Shapes;
+using OpenTK;
+using OpenTK.Graphics;
+using RayMath;
+using RayTracer;
 
 namespace Raytracer
 {
@@ -18,7 +17,7 @@ namespace Raytracer
     {
         private const int ComponentsPerPixel = 4;
         private const double NearPlaneDist = 1.0f;
-        private const double FovY = (double)Math.PI/4.0f;
+        private const double FovY = Math.PI/4.0f;
 
         private int _heightInPixels;
         private int _widthInPixels;
@@ -29,7 +28,7 @@ namespace Raytracer
 
         private List<Ray> _rayCache;
 
-        public Vector3d LightPosition {get; set; }
+        public Vector3d LightPosition { get; set; }
 
 
         private static Color Background
@@ -45,18 +44,18 @@ namespace Raytracer
 
         public LightSource Light
         {
-            get { return _lightSource;}
+            get { return _lightSource; }
             set { _lightSource = value; }
         }
 
         double Ratio
         {
-            get { return (double)_widthInPixels / (double)_heightInPixels; }
+            get { return _widthInPixels/(double) _heightInPixels; }
         }
 
         private double NearPlaneHeight
         {
-            get { return 2 * (double)Math.Tan((double)FovY / 2.0) * NearPlaneDist; }
+            get { return 2*Math.Tan(FovY/2.0)*NearPlaneDist; }
         }
 
         private double NearPlaneWidth
@@ -78,8 +77,47 @@ namespace Raytracer
             _camera = new Camera(0, 70, -150);
             _lightSource = new LightSource(0, 100, 5);
             _sceneObjects = new List<SceneObject>();
-            _sceneObjects.Add(new SceneObject(new Cylinder(new Vector3d(0,0,100), new Vector3d(0,10,0), 20), new BoundingBox(-20, -1000, -20, 20, 1000, 20)));
-            _sceneObjects.Add(new SceneObject(new Sphere(new Vector3d(100, 0, 0), 30), new BoundingBox(70, -30, -30, 130, 30, 30)));
+            _sceneObjects.Add(new SceneObject(
+                new List<Shape>(new[]
+                {
+                    new Cylinder(
+                        new Vector3d(0, 0, 100),
+                        new Vector3d(0, 10, 0), 20, Vector3d.UnitZ),
+                }),
+                Color4.Chocolate,
+                new BoundingBox(-20, -1000, -20, 20, 1000, 20))
+                );
+
+            _sceneObjects.Add(new SceneObject(
+                new List<Shape>(new[]
+                {
+                    new Sphere(new Vector3d(100, 0, 0), 30, Vector3d.UnitY)
+                }),
+                Color4.Chocolate,
+                new BoundingBox(70, -30, -30, 130, 30, 30)
+                )
+                );
+
+            _sceneObjects.Add(new SceneObject(
+                new List<Shape>(new[]
+                {
+                    new Sphere(new Vector3d(50, 0, 0), 10, Vector3d.UnitY)
+                }),
+                Color4.Chocolate,
+                new BoundingBox(40, -10, -10, 60, 10, 10)
+                )
+                );
+
+            _sceneObjects.Add(new SceneObject(
+                new List<Shape>(new [] {
+                    new Plane(
+                        new Vector3d(0, 1, 0), 
+                        new Vector3d(0, -100, 0),
+                        Vector3d.UnitX
+                        )
+                }),
+                Color4.AliceBlue
+                ));
 
             _rayCache = new List<Ray>();
 
@@ -92,6 +130,25 @@ namespace Raytracer
             _widthInPixels = widthInPixels;
         }
 
+
+        private Intersection GetClosestIntersection(Ray ray)
+        {
+            // Search for closest intersection
+            var closestIntersection = new Intersection(Intersection.IntersectionKind.None);
+
+            foreach (SceneObject sceneObject in _sceneObjects)
+            {
+                var intersection = sceneObject.IntersectFirst(ray);
+                if (intersection.Kind != Intersection.IntersectionKind.None &&
+                    intersection.Distance < closestIntersection.Distance)
+                {
+                    closestIntersection = intersection;
+                }
+            }
+
+            return closestIntersection;
+        }
+
         /// <summary>
         /// Traces single ray throughout the scene. 
         /// </summary>
@@ -100,24 +157,19 @@ namespace Raytracer
         private Color TraceRay(Ray ray)
         {
             // Search for closest intersection
-            var closestIntersection = new CSG.Intersection(CSG.Intersection.IntersectionKind.None);
-            
-            for (var i = 0; i < _sceneObjects.Count; i++)
-            {
-                var intersection = _sceneObjects[i].IntersectFirst(ray);
-                if (intersection.Kind != CSG.Intersection.IntersectionKind.None && intersection.Distance < closestIntersection.Distance)
-                    closestIntersection = intersection;
-            }
+            var closestIntersection = GetClosestIntersection(ray);
 
-            if (closestIntersection.Kind == CSG.Intersection.IntersectionKind.None)
+            if (closestIntersection.Kind == Intersection.IntersectionKind.None)
+            {
                 return Background;
+            }
 
             var intensity = 0.0;
 
             if (closestIntersection.Shape != null)
             {
                 // We have closest intersection, shoot shadow ray
-                var hitPosition = ray.Origin + ray.Direction * closestIntersection.Distance;
+                var hitPosition = ray.Origin + ray.Direction*closestIntersection.Distance;
                 var lightDirection = Light.Position - hitPosition;
                 lightDirection.Normalize();
 
@@ -128,12 +180,13 @@ namespace Raytracer
             else
                 intensity = 1.0;
 
-            var color = new Vector3d(0.5f, 1.0f, 0.0f) * Light.Color;
-            color = color * intensity;
+            // unitY is like rGb (0,1,0) color
+            var color =  closestIntersection.Shape.Color * Light.Color;
+            color = color*intensity;
 
-            var pixelColor = Color.FromArgb((int)Math.Round((255.0) * color.X),
-                                            (int)Math.Round((255.0) * color.Y),
-                                            (int)Math.Round((255.0) * color.Z));
+            var pixelColor = Color.FromArgb((int) Math.Round((255.0)*color.X),
+                (int) Math.Round((255.0)*color.Y),
+                (int) Math.Round((255.0)*color.Z));
             return pixelColor;
         }
 
@@ -145,7 +198,6 @@ namespace Raytracer
         /// <returns></returns>
         public Bitmap RenderImage(CancellationToken cancelToken, Action<Tuple<int, int>> reportFunc)
         {
-            
             var sourceImg = new Bitmap(_widthInPixels, _heightInPixels, PixelFormat.Format32bppArgb);
             var image = new LockBitmap(sourceImg);
             image.LockBits();
@@ -154,7 +206,7 @@ namespace Raytracer
 
             //TODO: Antialiasing - Cast 4 rays for each pixel and save average color 
 
-            var totalPixels = _widthInPixels * _heightInPixels;
+            var totalPixels = _widthInPixels*_heightInPixels;
             var progressLock = new Object();
             var progress = 0;
 
@@ -167,7 +219,6 @@ namespace Raytracer
             for (var i = 0; i < _rayCache.Count; i++)
 #endif
             {
-
                 if (cancelToken.IsCancellationRequested)
                 {
 #if PARALLEL
@@ -184,9 +235,9 @@ namespace Raytracer
                 lock (progressLock)
                 {
 #endif
-                    image.EfficientSetPixel(ray.Component, color.R, color.G, color.B);
-                    progress++;
-                    //reportFunc(new Tuple<int, int>(progress, totalPixels));
+                image.EfficientSetPixel(ray.Component, color.R, color.G, color.B);
+                progress++;
+                //reportFunc(new Tuple<int, int>(progress, totalPixels));
 
 #if PARALLEL
                 }
@@ -205,18 +256,19 @@ namespace Raytracer
         {
             _rayCache.Clear();
 
-            var rightIncrement = Eye.RightVector * PixelSize;
-            var rightIncrementHalf = rightIncrement * 0.5f;
-            var downIncrement = Eye.UpVector * -PixelSize;
-            var downIncrementHalf = downIncrement * 0.5f;
-            var nearPlaneHeightHalf = NearPlaneHeight * 0.5f;
-            var nearPlaneWidthtHalf = NearPlaneWidth * 0.5f;
+            var rightIncrement = Eye.RightVector*PixelSize;
+            var rightIncrementHalf = rightIncrement*0.5f;
+            var downIncrement = Eye.UpVector*-PixelSize;
+            var downIncrementHalf = downIncrement*0.5f;
+            var nearPlaneHeightHalf = NearPlaneHeight*0.5f;
+            var nearPlaneWidthtHalf = NearPlaneWidth*0.5f;
 
             // (0,0) in pixels is top left corner
-            var firstPixelCenter = (Eye.Position + Eye.UpVector * nearPlaneHeightHalf) + (Eye.RightVector * -nearPlaneWidthtHalf);
+            var firstPixelCenter = (Eye.Position + Eye.UpVector*nearPlaneHeightHalf) +
+                                   (Eye.RightVector*-nearPlaneWidthtHalf);
 
             // Move the plane at NearPlaneDist from eye
-            firstPixelCenter += Eye.ViewVector * NearPlaneDist;
+            firstPixelCenter += Eye.ViewVector*NearPlaneDist;
 
             // Move half pixel from top left to its center
             firstPixelCenter += rightIncrementHalf + downIncrementHalf;
@@ -227,7 +279,7 @@ namespace Raytracer
                 var pixelCenter = new Vector3d(firstPixelCenter);
                 for (var x = 0; x < _widthInPixels; x++)
                 {
-                    var component = (firstX + x) * ComponentsPerPixel;
+                    var component = (firstX + x)*ComponentsPerPixel;
                     var direction = pixelCenter - Eye.Position;
 
                     var ray = new Ray(Eye.Position, direction, true, component);

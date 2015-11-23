@@ -50,6 +50,7 @@
     <Compile Include="Ranges.cs" />
     <Compile Include="Shapes\Box.cs" />
     <Compile Include="Shapes\Cylinder.cs" />
+    <Compile Include="Shapes\Plane.cs" />
     <Compile Include="Shapes\Shape.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shapes\Sphere.cs" />

@@ -8,6 +8,12 @@ namespace CSG.Shapes
     /// </summary>
     public abstract class Shape
     {
+        protected Shape(Vector3d color)
+        {
+            Color = color;
+        }
+
+        public Vector3d Color { get; }
 
         /// <summary>
         /// Find first intersection with ray.

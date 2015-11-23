@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CSG;
 using CSG.Shapes;
+using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace RayTracer
@@ -14,12 +16,17 @@ namespace RayTracer
     /// </summary>
     class SceneObject
     {
+        public Color4 Color { get; set; }
         public Shape Shape { get; set; }
         public BoundingBox BoundingBox { get; set; }
 
-        public SceneObject(Shape shape, BoundingBox bbox)
+        public List<Shape> Shapes { get; }
+
+        public SceneObject(List<Shape> shapes, Color4 color, BoundingBox bbox = null)
         {
-            Shape = shape;
+            Color = color;
+            Shapes = shapes;
+            Shape = shapes.First();
             BoundingBox = bbox;
         }
 
@@ -33,15 +40,13 @@ namespace RayTracer
         {
             double t;
             // Test bounding box first, then the shape itself
-            if (ray.Intersects(BoundingBox, out t))
+
+            if (BoundingBox != null && ray.Intersects(BoundingBox, out t))
             {
-                if (renderBBox)
-                    return new Intersection(Intersection.IntersectionKind.Outfrom, null, t);
-                else
-                    return Shape.IntersectFirst(ray);
+                return renderBBox ? new Intersection(Intersection.IntersectionKind.Outfrom, null, t) : Shape.IntersectFirst(ray);
             }
 
-            return new Intersection(Intersection.IntersectionKind.None);
+            return Shape.IntersectFirst(ray);
         }
     }
 }
