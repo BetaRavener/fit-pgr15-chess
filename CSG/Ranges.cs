@@ -51,11 +51,11 @@ namespace CSG
                 else if (current.Left <= range.Left)
                 {
                     if (current.Right >= range.Right) return;
-                    current.SetRight(range.Right, range.RightNode);
+                    current.SetRight(range.Right, range.RightNode, range.RightSide);
                     while ((pos + 1) < _data.Count && next.Left <= current.Right)
                     {
                         if (next.Right > current.Right)
-                            current.SetRight(next.Right, next.RightNode);
+                            current.SetRight(next.Right, next.RightNode, next.RightSide);
 
                         _data.RemoveAt(pos + 1);
                         if ((pos + 1) < _data.Count)
@@ -64,17 +64,17 @@ namespace CSG
                 }
                 else if (current.Right >= range.Right)
                 {
-                    current.SetLeft(range.Left, range.LeftNode);
+                    current.SetLeft(range.Left, range.LeftNode, range.LeftSide);
                 }
                 else
                 {
                     // pozor na zakryte intervaly!!
-                    current.SetLeft(range.Left, range.LeftNode);
-                    current.SetRight(range.Right, range.RightNode);
+                    current.SetLeft(range.Left, range.LeftNode, range.LeftSide);
+                    current.SetRight(range.Right, range.RightNode, range.RightSide);
                     while ((pos + 1) < _data.Count && next.Left <= current.Right)
                     {
                         if (next.Right > current.Right)
-                            current.SetRight(next.Right, next.RightNode);
+                            current.SetRight(next.Right, next.RightNode, next.RightSide);
 
                         _data.RemoveAt(pos + 1);
                         if ((pos + 1) < _data.Count)
@@ -134,22 +134,22 @@ namespace CSG
 
             if (pos == _data.Count)
             {
-                Add(new RangeShape(-RangeShape.Inf, RangeShape.Inf));
+                Add(new RangeShape(-RangeShape.Inf, RangeShape.Inf, null, null, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
                 return;
             }
 
             if (_data[pos].Left > -RangeShape.Inf)
-                result.Add(new RangeShape(-RangeShape.Inf, _data[pos].Left, null, _data[pos].LeftNode));
+                result.Add(new RangeShape(-RangeShape.Inf, _data[pos].Left, null, _data[pos].LeftNode, RangeShape.Sides.Exterior, _data[pos].LeftSide));
 
             while (pos < _data.Count)
             {
                 if (pos + 1 < _data.Count)
                 {
-                    result.Add(new RangeShape(_data[pos].Right, _data[pos].Left, _data[pos].RightNode, _data[pos].LeftNode));
+                    result.Add(new RangeShape(_data[pos].Right, _data[pos+1].Left, _data[pos].RightNode, _data[pos+1].LeftNode, _data[pos].RightSide, _data[pos+1].LeftSide));
                 }
-                else
+                else if (_data[pos].Right < RangeShape.Inf)
                 {
-                    result.Add(new RangeShape(_data[pos].Right, RangeShape.Inf, _data[pos].RightNode));
+                    result.Add(new RangeShape(_data[pos].Right, RangeShape.Inf, _data[pos].RightNode, null, _data[pos].RightSide, RangeShape.Sides.Interior));
                 }
                 pos++;
             }
@@ -176,10 +176,19 @@ namespace CSG
             {
                 var x = _data[i];
                 if (x.Left > t)
-                    return new RangeEdgeShape(x.Left, x.LeftNode, CSG.Intersection.IntersectionKind.Into);
-
+                {
+                    if (x.LeftSide == RangeShape.Sides.Exterior)
+                        return new RangeEdgeShape(x.Left, x.LeftNode, CSG.Intersection.IntersectionKind.Into);
+                    if (x.LeftSide == RangeShape.Sides.Interior)
+                        return new RangeEdgeShape(x.Left, x.LeftNode, CSG.Intersection.IntersectionKind.Outfrom);
+                }
                 if (x.Right > t)
-                    return new RangeEdgeShape(x.Right, x.RightNode, CSG.Intersection.IntersectionKind.Outfrom);
+                {
+                    if (x.RightSide == RangeShape.Sides.Exterior)
+                        return new RangeEdgeShape(x.Right, x.RightNode, CSG.Intersection.IntersectionKind.Into);
+                    if (x.RightSide == RangeShape.Sides.Interior)
+                        return new RangeEdgeShape(x.Right, x.RightNode, CSG.Intersection.IntersectionKind.Outfrom);
+                }
             }
 
             return new RangeEdgeShape(t, null, CSG.Intersection.IntersectionKind.None);

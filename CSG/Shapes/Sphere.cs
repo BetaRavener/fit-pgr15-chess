@@ -67,7 +67,7 @@ namespace CSG.Shapes
                 double sD = Math.Sqrt(D);
                 double t2 = (-bb + sD) / (2 * aa);
                 double t1 = (-bb - sD) / (2 * aa);
-                ranges.Add(new RangeShape(t1, t2, this, this));
+                ranges.Add(new RangeShape(t1, t2, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
             }
             return ranges;
         }

@@ -17,23 +17,6 @@ namespace CSG.Shapes
         public Vector3d Color { get; }
 
         /// <summary>
-        /// Find first intersection with ray.
-        /// </summary>
-        /// <param name="ray">Tracing ray.</param>
-        /// <returns>First intersection.</returns>
-        public virtual Intersection IntersectFirst(Ray ray)
-        {
-            RangesShape r = Intersect(ray);
-            RangeEdgeShape re = r.FirstEdgeGreater(0);
-            switch (re.Kind)
-            {
-                case Intersection.IntersectionKind.Into: return new Intersection(Intersection.IntersectionKind.Into, re.Node, re.Distance);
-                case Intersection.IntersectionKind.Outfrom: return new Intersection(Intersection.IntersectionKind.Outfrom, re.Node, re.Distance);
-                default: return new Intersection(Intersection.IntersectionKind.None);
-            }
-        }
-
-        /// <summary>
         /// Find set of spans at which the ray intersects this shape.
         /// This is an abstract method and must be implemented.
         /// </summary>

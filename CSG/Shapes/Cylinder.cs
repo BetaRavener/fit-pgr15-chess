@@ -17,13 +17,17 @@ namespace CSG.Shapes
         public Vector3d Direction { get; protected set; }
         public double Radius { get; protected set; }   
         public double Height { get; set; }
+        private Plane _topCap;
+        private Plane _bottomCap;
 
-        public Cylinder(Vector3d start, Vector3d dir, double radius, Vector3d color) : base(color)
+        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, Vector3d color) : base(color)
         {
             Start = start;
             Direction = Vector3d.Normalize(dir);
             Radius = radius;
-            Height = 999; // TODO
+            Height = height;
+            _topCap = new Plane(Direction, Start + Direction * Height, Color);
+            _bottomCap = new Plane(-Direction, Start, Color);
         }
 
 
@@ -57,7 +61,67 @@ namespace CSG.Shapes
                 double sD = Math.Sqrt(D);
                 double t1 = (-B - sD) / (2 * A);
                 double t2 = (-B + sD) / (2 * A);
-                ranges.Add(new RangeShape(t1, t2, this, this));
+                
+                //Plane cap1 = null;
+                //Plane cap2 = null;
+                //Intersection cap1I = null;
+                //Intersection cap2I = null;
+                //if (t1 == RangeShape.Inf || t2 == RangeShape.Inf)
+                //{
+                //    var cap1Itmp = (_topCap).IntersectFirst(ray);
+                //    var cap2Itmp = (_bottomCap).IntersectFirst(ray);
+                //    if (cap1Itmp.Distance < cap2Itmp.Distance)
+                //    {
+                //        cap1 = _topCap;
+                //        cap2 = _bottomCap;
+                //        cap1I = cap1Itmp;
+                //        cap2I = cap2Itmp;
+                //    }
+                //    else
+                //    {
+                //        cap1 = _bottomCap;
+                //        cap2 = _topCap;
+                //        cap1I = cap2Itmp;
+                //        cap2I = cap1Itmp;
+                //    }
+                //}
+
+                //if (t1 != RangeShape.Inf)
+                //{
+                //    if (t2 != RangeShape.Inf)
+                //    { // Both intersections with cylinder
+                //        ranges.Add(new RangeShape(t1, t2, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //    }
+                //    else
+                //    { // First intersection with cylinder, second with cap
+                //        //No cap: ranges.Add(new RangeShape(t1, t1, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //        ranges.Add(new RangeShape(t1, cap2I.Distance, this, cap2, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //    }
+                //}
+                //else
+                //{
+                //    if (t2 != RangeShape.Inf)
+                //    { // First intersection with cap, second with cylinder 
+                //        //No cap: ranges.Add(new RangeShape(t2, t2, this, this, RangeShape.Sides.Interior, RangeShape.Sides.Exterior));
+                //        ranges.Add(new RangeShape(cap1I.Distance, t2, cap1, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //    }
+                //    else
+                //    { // Both intersections with cap
+                //        // Needs additional test if the intersection is in radius on the plane
+                //        var cap1v = (ray.Origin + ray.Direction * cap1I.Distance) - cap1.;
+                //        var cap2v = ray.Origin + ray.Direction * cap2I.Distance;
+                //        if ()
+                //        ranges.Add(new RangeShape(cap1I.Distance, cap2I.Distance, cap1, cap2, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //    }
+                //}
+
+                ranges.Add(new RangeShape(t1, t2, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+
+                var rangesCap1 = _topCap.Intersect(ray);
+                var rangesCap2 = _bottomCap.Intersect(ray);
+                rangesCap1.Union(rangesCap2);
+                rangesCap1.Inverse();
+                ranges.Intersection(rangesCap1);
             }
             return ranges;
         }

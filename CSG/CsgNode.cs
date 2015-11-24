@@ -19,35 +19,68 @@ namespace CSG
 
         public Operations Operation { get; set; }
         public CsgNode Left { get; set; }
-        public CsgNode Right { get; set; } 
+        public CsgNode Right { get; set; }
+
+        /// <summary>
+        /// Constructs CSG node from 2 previous nodes and operation between them. 
+        /// </summary>
+        /// <param name="operation">Operation that is performed between the nodes.</param>
+        /// <param name="left">Left node (Operand A)</param>
+        /// <param name="right">Right node (Operand B)</param>
+        public CsgNode(Operations operation, CsgNode left, CsgNode right)
+        {
+            Operation = operation;
+            Left = left;
+            Right = right;
+        }
+
+        /// <summary>
+        /// Constructs a CSG leaf.
+        /// </summary>
+        /// <param name="shape"></param>
+        public CsgNode()
+        {
+            Left = null;
+            Right = null;
+        }
+
+        /// <summary>
+        /// Find first intersection with ray.
+        /// </summary>
+        /// <param name="ray">Tracing ray.</param>
+        /// <returns>First intersection.</returns>
+        public virtual Intersection IntersectFirst(Ray ray)
+        {
+            RangesShape r = Intersect(ray);
+            RangeEdgeShape re = r.FirstEdgeGreater(0);
+            switch (re.Kind)
+            {
+                case Intersection.IntersectionKind.Into: return new Intersection(Intersection.IntersectionKind.Into, re.Node, re.Distance);
+                case Intersection.IntersectionKind.Outfrom: return new Intersection(Intersection.IntersectionKind.Outfrom, re.Node, re.Distance);
+                default: return new Intersection(Intersection.IntersectionKind.None);
+            }
+        }
 
         public virtual RangesShape Intersect(Ray ray)
         {
-            if (Left == Right)
-            { // This is leaf of the tree
-                return Left.Intersect(ray);
-            }
-            else
+            var rangesLeft = Left.Intersect(ray);
+            var rangesRight = Right.Intersect(ray);
+
+            switch (Operation)
             {
-                var rangesLeft = Left.Intersect(ray);
-                var rangesRight = Right.Intersect(ray);
-
-                switch (Operation)
-                {
-                    case Operations.Union:
-                        rangesLeft.Union(rangesRight);
-                        break;
-                    case Operations.Intersection:
-                        rangesLeft.Intersection(rangesRight);
-                        break;
-                    case Operations.Difference:
-                        rangesRight.Inverse();
-                        rangesLeft.Intersection(rangesRight);
-                        break;
-                }
-
-                return rangesLeft;
+                case Operations.Union:
+                    rangesLeft.Union(rangesRight);
+                    break;
+                case Operations.Intersection:
+                    rangesLeft.Intersection(rangesRight);
+                    break;
+                case Operations.Difference:
+                    rangesRight.Inverse();
+                    rangesLeft.Intersection(rangesRight);
+                    break;
             }
+
+            return rangesLeft;
         }
     }
 }

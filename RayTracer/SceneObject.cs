@@ -17,16 +17,15 @@ namespace RayTracer
     class SceneObject
     {
         public Color4 Color { get; set; }
-        public Shape Shape { get; set; }
+        public CsgNode CsgTree { get; set; }
         public BoundingBox BoundingBox { get; set; }
 
         public List<Shape> Shapes { get; }
 
-        public SceneObject(List<Shape> shapes, Color4 color, BoundingBox bbox = null)
+        public SceneObject(CsgNode tree, Color4 color, BoundingBox bbox = null)
         {
             Color = color;
-            Shapes = shapes;
-            Shape = shapes.First();
+            CsgTree = tree;
             BoundingBox = bbox;
         }
 
@@ -43,10 +42,10 @@ namespace RayTracer
 
             if (BoundingBox != null && ray.Intersects(BoundingBox, out t))
             {
-                return renderBBox ? new Intersection(Intersection.IntersectionKind.Outfrom, null, t) : Shape.IntersectFirst(ray);
+                return renderBBox ? new Intersection(Intersection.IntersectionKind.Outfrom, null, t) : CsgTree.IntersectFirst(ray);
             }
 
-            return Shape.IntersectFirst(ray);
+            return CsgTree.IntersectFirst(ray);
         }
     }
 }

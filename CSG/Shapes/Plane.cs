@@ -5,8 +5,8 @@ namespace CSG.Shapes
 {
     public class Plane : Shape
     {
-        private Vector3d _normal;
-        private double _d;
+        protected Vector3d _normal;
+        protected double _d;
 
         public Plane(Vector3d normal, Vector3d point, Vector3d color) : base(color)
         {
@@ -31,8 +31,8 @@ namespace CSG.Shapes
             {
                 var t = -(_d + Vector3d.Dot(_normal, ray.Origin)) / np;
                 ranges.Add(np < 0
-                    ? new RangeShape(-RangeShape.Inf, t, this, this)
-                    : new RangeShape(t, RangeShape.Inf, this, this));
+                    ? new RangeShape(-RangeShape.Inf, t, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Exterior)
+                    : new RangeShape(t, RangeShape.Inf, this, this, RangeShape.Sides.Interior, RangeShape.Sides.Interior));
             }
             return ranges;
         }

@@ -74,50 +74,31 @@ namespace Raytracer
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera(0, 70, -150);
-            _lightSource = new LightSource(0, 100, 5);
+            _camera = new Camera(-100, 400, -400);
+            _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
-            _sceneObjects.Add(new SceneObject(
-                new List<Shape>(new[]
-                {
-                    new Cylinder(
-                        new Vector3d(0, 0, 100),
-                        new Vector3d(0, 10, 0), 20, Vector3d.UnitZ),
-                }),
-                Color4.Chocolate,
-                new BoundingBox(-20, -1000, -20, 20, 1000, 20))
-                );
 
-            _sceneObjects.Add(new SceneObject(
-                new List<Shape>(new[]
-                {
-                    new Sphere(new Vector3d(100, 0, 0), 30, Vector3d.UnitY)
-                }),
-                Color4.Chocolate,
-                new BoundingBox(70, -30, -30, 130, 30, 30)
-                )
-                );
+            //var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, new Vector3d(0.6,0,0.8));
+            //var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, new Vector3d(0.5,1,0));
+            //var csgNode = new CsgNode(CsgNode.Operations.Difference, sphere2, sphere1);
+            //var sceneObject = new SceneObject(csgNode, Color4.Azure);
 
-            _sceneObjects.Add(new SceneObject(
-                new List<Shape>(new[]
-                {
-                    new Sphere(new Vector3d(50, 0, 0), 10, Vector3d.UnitY)
-                }),
-                Color4.Chocolate,
-                new BoundingBox(40, -10, -10, 60, 10, 10)
-                )
-                );
+            //_sceneObjects.Add(sceneObject);
 
-            _sceneObjects.Add(new SceneObject(
-                new List<Shape>(new [] {
-                    new Plane(
-                        new Vector3d(0, 1, 0), 
-                        new Vector3d(0, -100, 0),
-                        Vector3d.UnitX
-                        )
-                }),
-                Color4.AliceBlue
-                ));
+            //var box1 = new Box(new Vector3d(-200, 0, -200), new Vector3d(200, 20, 200), new Vector3d(0.5, 0.5, 0));
+            //var box2 = new Box(new Vector3d(-90, -10, -90), new Vector3d(90, 30, 90), new Vector3d(0.5, 0.5, 0));
+            //csgNode =  new CsgNode(CsgNode.Operations.Difference, box1, box2);
+            //sceneObject = new SceneObject(csgNode, Color4.Azure);
+
+            //_sceneObjects.Add(sceneObject);
+
+            var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Vector3d(0.2, 0, 0.8));
+            var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Vector3d(0.2, 0.8, 0.1));
+            var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
+            var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Vector3d(0.8, 0.3, 0.3));
+            var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
+            var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
+            _sceneObjects.Add(sceneObject);
 
             _rayCache = new List<Ray>();
 
@@ -165,23 +146,30 @@ namespace Raytracer
             }
 
             var intensity = 0.0;
+            var shapeColor = new Vector3d(1, 0, 0);
 
+            //This is just to allow rendering of bounding boxes which do not have a shape
             if (closestIntersection.Shape != null)
             {
                 // We have closest intersection, shoot shadow ray
-                var hitPosition = ray.Origin + ray.Direction*closestIntersection.Distance;
+                var hitPosition = ray.Origin + ray.Direction * closestIntersection.Distance;
                 var lightDirection = Light.Position - hitPosition;
                 lightDirection.Normalize();
 
                 // Calculate intensity and final pixel color
                 var normal = closestIntersection.Shape.Normal(hitPosition);
+                // If the intersection is from the inside, inverse normal vector
+                if (closestIntersection.Kind == Intersection.IntersectionKind.Outfrom)
+                    normal = -normal;
+
                 intensity = Math.Max(0.0f, Vector3d.Dot(normal, lightDirection));
+                shapeColor = closestIntersection.Shape.Color;
             }
             else
                 intensity = 1.0;
 
             // unitY is like rGb (0,1,0) color
-            var color =  closestIntersection.Shape.Color * Light.Color;
+            var color = shapeColor * Light.Color;
             color = color*intensity;
 
             var pixelColor = Color.FromArgb((int) Math.Round((255.0)*color.X),

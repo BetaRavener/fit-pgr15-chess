@@ -27,6 +27,13 @@ namespace Chess.Gui
             _raytracer = new Raytracer.Raytracer();
             _resized = true;
             _synchronizationContext = SynchronizationContext.Current;
+            lightX.Text = ((int)_raytracer.Light.Position.X).ToString();
+            lightY.Text = ((int)_raytracer.Light.Position.Y).ToString();
+            lightZ.Text = ((int)_raytracer.Light.Position.Z).ToString();
+
+            cameraX.Text = ((int)_raytracer.Eye.Position.X).ToString();
+            cameraY.Text = ((int)_raytracer.Eye.Position.Y).ToString();
+            cameraZ.Text = ((int)_raytracer.Eye.Position.Z).ToString();
         }
 
         private void RenderView_Resize(object sender, EventArgs e)
