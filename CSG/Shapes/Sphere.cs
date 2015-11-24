@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
@@ -18,7 +19,7 @@ namespace CSG.Shapes
 
         private double _radiusSqr;
 
-        public Sphere(Vector3d center, double radius, Vector3d color) : base(color)
+        public Sphere(Vector3d center, double radius, Color4 color) : base(color)
         {
             Center = center;
             Radius = radius;

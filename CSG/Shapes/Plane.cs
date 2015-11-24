@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
@@ -8,7 +9,7 @@ namespace CSG.Shapes
         protected Vector3d _normal;
         protected double _d;
 
-        public Plane(Vector3d normal, Vector3d point, Vector3d color) : base(color)
+        public Plane(Vector3d normal, Vector3d point, Color4 color) : base(color)
         {
             normal.Normalize();
             _normal = normal;

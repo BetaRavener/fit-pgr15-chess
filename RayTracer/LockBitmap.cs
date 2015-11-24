@@ -171,5 +171,15 @@ namespace RayTracer
             _pixels[idx + 2] = r;
             _pixels[idx + 3] = 255;
         }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void EfficientSetPixel(int idx, int argb)
+        {
+            var color = Color.FromArgb(argb);
+            _pixels[idx] = color.B;
+            _pixels[idx + 1] = color.G;
+            _pixels[idx + 2] = color.R;
+            _pixels[idx + 3] = 255; //color.A;
+        }
     }
 }

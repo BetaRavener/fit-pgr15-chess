@@ -20,8 +20,6 @@ namespace RayTracer
         public CsgNode CsgTree { get; set; }
         public BoundingBox BoundingBox { get; set; }
 
-        public List<Shape> Shapes { get; }
-
         public SceneObject(CsgNode tree, Color4 color, BoundingBox bbox = null)
         {
             Color = color;
@@ -37,15 +35,11 @@ namespace RayTracer
         /// <returns>Intersection with scene object.</returns>
         public Intersection IntersectFirst(Ray ray, bool renderBBox = false)
         {
+            // could happen that bbox is not used
+            if (BoundingBox == null) return CsgTree.IntersectFirst(ray);
+            // if hitting bounding box, recurse to try to hit shape ..otherwise none
             double t;
-            // Test bounding box first, then the shape itself
-
-            if (BoundingBox != null && ray.Intersects(BoundingBox, out t))
-            {
-                return renderBBox ? new Intersection(Intersection.IntersectionKind.Outfrom, null, t) : CsgTree.IntersectFirst(ray);
-            }
-
-            return CsgTree.IntersectFirst(ray);
+            return ray.Intersects(BoundingBox, out t) ? CsgTree.IntersectFirst(ray) : new Intersection(Intersection.IntersectionKind.None);
         }
     }
 }

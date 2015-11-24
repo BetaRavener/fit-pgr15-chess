@@ -92,10 +92,12 @@ namespace Raytracer
 
             //_sceneObjects.Add(sceneObject);
 
-            var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Vector3d(0.2, 0, 0.8));
-            var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Vector3d(0.2, 0.8, 0.1));
+            
+
+            var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Color4((float)0.2, 0, (float)0.8, 1));
+            var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Color4((float)0.2, (float)0.8, (float) 0.1, 1));
             var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
-            var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Vector3d(0.8, 0.3, 0.3));
+            var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Color4((float)0.8, (float)0.3, (float)0.3, 1));
             var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
             var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
             _sceneObjects.Add(sceneObject);
@@ -130,21 +132,42 @@ namespace Raytracer
             return closestIntersection;
         }
 
+
         /// <summary>
         /// Traces single ray throughout the scene. 
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <returns>Color of traced object at the intersection point.</returns>
-        private Color TraceRay(Ray ray)
+        private Color4 TraceRay(Ray ray)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
-
             if (closestIntersection.Kind == Intersection.IntersectionKind.None)
             {
                 return Background;
             }
 
+            // We have closest intersection, shoot shadow ray
+            var hitPosition = ray.Origin + ray.Direction*closestIntersection.Distance;
+            var lightDirection = (Light.Position - hitPosition).Normalized();
+
+            // Calculate intensity and final pixel color
+            var hitNormal = closestIntersection.ShapeNormal(hitPosition);
+
+            var intensity = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
+
+
+            var finalColor = new Color4
+            {
+                R = (float) (closestIntersection.Shape.Color.R*Light.Color.R*intensity),
+                G = (float) (closestIntersection.Shape.Color.G*Light.Color.G*intensity),
+                B = (float) (closestIntersection.Shape.Color.B*Light.Color.B*intensity),
+                A = (float)(closestIntersection.Shape.Color.A * Light.Color.A * intensity),
+            };
+            
+            return finalColor;
+
+            /*
             var intensity = 0.0;
             var shapeColor = new Vector3d(1, 0, 0);
 
@@ -176,6 +199,7 @@ namespace Raytracer
                 (int) Math.Round((255.0)*color.Y),
                 (int) Math.Round((255.0)*color.Z));
             return pixelColor;
+            */
         }
 
         /// <summary>
@@ -218,12 +242,11 @@ namespace Raytracer
 
                 var ray = _rayCache[i];
                 var color = TraceRay(ray);
-
 #if PARALLEL
                 lock (progressLock)
                 {
 #endif
-                image.EfficientSetPixel(ray.Component, color.R, color.G, color.B);
+                image.EfficientSetPixel(ray.Component, color.ToArgb());
                 progress++;
                 //reportFunc(new Tuple<int, int>(progress, totalPixels));
 
