@@ -25,9 +25,9 @@ namespace CSG
         /// <summary>
         /// The kind of edge. 
         /// </summary>
-        public Intersection.IntersectionKind Kind { get; private set; }
+        public IntersectionKind Kind { get; private set; }
 
-        public RangeEdgeShape(double dist, Shapes.Shape node, Intersection.IntersectionKind kind)
+        public RangeEdgeShape(double dist, Shapes.Shape node, IntersectionKind kind)
         {
             Distance = dist;
             Node = node;

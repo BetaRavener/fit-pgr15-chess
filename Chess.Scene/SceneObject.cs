@@ -1,32 +1,38 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CSG;
-using CSG.Shapes;
+﻿using CSG;
 using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
 
-namespace RayTracer
+namespace Chess.Scene
 {
     /// <summary>
     /// Class holding the shape and its boundary box
     /// </summary>
-    class SceneObject
+    public class SceneObject : ISceneObject
     {
         public Color4 Color { get; set; }
         public CsgNode CsgTree { get; set; }
         public BoundingBox BoundingBox { get; set; }
-
-        public List<Shape> Shapes { get; }
 
         public SceneObject(CsgNode tree, Color4 color, BoundingBox bbox = null)
         {
             Color = color;
             CsgTree = tree;
             BoundingBox = bbox;
+
+            Utilities.SetParentTree(tree, this);
+        }
+
+        public SceneObject(CsgNode tree)
+        {
+            CsgTree = tree;
+
+            Utilities.SetParentTree(tree, this);
+        }
+
+        public virtual Color4 ComputeColor(Vector3d position, Vector3d normal)
+        {
+            return Color;
         }
 
         /// <summary>
@@ -37,15 +43,22 @@ namespace RayTracer
         /// <returns>Intersection with scene object.</returns>
         public Intersection IntersectFirst(Ray ray, bool renderBBox = false)
         {
-            double t;
-            // Test bounding box first, then the shape itself
-
-            if (BoundingBox != null && ray.Intersects(BoundingBox, out t))
+            if (BoundingBox == null)
             {
-                return renderBBox ? new Intersection(Intersection.IntersectionKind.Outfrom, null, t) : CsgTree.IntersectFirst(ray);
+                return CsgTree.IntersectFirst(ray);
             }
 
-            return CsgTree.IntersectFirst(ray);
+
+            double t;
+            if (ray.Intersects(BoundingBox, out t))
+            {
+                return renderBBox 
+                    ? new Intersection(IntersectionKind.Outfrom, null, t) 
+                    : CsgTree.IntersectFirst(ray);
+            }
+
+
+            return new Intersection(IntersectionKind.None);
         }
     }
 }

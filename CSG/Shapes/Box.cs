@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
@@ -13,8 +14,8 @@ namespace CSG.Shapes
         public Vector3d Min { get; protected set; }
         public Vector3d Max { get; protected set; }
 
-        public Box(Vector3d min, Vector3d max, Vector3d color) :
-            base(color)
+        public Box(Vector3d min, Vector3d max)
+            : base(Color4.AliceBlue) // Todo: Fallbackvalue 
         {
             Min = min;
             Max = max;

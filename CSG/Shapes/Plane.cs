@@ -1,4 +1,5 @@
 ﻿using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
@@ -8,7 +9,7 @@ namespace CSG.Shapes
         protected Vector3d _normal;
         protected double _d;
 
-        public Plane(Vector3d normal, Vector3d point, Vector3d color) : base(color)
+        public Plane(Vector3d normal, Vector3d point, Color4 color) : base(color)
         {
             normal.Normalize();
             _normal = normal;
@@ -18,9 +19,9 @@ namespace CSG.Shapes
         public override Intersection IntersectFirst(Ray ray)
         {
             double np = Vector3d.Dot(_normal, ray.Direction);
-            if (np == 0) return new Intersection(Intersection.IntersectionKind.None);
+            if (np == 0) return new Intersection(IntersectionKind.None);
             double t = -(_d + Vector3d.Dot(_normal, ray.Origin)) / np;
-            return t > 0 ? new Intersection((np > 0) ? Intersection.IntersectionKind.Into : Intersection.IntersectionKind.Outfrom, this, t) : new Intersection(Intersection.IntersectionKind.None);
+            return t > 0 ? new Intersection((np > 0) ? IntersectionKind.Into : IntersectionKind.Outfrom, this, t) : new Intersection(IntersectionKind.None);
         }
 
         public override RangesShape Intersect(Ray ray)

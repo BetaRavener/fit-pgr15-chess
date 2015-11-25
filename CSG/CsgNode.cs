@@ -37,7 +37,6 @@ namespace CSG
         /// <summary>
         /// Constructs a CSG leaf.
         /// </summary>
-        /// <param name="shape"></param>
         public CsgNode()
         {
             Left = null;
@@ -55,9 +54,9 @@ namespace CSG
             RangeEdgeShape re = r.FirstEdgeGreater(0);
             switch (re.Kind)
             {
-                case Intersection.IntersectionKind.Into: return new Intersection(Intersection.IntersectionKind.Into, re.Node, re.Distance);
-                case Intersection.IntersectionKind.Outfrom: return new Intersection(Intersection.IntersectionKind.Outfrom, re.Node, re.Distance);
-                default: return new Intersection(Intersection.IntersectionKind.None);
+                case IntersectionKind.Into: return new Intersection(IntersectionKind.Into, re.Node, re.Distance);
+                case IntersectionKind.Outfrom: return new Intersection(IntersectionKind.Outfrom, re.Node, re.Distance);
+                default: return new Intersection(IntersectionKind.None);
             }
         }
 

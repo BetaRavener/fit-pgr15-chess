@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using RayMath;
 using System;
+using OpenTK.Graphics;
 
 namespace CSG.Shapes
 {
@@ -9,12 +10,24 @@ namespace CSG.Shapes
     /// </summary>
     public abstract class Shape : CsgNode
     {
-        protected Shape(Vector3d color)
+        public ISceneObject Parent { get; set; }
+
+        public Color4 Color { get; set; }
+        protected Shape(ISceneObject sceneObject)
+        {
+            Parent = sceneObject;
+        }
+
+        protected Shape(Color4 color)
         {
             Color = color;
         }
 
-        public Vector3d Color { get; }
+
+        public virtual Color4 GetColor(Vector3d position, Vector3d normal)
+        {  
+            return Parent?.ComputeColor(position, normal) ?? Color;
+        }
 
         /// <summary>
         /// Find set of spans at which the ray intersects this shape.

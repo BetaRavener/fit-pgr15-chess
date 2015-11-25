@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}</ProjectGuid>
+    <ProjectGuid>{528B8909-0A46-4037-866F-3E1A0BDCF0F7}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RayTracer</RootNamespace>
-    <AssemblyName>RayTracer</AssemblyName>
+    <RootNamespace>Chess.Scene</RootNamespace>
+    <AssemblyName>Chess.Scene</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,17 +30,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=3.8.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.3.8.0\lib\net40\MathNet.Numerics.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.1.1.1589.5942\lib\NET40\OpenTK.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -49,39 +44,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera.cs" />
-    <Compile Include="HitInfo.cs" />
-    <Compile Include="LightSource.cs" />
-    <Compile Include="LockBitmap.cs" />
-    <Compile Include="Material.cs" />
-    <Compile Include="Raytracer.cs" />
+    <Compile Include="Chessboard.cs" />
+    <Compile Include="FigureType.cs" />
+    <Compile Include="Game.cs" />
+    <Compile Include="GameState.cs" />
+    <Compile Include="ObjectBuilders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SceneObject.cs" />
+    <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Chess.Scene\Chess.Scene.csproj">
-      <Project>{528b8909-0a46-4037-866f-3e1a0bdcf0f7}</Project>
-      <Name>Chess.Scene</Name>
-    </ProjectReference>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\CSG\CSG.csproj">
-      <Project>{a9581c82-e600-469f-8ff0-5fca3c3ca11f}</Project>
+      <Project>{A9581C82-E600-469F-8FF0-5FCA3C3CA11F}</Project>
       <Name>CSG</Name>
     </ProjectReference>
     <ProjectReference Include="..\Math3d\RayMath.csproj">
       <Project>{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}</Project>
       <Name>RayMath</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="models\Map__2_Checker.tga">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="models\teapot.mtl">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="models\teapot.obj">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
@@ -18,7 +19,7 @@ namespace CSG.Shapes
 
         private double _radiusSqr;
 
-        public Sphere(Vector3d center, double radius, Vector3d color) : base(color)
+        public Sphere(Vector3d center, double radius, Color4 color) : base(color)
         {
             Center = center;
             Radius = radius;
@@ -41,11 +42,11 @@ namespace CSG.Shapes
             {
                 double sD = Math.Sqrt(D);
                 double t1 = (-bb - sD) / (2 * aa);
-                if (t1 > 0) return new Intersection(Intersection.IntersectionKind.Into, this, t1);
+                if (t1 > 0) return new Intersection(IntersectionKind.Into, this, t1);
                 double t2 = (-bb + sD) / (2 * aa);
-                if (t2 > 0) return new Intersection(Intersection.IntersectionKind.Outfrom, this, t2);
+                if (t2 > 0) return new Intersection(IntersectionKind.Outfrom, this, t2);
             }
-            return new Intersection(Intersection.IntersectionKind.None);
+            return new Intersection(IntersectionKind.None);
         }
 
         /// <summary>

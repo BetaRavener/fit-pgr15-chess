@@ -46,6 +46,8 @@
   <ItemGroup>
     <Compile Include="CsgNode.cs" />
     <Compile Include="Intersection.cs" />
+    <Compile Include="IntersectionKind.cs" />
+    <Compile Include="ISceneObject.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="RangeEdge.cs" />
     <Compile Include="Ranges.cs" />

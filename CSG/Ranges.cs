@@ -178,20 +178,20 @@ namespace CSG
                 if (x.Left > t)
                 {
                     if (x.LeftSide == RangeShape.Sides.Exterior)
-                        return new RangeEdgeShape(x.Left, x.LeftNode, CSG.Intersection.IntersectionKind.Into);
+                        return new RangeEdgeShape(x.Left, x.LeftNode, IntersectionKind.Into);
                     if (x.LeftSide == RangeShape.Sides.Interior)
-                        return new RangeEdgeShape(x.Left, x.LeftNode, CSG.Intersection.IntersectionKind.Outfrom);
+                        return new RangeEdgeShape(x.Left, x.LeftNode, IntersectionKind.Outfrom);
                 }
                 if (x.Right > t)
                 {
                     if (x.RightSide == RangeShape.Sides.Exterior)
-                        return new RangeEdgeShape(x.Right, x.RightNode, CSG.Intersection.IntersectionKind.Into);
+                        return new RangeEdgeShape(x.Right, x.RightNode, IntersectionKind.Into);
                     if (x.RightSide == RangeShape.Sides.Interior)
-                        return new RangeEdgeShape(x.Right, x.RightNode, CSG.Intersection.IntersectionKind.Outfrom);
+                        return new RangeEdgeShape(x.Right, x.RightNode, IntersectionKind.Outfrom);
                 }
             }
 
-            return new RangeEdgeShape(t, null, CSG.Intersection.IntersectionKind.None);
+            return new RangeEdgeShape(t, null, IntersectionKind.None);
         }
     }
 }

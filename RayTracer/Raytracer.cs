@@ -10,6 +10,7 @@ using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
 using RayTracer;
+using Chess.Scene;
 
 namespace Raytracer
 {
@@ -92,13 +93,29 @@ namespace Raytracer
 
             //_sceneObjects.Add(sceneObject);
 
-            var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Vector3d(0.2, 0, 0.8));
-            var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Vector3d(0.2, 0.8, 0.1));
-            var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
-            var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Vector3d(0.8, 0.3, 0.3));
-            var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
-            var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
-            _sceneObjects.Add(sceneObject);
+            //var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Vector3d(0.2, 0, 0.8));
+            //var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Vector3d(0.2, 0.8, 0.1));
+            //var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
+            //var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Vector3d(0.8, 0.3, 0.3));
+            //var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
+            //var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
+            ////_sceneObjects.Add(sceneObject);
+
+            //var csgNode3 = new Box(new Vector3d(0, 0, 0), new Vector3d(100, 50, 100), new Vector3d(0.0, 0, 0.0));
+            //var csgNode4 = new Box(new Vector3d(100, 0, 100), new Vector3d(200, 50, 200), new Vector3d(0.0, 0, 0.0));
+            //var csgNode5 = new Box(new Vector3d(0, 0, 100), new Vector3d(100, 50, 200), new Vector3d(1.0, 1, 1.0));
+            //var csgNode6 = new Box(new Vector3d(100, 0, 0), new Vector3d(200, 50, 100), new Vector3d(1.0, 1, 1.0));
+
+
+            //var csgNodefin =  new CsgNode(CsgNode.Operations.Union, csgNode3, csgNode4);
+            //var csgNodefin2 = new CsgNode(CsgNode.Operations.Union, csgNodefin, csgNode5);
+            //var csgNodefin3 = new CsgNode(CsgNode.Operations.Union, csgNodefin2, csgNode6);
+
+
+            //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
+            var chessboard = new Chessboard();
+        
+            _sceneObjects.Add(chessboard);
 
             _rayCache = new List<Ray>();
 
@@ -115,12 +132,12 @@ namespace Raytracer
         private Intersection GetClosestIntersection(Ray ray)
         {
             // Search for closest intersection
-            var closestIntersection = new Intersection(Intersection.IntersectionKind.None);
+            var closestIntersection = new Intersection(IntersectionKind.None);
 
             foreach (SceneObject sceneObject in _sceneObjects)
             {
                 var intersection = sceneObject.IntersectFirst(ray);
-                if (intersection.Kind != Intersection.IntersectionKind.None &&
+                if (intersection.Kind != IntersectionKind.None &&
                     intersection.Distance < closestIntersection.Distance)
                 {
                     closestIntersection = intersection;
@@ -140,13 +157,13 @@ namespace Raytracer
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
 
-            if (closestIntersection.Kind == Intersection.IntersectionKind.None)
+            if (closestIntersection.Kind == IntersectionKind.None)
             {
                 return Background;
             }
 
             var intensity = 0.0;
-            var shapeColor = new Vector3d(1, 0, 0);
+            var shapeColor = Color4.Black;
 
             //This is just to allow rendering of bounding boxes which do not have a shape
             if (closestIntersection.Shape != null)
@@ -159,17 +176,18 @@ namespace Raytracer
                 // Calculate intensity and final pixel color
                 var normal = closestIntersection.Shape.Normal(hitPosition);
                 // If the intersection is from the inside, inverse normal vector
-                if (closestIntersection.Kind == Intersection.IntersectionKind.Outfrom)
+                if (closestIntersection.Kind == IntersectionKind.Outfrom)
                     normal = -normal;
 
                 intensity = Math.Max(0.0f, Vector3d.Dot(normal, lightDirection));
-                shapeColor = closestIntersection.Shape.Color;
+                shapeColor = closestIntersection.Shape.GetColor(hitPosition, normal);
             }
             else
                 intensity = 1.0;
 
             // unitY is like rGb (0,1,0) color
-            var color = shapeColor * Light.Color;
+            Vector3d vectorColor = new Vector3d(shapeColor.B, shapeColor.G, shapeColor.R);
+            var color = vectorColor * Light.Color;
             color = color*intensity;
 
             var pixelColor = Color.FromArgb((int) Math.Round((255.0)*color.X),
