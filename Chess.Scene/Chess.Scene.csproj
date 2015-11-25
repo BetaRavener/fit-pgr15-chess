@@ -45,9 +45,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Chessboard.cs" />
+    <Compile Include="ChessboardPosition.cs" />
+    <Compile Include="Figure.cs" />
     <Compile Include="FigureType.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="GameState.cs" />
+    <Compile Include="ObjectBuilderResolver.cs" />
     <Compile Include="ObjectBuilders.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SceneObject.cs" />

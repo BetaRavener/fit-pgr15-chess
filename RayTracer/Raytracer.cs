@@ -114,8 +114,13 @@ namespace Raytracer
 
             //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
             var chessboard = new Chessboard();
-        
+     
             _sceneObjects.Add(chessboard);
+
+            var figure = new Figure(new ChessboardPosition(0, 0), FigureType.King);
+            figure.Color = Color4.Azure;
+
+            _sceneObjects.Add(figure);
 
             _rayCache = new List<Ray>();
 

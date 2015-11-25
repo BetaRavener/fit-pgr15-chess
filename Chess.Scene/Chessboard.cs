@@ -13,6 +13,8 @@ namespace Chess.Scene
     {
         public const int CroftWidth = 100;
         public const int CroftHeight = 100;
+        public const int CroftThickness = 50;
+
 
         public static readonly Color4 BackgroundColor = Color4.Brown;
         public static readonly Color4 WhiteColor = Color4.White;
@@ -20,7 +22,7 @@ namespace Chess.Scene
 
 
         public Chessboard() 
-            : base(ObjectBuilders.BuildChessboard())
+            : base(ObjectBuilder.BuildChessboard())
         {
         }
 
