@@ -92,8 +92,6 @@ namespace Raytracer
 
             //_sceneObjects.Add(sceneObject);
 
-            
-
             var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Color4((float)0.2, 0, (float)0.8, 1));
             var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Color4((float)0.2, (float)0.8, (float) 0.1, 1));
             var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
@@ -115,7 +113,6 @@ namespace Raytracer
 
             _sceneObjects.Add(obj2);
 
-
             _rayCache = new List<Ray>();
 
             NumberOfThreads = 1;
@@ -125,6 +122,21 @@ namespace Raytracer
         {
             _heightInPixels = heightInPixels;
             _widthInPixels = widthInPixels;
+
+            _rayCache.Clear();
+            var firstX = 0;
+            for (var y = 0; y < _heightInPixels; y++)
+            {
+                for (var x = 0; x < _widthInPixels; x++)
+                {
+                    var component = (firstX + x) * ComponentsPerPixel;
+
+                    var ray = new Ray(Eye.Position, Vector3d.UnitZ, component);
+
+                    _rayCache.Add(ray);
+                }
+                firstX += _widthInPixels;
+            }
         }
 
 
@@ -169,7 +181,7 @@ namespace Raytracer
             var lightDirection = (Light.Position - hitPosition).Normalized();
             
             
-            Ray shadowRay = new Ray(hitPosition, lightDirection, true, ray.Component);
+            Ray shadowRay = new Ray(hitPosition, lightDirection, ray.Component);
             /*foreach (var sceneObject in _sceneObjects)
             {
                 if (sceneObject.IntersectFirst(shadowRay).Kind != Intersection.IntersectionKind.None)
@@ -255,8 +267,6 @@ namespace Raytracer
         /// </summary>
         public void BuildRayCache()
         {
-            _rayCache.Clear();
-
             var rightIncrement = Eye.RightVector*PixelSize;
             var rightIncrementHalf = rightIncrement*0.5f;
             var downIncrement = Eye.UpVector*-PixelSize;
@@ -282,10 +292,12 @@ namespace Raytracer
                 {
                     var component = (firstX + x)*ComponentsPerPixel;
                     var direction = pixelCenter - Eye.Position;
+                    direction.Normalize();
 
-                    var ray = new Ray(Eye.Position, direction, true, component);
+                    var ray = _rayCache[firstX + x];
+                    ray.Origin = Eye.Position;
+                    ray.Direction = direction;
 
-                    _rayCache.Add(ray);
                     pixelCenter += rightIncrement;
                 }
 

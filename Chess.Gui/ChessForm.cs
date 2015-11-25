@@ -17,15 +17,15 @@ namespace Chess.Gui
         private int _lastX;
         private int _lastY;
 
-
         private bool _mousePressed;
         private bool _resized;
+        private bool _viewChanged;
 
         public ChessForm()
         {
             InitializeComponent();
             _raytracer = new Raytracer.Raytracer();
-            _resized = true;
+            
             _synchronizationContext = SynchronizationContext.Current;
             lightX.Text = ((int) _raytracer.Light.Position.X).ToString();
             lightY.Text = ((int) _raytracer.Light.Position.Y).ToString();
@@ -34,6 +34,9 @@ namespace Chess.Gui
             cameraX.Text = ((int) _raytracer.Eye.Position.X).ToString();
             cameraY.Text = ((int) _raytracer.Eye.Position.Y).ToString();
             cameraZ.Text = ((int) _raytracer.Eye.Position.Z).ToString();
+
+            _resized = true;
+            _viewChanged = true;
         }
 
         /// <summary>
@@ -53,6 +56,7 @@ namespace Chess.Gui
         private void RenderView_Resize(object sender, EventArgs e)
         {
             _resized = true;
+            _viewChanged = true;
         }
 
         /// <summary>
@@ -84,28 +88,25 @@ namespace Chess.Gui
             _cancelSource = new CancellationTokenSource();
 
             _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
-            _raytracer.Resize(RenderView.Width, RenderView.Height);
-
-            _raytracer.Light = new LightSource(int.Parse(lightX.Text), int.Parse(lightY.Text), int.Parse(lightZ.Text));
-            _raytracer.Eye = new Camera(int.Parse(cameraX.Text), int.Parse(cameraY.Text), int.Parse(cameraZ.Text));
-            _resized = false;
-            _raytracer.BuildRayCache();
-
-            //Image img = null;
-            //await Task.Run(() => img = Redraw(), _cancelSource.Token);
-
-            //if (img != null)
-            //{
-            //    var oldImg = RenderView.Image;
-            //    RenderView.Image = img;
-            //    oldImg?.Dispose();
-            //    Refresh();
-            //}
 
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
             {
                 var begin = DateTime.UtcNow;
+
+                if (_resized)
+                {
+                    _raytracer.Resize(RenderView.Width, RenderView.Height);
+                }
+                _resized = false;
+
+                if (_viewChanged)
+                {
+                    _raytracer.Light = new LightSource(int.Parse(lightX.Text), int.Parse(lightY.Text), int.Parse(lightZ.Text));
+                    _raytracer.Eye = new Camera(int.Parse(cameraX.Text), int.Parse(cameraY.Text), int.Parse(cameraZ.Text));
+                    _raytracer.BuildRayCache();
+                }
+                _viewChanged = false;
 
                 Image img = null;
                 await Task.Run(() => img = Redraw(), _cancelSource.Token);
@@ -175,35 +176,38 @@ namespace Chess.Gui
                     cameraX.Text = (int.Parse(cameraX.Text) + (dX < 0 ? -1 : 1)*_increment).ToString();
                 else
                     cameraY.Text = (int.Parse(cameraY.Text) + (dY < 0 ? -1 : 1)*_increment).ToString();
+
+                _viewChanged = true;
             }
         }
 
         private void RenderView_MouseUp(object sender, MouseEventArgs e)
         {
-            _mousePressed = false;
-            // TODO solve so that it will render and finishes
-            if (_cancelSource == null)
-            {
-                Render();
-            }
-            else
-            {
-                _cancelSource.Cancel();
-            }
+            //_mousePressed = false;
+            //// TODO solve so that it will render and finishes
+            //if (_cancelSource == null)
+            //{
+            //    Render();
+            //}
+            //else
+            //{
+            //    _cancelSource.Cancel();
+            //}
         }
 
         private void RenderView_MouseWheel(object sender, MouseEventArgs e)
         {
             cameraZ.Text = (int.Parse(cameraZ.Text) + e.Delta/_increment).ToString();
-            // TODO solve so that it will render and finishes
-            if (_cancelSource == null)
-            {
-                Render();
-            }
-            else
-            {
-                _cancelSource.Cancel();
-            }
+            //// TODO solve so that it will render and finishes
+            //if (_cancelSource == null)
+            //{
+            //    Render();
+            //}
+            //else
+            //{
+            //    _cancelSource.Cancel();
+            //}
+            _viewChanged = true;
         }
     }
 }
