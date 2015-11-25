@@ -133,8 +133,7 @@ namespace Chess.Gui
             this.labelLightPosition.Name = "labelLightPosition";
             this.labelLightPosition.Size = new System.Drawing.Size(195, 25);
             this.labelLightPosition.TabIndex = 5;
-            this.labelLightPosition.Text = "Light position (x, y, z)";
-            this.labelLightPosition.Click += new System.EventHandler(this.label2_Click);
+            this.labelLightPosition.Text = "Light position (x, y, z)";            
             // 
             // lightX
             // 
@@ -222,8 +221,7 @@ namespace Chess.Gui
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 25);
             this.label3.TabIndex = 17;
-            this.label3.Text = "FPS";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.label3.Text = "FPS";            
             // 
             // FPSlabel
             // 

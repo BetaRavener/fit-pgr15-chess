@@ -133,31 +133,7 @@ namespace Chess.Gui
             RenderProgressBar.Value = RenderProgressBar.Minimum;
             RenderButton.Text = "Render";
         }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label2_Click_1(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-        }
-
+        
         private void RenderView_MouseDown(object sender, MouseEventArgs e)
         {
             _mousePressed = true;
@@ -167,46 +143,28 @@ namespace Chess.Gui
 
         private void RenderView_MouseMove(object sender, MouseEventArgs e)
         {
-            if (_mousePressed)
-            {
-                var dX = e.X - _lastX;
-                var dY = e.Y - _lastY;
+            if (!_mousePressed) return;
 
-                if (Math.Abs(dX) > Math.Abs(dY))
-                    cameraX.Text = (int.Parse(cameraX.Text) + (dX < 0 ? -1 : 1)*_increment).ToString();
-                else
-                    cameraY.Text = (int.Parse(cameraY.Text) + (dY < 0 ? -1 : 1)*_increment).ToString();
+            var dX = e.X - _lastX;
+            var dY = e.Y - _lastY;
 
-                _viewChanged = true;
-            }
+            if (Math.Abs(dX) > Math.Abs(dY))
+                cameraX.Text = (int.Parse(cameraX.Text) + (dX < 0 ? -1 : 1)*_increment).ToString();
+            else
+                cameraY.Text = (int.Parse(cameraY.Text) + (dY < 0 ? -1 : 1)*_increment).ToString();
+
+            _viewChanged = true;
         }
 
         private void RenderView_MouseUp(object sender, MouseEventArgs e)
         {
-            //_mousePressed = false;
-            //// TODO solve so that it will render and finishes
-            //if (_cancelSource == null)
-            //{
-            //    Render();
-            //}
-            //else
-            //{
-            //    _cancelSource.Cancel();
-            //}
+            _mousePressed = false;
+            //_viewChanged = true;
         }
 
         private void RenderView_MouseWheel(object sender, MouseEventArgs e)
         {
             cameraZ.Text = (int.Parse(cameraZ.Text) + e.Delta/_increment).ToString();
-            //// TODO solve so that it will render and finishes
-            //if (_cancelSource == null)
-            //{
-            //    Render();
-            //}
-            //else
-            //{
-            //    _cancelSource.Cancel();
-            //}
             _viewChanged = true;
         }
     }
