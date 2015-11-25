@@ -20,12 +20,13 @@ namespace Chess.Gui
         private bool _mousePressed;
         private bool _resized;
         private bool _viewChanged;
+        private MouseButtons _mouseButtonPressed;
 
         public ChessForm()
         {
             InitializeComponent();
             _raytracer = new Raytracer.Raytracer();
-            
+
             _synchronizationContext = SynchronizationContext.Current;
             lightX.Text = ((int) _raytracer.Light.Position.X).ToString();
             lightY.Text = ((int) _raytracer.Light.Position.Y).ToString();
@@ -102,8 +103,10 @@ namespace Chess.Gui
 
                 if (_viewChanged)
                 {
-                    _raytracer.Light = new LightSource(int.Parse(lightX.Text), int.Parse(lightY.Text), int.Parse(lightZ.Text));
-                    _raytracer.Eye = new Camera(int.Parse(cameraX.Text), int.Parse(cameraY.Text), int.Parse(cameraZ.Text));
+                    _raytracer.Light = new LightSource(int.Parse(lightX.Text), int.Parse(lightY.Text),
+                        int.Parse(lightZ.Text));
+                    _raytracer.Eye = new Camera(int.Parse(cameraX.Text), int.Parse(cameraY.Text),
+                        int.Parse(cameraZ.Text));
                     _raytracer.BuildRayCache();
                 }
                 _viewChanged = false;
@@ -133,10 +136,11 @@ namespace Chess.Gui
             RenderProgressBar.Value = RenderProgressBar.Minimum;
             RenderButton.Text = "Render";
         }
-        
+
         private void RenderView_MouseDown(object sender, MouseEventArgs e)
         {
             _mousePressed = true;
+            _mouseButtonPressed = e.Button;
             _lastX = e.X;
             _lastY = e.Y;
         }
@@ -147,11 +151,18 @@ namespace Chess.Gui
 
             var dX = e.X - _lastX;
             var dY = e.Y - _lastY;
-
-            if (Math.Abs(dX) > Math.Abs(dY))
-                cameraX.Text = (int.Parse(cameraX.Text) + (dX < 0 ? -1 : 1)*_increment).ToString();
+            TextBox textBox;
+        
+            if (_mouseButtonPressed == System.Windows.Forms.MouseButtons.Left)
+            {
+                textBox = Math.Abs(dX) > Math.Abs(dY) ? cameraX : cameraY;
+            }
             else
-                cameraY.Text = (int.Parse(cameraY.Text) + (dY < 0 ? -1 : 1)*_increment).ToString();
+            {
+                textBox = Math.Abs(dX) > Math.Abs(dY) ? lightX : lightY;
+            }
+
+            textBox.Text = (int.Parse(textBox.Text) + (dX < 0 ? -1 : 1)*_increment).ToString();
 
             _viewChanged = true;
         }
