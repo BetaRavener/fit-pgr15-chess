@@ -9,7 +9,7 @@ namespace Chess.Gui
 {
     public partial class ChessForm : Form, IProgress<Tuple<int, int>>
     {
-        private readonly int _increment = 10;
+        private readonly int _increment = 5;
         private readonly Raytracer.Raytracer _raytracer;
         private readonly SynchronizationContext _synchronizationContext;
         private CancellationTokenSource _cancelSource;
@@ -136,6 +136,11 @@ namespace Chess.Gui
             RenderProgressBar.Value = RenderProgressBar.Minimum;
             RenderButton.Text = "Render";
         }
+        
+        private int _lastCamX;
+        private int _lastCamY;
+        private int _lastLightX;
+        private int _lastLightY;
 
         private void RenderView_MouseDown(object sender, MouseEventArgs e)
         {
@@ -143,6 +148,11 @@ namespace Chess.Gui
             _mouseButtonPressed = e.Button;
             _lastX = e.X;
             _lastY = e.Y;
+
+            _lastCamX = int.Parse(cameraX.Text);
+            _lastCamY = int.Parse(cameraX.Text);
+            _lastLightX = int.Parse(lightX.Text);
+            _lastLightY = int.Parse(lightY.Text);
         }
 
         private void RenderView_MouseMove(object sender, MouseEventArgs e)
@@ -150,19 +160,30 @@ namespace Chess.Gui
             if (!_mousePressed) return;
 
             var dX = e.X - _lastX;
-            var dY = e.Y - _lastY;
-            TextBox textBox;
+            var dY = e.Y - _lastY;        
+
+            TextBox textBoxX;
+            TextBox textBoxY;
+            int lastCamOrLightX;
+            int lastCamOrLightY;
         
             if (_mouseButtonPressed == System.Windows.Forms.MouseButtons.Left)
             {
-                textBox = Math.Abs(dX) > Math.Abs(dY) ? cameraX : cameraY;
+                textBoxX = cameraX;
+                textBoxY = cameraY;
+                lastCamOrLightX = _lastCamX;
+                lastCamOrLightX = _lastCamY;
             }
             else
             {
-                textBox = Math.Abs(dX) > Math.Abs(dY) ? lightX : lightY;
+                textBoxX = lightX;
+                textBoxY = lightY;
+                lastCamOrLightX = _lastLightX;
+                lastCamOrLightX = _lastLightY;
             }
 
-            textBox.Text = (int.Parse(textBox.Text) + (dX < 0 ? -1 : 1)*_increment).ToString();
+            textBoxX.Text = (_lastCamY + dX * _increment).ToString();
+            textBoxY.Text = (_lastCamY + dY * _increment).ToString();;
 
             _viewChanged = true;
         }
