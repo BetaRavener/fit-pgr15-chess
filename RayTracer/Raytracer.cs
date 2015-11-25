@@ -102,6 +102,20 @@ namespace Raytracer
             var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
             _sceneObjects.Add(sceneObject);
 
+            var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
+
+            var obj2 = new SceneObject(
+                new CsgNode(
+                    CsgNode.Operations.Union, 
+                    sphere2,
+                    sphere2
+                    ),
+                Color4.Green
+            );
+
+            _sceneObjects.Add(obj2);
+
+
             _rayCache = new List<Ray>();
 
             NumberOfThreads = 1;
@@ -132,6 +146,7 @@ namespace Raytracer
             return closestIntersection;
         }
 
+        private int maxRecursion = 2;
 
         /// <summary>
         /// Traces single ray throughout the scene. 
@@ -148,58 +163,33 @@ namespace Raytracer
             }
 
             // We have closest intersection, shoot shadow ray
-            var hitPosition = ray.Origin + ray.Direction*closestIntersection.Distance;
-            var lightDirection = (Light.Position - hitPosition).Normalized();
-
-            // Calculate intensity and final pixel color
+            var hitPosition = ray.PointAt(closestIntersection.Distance);            
             var hitNormal = closestIntersection.ShapeNormal(hitPosition);
 
-            var intensity = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
-
-
-            var finalColor = new Color4
-            {
-                R = (float) (closestIntersection.Shape.Color.R*Light.Color.R*intensity),
-                G = (float) (closestIntersection.Shape.Color.G*Light.Color.G*intensity),
-                B = (float) (closestIntersection.Shape.Color.B*Light.Color.B*intensity),
-                A = (float)(closestIntersection.Shape.Color.A * Light.Color.A * intensity),
-            };
+            var lightDirection = (Light.Position - hitPosition).Normalized();
             
-            return finalColor;
-
-            /*
-            var intensity = 0.0;
-            var shapeColor = new Vector3d(1, 0, 0);
-
-            //This is just to allow rendering of bounding boxes which do not have a shape
-            if (closestIntersection.Shape != null)
+            
+            Ray shadowRay = new Ray(hitPosition, lightDirection, true, ray.Component);
+            /*foreach (var sceneObject in _sceneObjects)
             {
-                // We have closest intersection, shoot shadow ray
-                var hitPosition = ray.Origin + ray.Direction * closestIntersection.Distance;
-                var lightDirection = Light.Position - hitPosition;
-                lightDirection.Normalize();
-
-                // Calculate intensity and final pixel color
-                var normal = closestIntersection.Shape.Normal(hitPosition);
-                // If the intersection is from the inside, inverse normal vector
-                if (closestIntersection.Kind == Intersection.IntersectionKind.Outfrom)
-                    normal = -normal;
-
-                intensity = Math.Max(0.0f, Vector3d.Dot(normal, lightDirection));
-                shapeColor = closestIntersection.Shape.Color;
+                if (sceneObject.IntersectFirst(shadowRay).Kind != Intersection.IntersectionKind.None)
+                    return Color.Purple;
             }
-            else
-                intensity = 1.0;
+            //*/
 
-            // unitY is like rGb (0,1,0) color
-            var color = shapeColor * Light.Color;
-            color = color*intensity;
+            var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
+        
+            // compute color based on intensity, light color and shape color
+            var hitColor = new Color4
+            {
+                R = (float) (closestIntersection.Shape.Color.R*Light.Color.R*brightness),
+                G = (float) (closestIntersection.Shape.Color.G*Light.Color.G*brightness),
+                B = (float) (closestIntersection.Shape.Color.B*Light.Color.B*brightness),
+                A = 1
+                //A = (float)(closestIntersection.Shape.Color.A * Light.Color.A * intensity),
+            };                       
 
-            var pixelColor = Color.FromArgb((int) Math.Round((255.0)*color.X),
-                (int) Math.Round((255.0)*color.Y),
-                (int) Math.Round((255.0)*color.Z));
-            return pixelColor;
-            */
+            return hitColor;
         }
 
         /// <summary>
