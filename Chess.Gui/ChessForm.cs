@@ -150,7 +150,7 @@ namespace Chess.Gui
             _lastY = e.Y;
 
             _lastCamX = int.Parse(cameraX.Text);
-            _lastCamY = int.Parse(cameraX.Text);
+            _lastCamY = int.Parse(cameraY.Text);
             _lastLightX = int.Parse(lightX.Text);
             _lastLightY = int.Parse(lightY.Text);
         }
@@ -172,18 +172,18 @@ namespace Chess.Gui
                 textBoxX = cameraX;
                 textBoxY = cameraY;
                 lastCamOrLightX = _lastCamX;
-                lastCamOrLightX = _lastCamY;
+                lastCamOrLightY = _lastCamY;
             }
             else
             {
                 textBoxX = lightX;
                 textBoxY = lightY;
                 lastCamOrLightX = _lastLightX;
-                lastCamOrLightX = _lastLightY;
+                lastCamOrLightY = _lastLightY;
             }
 
-            textBoxX.Text = (_lastCamY + dX * _increment).ToString();
-            textBoxY.Text = (_lastCamY + dY * _increment).ToString();;
+            textBoxX.Text = (lastCamOrLightX + dX * _increment).ToString();
+            textBoxY.Text = (lastCamOrLightY + dY * _increment).ToString();;
 
             _viewChanged = true;
         }
