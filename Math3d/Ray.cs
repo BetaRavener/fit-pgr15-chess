@@ -47,9 +47,10 @@ namespace RayMath
             return Origin + Direction * t;
         }
 
-        public void Shift(double shift = 1e-5f)
+        public Ray Shift(double shift = 1e-5f)
         {
             Origin += Direction*shift;
+            return this;
         }
     }
 }

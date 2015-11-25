@@ -185,7 +185,20 @@ namespace Raytracer
             return closestIntersection;
         }
 
-        private int maxRecursion = 2;
+        private bool IsInShadow(Ray ray)
+        {
+            foreach (var sceneObject in _sceneObjects)
+            {
+                if (sceneObject.IntersectFirst(ray).Kind != Intersection.IntersectionKind.None)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private int _maxRecursion = 2;
 
         /// <summary>
         /// Traces single ray throughout the scene. 
@@ -205,15 +218,14 @@ namespace Raytracer
             var hitPosition = ray.PointAt(closestIntersection.Distance);
 
             var lightDirection = (Light.Position - hitPosition).Normalized();
-
-            Ray shadowRay = new Ray(hitPosition, lightDirection, ray.Component);
-            /*foreach (var sceneObject in _sceneObjects)
-            {
-                if (sceneObject.IntersectFirst(shadowRay).Kind != Intersection.IntersectionKind.None)
-                    return Color.Purple;
-            }
-            //*/
             var hitNormal = closestIntersection.ShapeNormal(hitPosition);
+
+            var lightDirection = (Light.Position - hitPosition).Normalized();
+            
+            
+            var shadowRay = new Ray(hitPosition, lightDirection).Shift();
+            if (IsInShadow(shadowRay)) return Color.Black;
+
             var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
 
             var color = closestIntersection.Shape.Color(hitPosition, hitNormal);
@@ -221,11 +233,9 @@ namespace Raytracer
             // compute color based on intensity, light color and shape color
             var hitColor = new Color4
             {
-                R = (float) (color.R*Light.Color.R*brightness),
-                G = (float) (color.G*Light.Color.G*brightness),
-                B = (float) (color.B*Light.Color.B*brightness),
-                A = 1
-                //A = (float)(closestIntersection.Shape.Color.A * Light.Color.A * intensity),
+                R = (float) (closestIntersection.Shape.Color.R*Light.Color.R*brightness),
+                G = (float) (closestIntersection.Shape.Color.G*Light.Color.G*brightness),
+                B = (float) (closestIntersection.Shape.Color.B*Light.Color.B*brightness),                
             };                       
 
             return hitColor;
