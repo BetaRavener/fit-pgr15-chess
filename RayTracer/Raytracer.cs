@@ -74,16 +74,16 @@ namespace Raytracer
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera(-100, 400, -400);
+            _camera = new Camera(-100, 200, -400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
 
-            //var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, new Vector3d(0.6,0,0.8));
-            //var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, new Vector3d(0.5,1,0));
-            //var csgNode = new CsgNode(CsgNode.Operations.Difference, sphere2, sphere1);
-            //var sceneObject = new SceneObject(csgNode, Color4.Azure);
+            var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, Color4.Beige);
+            var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, Color4.Aqua);
+            var csgNode = new CsgNode(CsgNode.Operations.Difference, sphere2, sphere1);
+            var sceneObject = new SceneObject(csgNode, Color4.Azure);
 
-            //_sceneObjects.Add(sceneObject);
+            _sceneObjects.Add(sceneObject);
 
             //var box1 = new Box(new Vector3d(-200, 0, -200), new Vector3d(200, 20, 200), new Vector3d(0.5, 0.5, 0));
             //var box2 = new Box(new Vector3d(-90, -10, -90), new Vector3d(90, 30, 90), new Vector3d(0.5, 0.5, 0));
@@ -92,26 +92,26 @@ namespace Raytracer
 
             //_sceneObjects.Add(sceneObject);
 
-            var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Color4((float)0.2, 0, (float)0.8, 1));
-            var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Color4((float)0.2, (float)0.8, (float) 0.1, 1));
-            var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
-            var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Color4((float)0.8, (float)0.3, (float)0.3, 1));
-            var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
-            var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
-            _sceneObjects.Add(sceneObject);
+            //var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Color4((float)0.2, 0, (float)0.8, 1));
+            //var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Color4((float)0.2, (float)0.8, (float) 0.1, 1));
+            //var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
+            //var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Color4((float)0.8, (float)0.3, (float)0.3, 1));
+            //var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
+            //var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
+            //_sceneObjects.Add(sceneObject);
 
-            var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
+            //var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
 
-            var obj2 = new SceneObject(
-                new CsgNode(
-                    CsgNode.Operations.Union, 
-                    sphere2,
-                    sphere2
-                    ),
-                Color4.Green
-            );
+            //var obj2 = new SceneObject(
+            //    new CsgNode(
+            //        CsgNode.Operations.Union, 
+            //        sphere2,
+            //        sphere2
+            //        ),
+            //    Color4.Green
+            //);
 
-            _sceneObjects.Add(obj2);
+            //_sceneObjects.Add(obj2);
 
             _rayCache = new List<Ray>();
 

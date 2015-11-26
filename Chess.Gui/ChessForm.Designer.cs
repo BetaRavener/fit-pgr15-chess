@@ -64,7 +64,6 @@ namespace Chess.Gui
             this.RenderView.Resize += new System.EventHandler(this.RenderView_Resize);
             this.RenderView.MouseDown += new MouseEventHandler(this.RenderView_MouseDown);
             this.RenderView.MouseMove += new MouseEventHandler(this.RenderView_MouseMove);
-            this.RenderView.MouseUp += new MouseEventHandler(this.RenderView_MouseUp);
             this.RenderView.MouseWheel += new MouseEventHandler(this.RenderView_MouseWheel);
             // 
             // RenderButton
