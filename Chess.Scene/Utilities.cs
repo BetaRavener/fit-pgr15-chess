@@ -15,7 +15,9 @@ namespace Chess.Scene
             if (root == null)
                 return;
 
-            ((Shape)root).Parent = parent;
+            var shape = root as Shape;
+            if(shape != null)
+                shape.Parent = parent;
 
             SetParentTree(root.Left, parent);
             SetParentTree(root.Right, parent);

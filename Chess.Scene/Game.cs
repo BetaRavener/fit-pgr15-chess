@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Chess.Scene
 {
@@ -14,15 +15,42 @@ namespace Chess.Scene
 
         public Chessboard Chessboard { get; set; }
 
-        public IList<Figure> FiguresP1 { get; set; }
-
-        public IList<Figure> FiguresP2 { get; set; }
+        public IList<Figure> Figures { get; set; }
 
 
         public Game()
         {
-            FiguresP1 = new List<Figure>();
-            FiguresP2 = new List<Figure>();
+            State = GameState.NotStarted;
+            Figures = new List<Figure>();
+        }
+
+        public void Start()
+        {
+            if(State != GameState.NotStarted)
+                throw new Exception("Game already started or already ended.");
+
+            StatedAt = DateTime.Now;
+            State = GameState.Running;
+        }
+
+        public void End()
+        {
+            if(State != GameState.Running)
+                throw new Exception("Game not started, so it can't be ended.");
+
+            EndedAt = DateTime.Now;
+            State = GameState.Ended;
+        }
+
+        public IList<SceneObject> GetSceneObjects()
+        {
+            var chessboard = (SceneObject) Chessboard;
+            var sceneObjects = Figures.Select(x => (SceneObject) x).ToList();
+
+            if(chessboard != null)
+                sceneObjects.Add(chessboard);
+
+            return sceneObjects;
         }
 
     }

@@ -13,6 +13,7 @@ namespace CSG.Shapes
         public ISceneObject Parent { get; set; }
 
         public Color4 Color { get; set; }
+
         protected Shape(ISceneObject sceneObject)
         {
             Parent = sceneObject;

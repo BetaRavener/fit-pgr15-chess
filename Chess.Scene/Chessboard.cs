@@ -28,6 +28,7 @@ namespace Chess.Scene
 
         public override Color4 ComputeColor(Vector3d position, Vector3d normal)
         {
+            // ToDo: implement faster algorithm
             // Normal vector is pointing to the top
             if (normal.Y > 0 && (int)normal.X == 0)
             {

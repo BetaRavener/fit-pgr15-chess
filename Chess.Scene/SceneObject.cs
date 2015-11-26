@@ -1,4 +1,6 @@
 ﻿using CSG;
+using CSG.Shapes;
+using Newtonsoft.Json;
 using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
@@ -10,24 +12,29 @@ namespace Chess.Scene
     /// </summary>
     public class SceneObject : ISceneObject
     {
+        [JsonIgnore]
         public Color4 Color { get; set; }
+        [JsonIgnore]
         public CsgNode CsgTree { get; set; }
+        [JsonIgnore]
         public BoundingBox BoundingBox { get; set; }
 
         public SceneObject(CsgNode tree, Color4 color, BoundingBox bbox = null)
         {
             Color = color;
-            CsgTree = tree;
             BoundingBox = bbox;
 
-            Utilities.SetParentTree(tree, this);
+            SetCsgTree(tree);
         }
 
         public SceneObject(CsgNode tree)
         {
-            CsgTree = tree;
+            SetCsgTree(tree);
+        }
 
-            Utilities.SetParentTree(tree, this);
+        protected SceneObject()
+        {
+
         }
 
         public virtual Color4 ComputeColor(Vector3d position, Vector3d normal)
@@ -60,5 +67,13 @@ namespace Chess.Scene
 
             return new Intersection(IntersectionKind.None);
         }
+
+        protected void SetCsgTree(CsgNode tree)
+        {
+            CsgTree = tree;
+
+            Utilities.SetParentTree(tree, this);
+        }
+
     }
 }

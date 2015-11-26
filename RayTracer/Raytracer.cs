@@ -113,14 +113,51 @@ namespace Raytracer
 
 
             //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
-            var chessboard = new Chessboard();
-     
-            _sceneObjects.Add(chessboard);
 
-            var figure = new Figure(new ChessboardPosition(0, 0), FigureType.King);
-            figure.Color = Color4.Azure;
+            var player1 = new Player()
+            {
+                Color = Color4.Black,
+                Name = "Player1"
+            };
 
-            _sceneObjects.Add(figure);
+            var player2 = new Player()
+            {
+                Color = Color4.White,
+                Name = "Player2"
+            };
+
+            var figure1 = new Figure()
+            {
+                Player = player1,
+                Type = FigureType.King,
+                Position = new ChessboardPosition(0,0)
+            };
+
+            var figure2 = new Figure()
+            {
+                Player = player2,
+                Type = FigureType.King,
+                Position = new ChessboardPosition(1, 0)
+            };
+
+            var game = new Game()
+            {
+                Chessboard = new Chessboard(),
+            };
+
+            game.Figures.Add(figure1);
+            game.Figures.Add(figure2);
+            game.Start();
+
+            var gameLoader = new GameLoader(@"C:\Users\adamj\Desktop\test");
+
+            gameLoader.SaveGame(game, "test.txt");
+
+            var loadedGame = gameLoader.LoadGame("test.txt");
+
+
+            _sceneObjects.AddRange(loadedGame.GetSceneObjects());
+
 
             _rayCache = new List<Ray>();
 

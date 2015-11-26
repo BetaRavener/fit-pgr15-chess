@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 using OpenTK;
 
 namespace Chess.Scene
@@ -30,12 +31,17 @@ namespace Chess.Scene
             }
         }
 
+        public ChessboardPosition()
+        {
+        }
+
         public ChessboardPosition(uint x, uint y)
         {
             X = x;
             Y = y;
         }
 
+        [JsonIgnore]
         public Vector3d RealPosition
         {
             get
