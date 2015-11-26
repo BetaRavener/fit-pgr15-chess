@@ -9,23 +9,25 @@ namespace Chess.Gui
 {
     public partial class ChessForm : Form, IProgress<Tuple<int, int>>
     {
-        private readonly int _increment = 10;
         private readonly Raytracer.Raytracer _raytracer;
         private readonly SynchronizationContext _synchronizationContext;
         private CancellationTokenSource _cancelSource;
 
-        private const double MouseSensitivity = 0.05;
+        private const double ZoomSensitivity = 0.05;
+        private const double RotationSensitivity = 0.02;
+        private const double LightSensitivity = 5;
         private int _lastX;
         private int _lastY;
 
         private bool _resized;
         private bool _viewChanged;
+        private bool _lightChanged;
 
         public ChessForm()
         {
             InitializeComponent();
             _raytracer = new Raytracer.Raytracer();
-            
+
             _synchronizationContext = SynchronizationContext.Current;
             lightX.Text = ((int) _raytracer.Light.Position.X).ToString();
             lightY.Text = ((int) _raytracer.Light.Position.Y).ToString();
@@ -37,6 +39,7 @@ namespace Chess.Gui
 
             _resized = true;
             _viewChanged = true;
+            _lightChanged = true;
         }
 
         /// <summary>
@@ -100,15 +103,23 @@ namespace Chess.Gui
                 }
                 _resized = false;
 
+                if (_lightChanged)
+                {
+                    var lightPos = _raytracer.Light.Position;
+                    lightX.Text = ((int)lightPos.X).ToString();
+                    lightY.Text = ((int)lightPos.Y).ToString();
+                    lightZ.Text = ((int)lightPos.Z).ToString();
+                }
                 if (_viewChanged)
                 {
-                    _raytracer.Light = new LightSource(int.Parse(lightX.Text), int.Parse(lightY.Text), int.Parse(lightZ.Text));
-                    var newPos = _raytracer.Eye.Position;
-                    cameraX.Text = newPos.X.ToString();
-                    cameraY.Text = newPos.Y.ToString();
-                    cameraZ.Text = newPos.Z.ToString();
+                    var camPos = _raytracer.Eye.Position;
+                    cameraX.Text = ((int)camPos.X).ToString();
+                    cameraY.Text = ((int)camPos.Y).ToString();
+                    cameraZ.Text = ((int)camPos.Z).ToString();
+
                     _raytracer.BuildRayCache();
                 }
+                _lightChanged = false;
                 _viewChanged = false;
 
                 Image img = null;
@@ -136,56 +147,47 @@ namespace Chess.Gui
             RenderProgressBar.Value = RenderProgressBar.Minimum;
             RenderButton.Text = "Render";
         }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-        }
-
-        private void label2_Click_1(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox3_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void textBox1_TextChanged(object sender, EventArgs e)
-        {
-        }
-
-        private void label3_Click(object sender, EventArgs e)
-        {
-        }
+        
+        private int _lastCamX;
+        private int _lastCamY;
+        private int _lastLightX;
+        private int _lastLightY;
 
         private void RenderView_MouseDown(object sender, MouseEventArgs e)
         {
             _lastX = e.X;
             _lastY = e.Y;
+
+            _lastCamX = int.Parse(cameraX.Text);
+            _lastCamY = int.Parse(cameraY.Text);
+            _lastLightX = int.Parse(lightX.Text);
+            _lastLightY = int.Parse(lightY.Text);
         }
 
         private void RenderView_MouseMove(object sender, MouseEventArgs e)
         {
+            var dX = e.X - _lastX;
+            // Invert Y axis
+            var dY = e.Y - _lastY;
+
             if (e.Button == MouseButtons.Left)
             {
-                var dX = MouseSensitivity * (e.X - _lastX);
-                // Invert Y axis
-                var dY = -MouseSensitivity * (e.Y - _lastY);
-
-                _raytracer.Eye.RotateRelative(new OpenTK.Vector2d(dY, dX));
-
-                _lastX = e.X;
-                _lastY = e.Y;
+                _raytracer.Eye.RotateRelative(new OpenTK.Vector2d(RotationSensitivity * dY, -RotationSensitivity * dX));
                 _viewChanged = true;
             }
+            else if (e.Button == MouseButtons.Right)
+            {
+                _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
+                _lightChanged = true;
+            }
+
+            _lastX = e.X;
+            _lastY = e.Y;
         }
 
         private void RenderView_MouseWheel(object sender, MouseEventArgs e)
         {
-            _raytracer.Eye.OrbitDistance += e.Delta / _increment;
+            _raytracer.Eye.OrbitDistance += e.Delta * ZoomSensitivity;
             _viewChanged = true;
         }
     }

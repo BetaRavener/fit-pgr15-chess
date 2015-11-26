@@ -28,9 +28,6 @@ namespace Raytracer
 
         private List<Ray> _rayCache;
 
-        public Vector3d LightPosition { get; set; }
-
-
         private static Color Background
         {
             get { return Color.MidnightBlue; }
