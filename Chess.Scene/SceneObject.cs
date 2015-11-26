@@ -50,7 +50,7 @@ namespace Chess.Scene
         /// <returns>Intersection with scene object.</returns>
         public Intersection IntersectFirst(Ray ray, bool renderBBox = false)
         {
-            if (BoundingBox == null)
+                if (BoundingBox == null)
             {
                 return CsgTree.IntersectFirst(ray);
             }

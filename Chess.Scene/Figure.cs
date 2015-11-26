@@ -3,12 +3,15 @@ using System.Media;
 using CSG;
 using OpenTK;
 using OpenTK.Graphics;
+using RayMath;
 
 namespace Chess.Scene
 {
     public class Figure : SceneObject
     {
-        public const int Height = 50;
+        public const int MaxY = 50;
+        public const int MaxX = 50;
+        public const int MaxZ = 50;
 
         private ChessboardPosition position;
         private FigureType type;
@@ -23,6 +26,7 @@ namespace Chess.Scene
                 if (Type != FigureType.Unknown)
                 {
                     SetCsgTree(ObjectBuilderResolver.BuildFigure(Type, Position.RealPosition));
+                    CreateBoundingBox(Position.RealPosition);
                 }
             }
         }
@@ -37,6 +41,7 @@ namespace Chess.Scene
                 if (Position != null)
                 {
                     SetCsgTree(ObjectBuilderResolver.BuildFigure(Type, position.RealPosition));
+                    CreateBoundingBox(Position.RealPosition);
                 }
             }
         }
@@ -51,12 +56,24 @@ namespace Chess.Scene
 
         public Figure()
         {
-
         }
 
-        public override Color4 ComputeColor(Vector3d position, Vector3d normal)
+        public override Color4 ComputeColor(Vector3d pos, Vector3d normal)
         {
             return Player.Color;
+        }
+
+        private void CreateBoundingBox(Vector3d pos)
+        {
+            var minX = pos.X - (MaxX / 2);
+            var minZ = pos.Z - (MaxZ / 2);
+            var minY = pos.Y;
+
+            var maxX = pos.X + (MaxX / 2);
+            var maxZ = pos.Z + (MaxZ / 2);
+            var maxY = pos.Y + MaxY;
+
+            BoundingBox = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
         }
     }
 }

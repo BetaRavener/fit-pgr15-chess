@@ -23,7 +23,7 @@ namespace Chess.Scene
         {
             var dir = new Vector3d(0, 1, 0);
 
-            return new Cylinder(center, dir, 20, Figure.Height, Color4.AliceBlue);
+            return new Cylinder(center, dir, 20, Figure.MaxY, Color4.AliceBlue);
         }
     }
 }
