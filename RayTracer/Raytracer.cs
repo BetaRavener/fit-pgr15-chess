@@ -84,6 +84,7 @@ namespace Raytracer
 
             //_sceneObjects.Add(sceneObject);
 
+
             //var box1 = new Box(new Vector3d(-200, 0, -200), new Vector3d(200, 20, 200), new Vector3d(0.5, 0.5, 0));
             //var box2 = new Box(new Vector3d(-90, -10, -90), new Vector3d(90, 30, 90), new Vector3d(0.5, 0.5, 0));
             //csgNode =  new CsgNode(CsgNode.Operations.Difference, box1, box2);
@@ -170,12 +171,12 @@ namespace Raytracer
 
             var obj2 = new SceneObject(
                 new CsgNode(
-                    CsgNode.Operations.Union, 
-                    sphere2,
+                    CsgNode.Operations.Union,
+                    sphere4,
                     sphere3
                     ),
                 Color4.Green
-            );
+                );
 
             _sceneObjects.Add(obj2);
 
@@ -196,7 +197,7 @@ namespace Raytracer
             {
                 for (var x = 0; x < _widthInPixels; x++)
                 {
-                    var component = (firstX + x) * ComponentsPerPixel;
+                    var component = (firstX + x)*ComponentsPerPixel;
 
                     var ray = new Ray(Eye.Position, Vector3d.UnitZ, component);
 
@@ -303,23 +304,23 @@ namespace Raytracer
                 left.B *= scale;
                 return left;
             }
-    }
+        }
 
         private double _reflectance = 0.5;
 
-        private double mix( double a, double b, double mix) 
-        { 
-            return b* mix + a* (1 - mix); 
+        private double mix(double a, double b, double mix)
+        {
+            return b*mix + a*(1 - mix);
         }
-        
+
         // todo factory na vector3d jako color (wrapper)
 
-    /// <summary>
-    /// Traces single ray throughout the scene. 
-    /// </summary>
-    /// <param name="ray">Tracing ray.</param>
-    /// <returns>Color of traced object at the intersection point.</returns>
-    private Color4 TraceRay(Ray ray, int depth = 2)
+        /// <summary>
+        /// Traces single ray throughout the scene. 
+        /// </summary>
+        /// <param name="ray">Tracing ray.</param>
+        /// <returns>Color of traced object at the intersection point.</returns>
+        private Color4 TraceRay(Ray ray, int depth = 2)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
@@ -332,7 +333,7 @@ namespace Raytracer
             Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition).Normalized(); //todo bez normalized()
 
             ColorExt surfaceColor = ColorExt.FromColor4(Color.Black);
-            
+
 
             if (depth < _maxRecursion)
             {
@@ -365,16 +366,16 @@ namespace Raytracer
                 Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
                 if (IsInShadow(shadowRay)) amount = 0.1;
 
-                
+
                 var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
                 // emission = 0.5
-                surfaceColor += ColorExt.FromColor4(closestIntersection.Shape.Color) * amount * brightness;
+                surfaceColor += ColorExt.FromColor4(closestIntersection.Shape.Color)*amount*brightness;
                 //*/
             }
 
             return (surfaceColor).ToColor4();
 
-        /*
+            /*
             ColorExt ambientColor = ColorExt.FromColor4(closestIntersection.Shape.Color);
 
             
@@ -419,8 +420,8 @@ namespace Raytracer
                 };
             }
             */
-        // We have closest intersection, shoot shadow ray
-        /*
+            // We have closest intersection, shoot shadow ray
+            /*
                        
             //if (IsInShadow(shadowRay)) return Color.Black;
             
@@ -444,10 +445,10 @@ namespace Raytracer
 
             
         */
-        // compute color based on intensity, light color and shape color
+            // compute color based on intensity, light color and shape color
 
 
-        //return hitColor;
+            //return hitColor;
         }
 
         /// <summary>
