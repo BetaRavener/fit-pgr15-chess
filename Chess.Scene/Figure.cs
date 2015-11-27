@@ -25,8 +25,7 @@ namespace Chess.Scene
 
                 if (Type != FigureType.Unknown)
                 {
-                    SetCsgTree(ObjectBuilderResolver.BuildFigure(Type, Position.RealPosition));
-                    CreateBoundingBox(Position.RealPosition);
+                    CreateFigureOnScene();
                 }
             }
         }
@@ -40,8 +39,7 @@ namespace Chess.Scene
 
                 if (Position != null)
                 {
-                    SetCsgTree(ObjectBuilderResolver.BuildFigure(Type, position.RealPosition));
-                    CreateBoundingBox(Position.RealPosition);
+                    CreateFigureOnScene();
                 }
             }
         }
@@ -74,6 +72,12 @@ namespace Chess.Scene
             var maxY = pos.Y + MaxY;
 
             BoundingBox = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+        }
+
+        private void CreateFigureOnScene()
+        {
+            SetCsgTree(ObjectBuilderResolver.BuildFigure(Type, Position.RealPosition));
+            CreateBoundingBox(Position.RealPosition);
         }
     }
 }
