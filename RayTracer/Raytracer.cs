@@ -182,15 +182,13 @@ namespace Raytracer
             var obj2 = new SceneObject(
                 new CsgNode(
                     CsgNode.Operations.Union,
-                    sphere4,
+                    box,
                     sphere3
                     ),
                 ColorToVec(Color.Green)
                 );
 
             _sceneObjects.Add(obj2);
-
-
             _rayCache = new List<Ray>();
 
             NumberOfThreads = 1;
@@ -238,6 +236,11 @@ namespace Raytracer
             return closestIntersection;
         }
 
+        /// <summary>
+        /// Check if specified ray intersects any object on the way to light
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <returns></returns>
         private bool IsInShadow(Ray ray)
         {
             // for should be faster than foreach/linq
@@ -257,54 +260,55 @@ namespace Raytracer
         /// Traces single ray throughout the scene. 
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
-        /// <param name="depth"></param>
-        /// <returns>Ambient of traced object at the intersection point.</returns>
+        /// <param name="depth">Actual level of recurse</param>
+        /// <returns>ColorAmbient of traced object at the intersection point.</returns>
         private Vector3d TraceRay(Ray ray, int depth = 2)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
             if (closestIntersection.Kind == Intersection.IntersectionKind.None) return Background;
 
-            Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
-            Vector3d hitNormal = closestIntersection.Shape.Normal(hitPosition).Normalized();
-
-            // If the intersection is from the inside, inverse normal vector
-            if (closestIntersection.Kind == Intersection.IntersectionKind.Outfrom)
-            {
-                hitNormal = -hitNormal;
-                //shapeInside = true;                
-            }
+            ray.Direction.Normalize();
 
             Shape hitShape = closestIntersection.Shape;
 
-            Vector3d surfaceColor = hitShape.Ambient;
+            Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
+            Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition);
 
+            Vector3d finalColor = hitShape.ColorAmbient; // TODO should use ambient color? or just black
             Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
+
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
+            var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
+            var tmp = 2*angleToLight*hitNormal;
+
             if (!IsInShadow(shadowRay))
             {
-                var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
-                surfaceColor += (hitShape.Diffuse * Light.Color) * brightness;
+                // diffuse light (default shape color)
+                finalColor += hitShape.Color * Light.Color * Math.Max(0.0, angleToLight);
 
-                if (hitShape.Shininess != 0)
+               // specular
+                if (hitShape.Shininess > 0)
                 {
-                    Vector3d rlv = 2 * (lightDirection * hitNormal) * hitNormal - lightDirection;                    
-                    double specular = -Vector3d.Dot(rlv, ray.Direction);
-                    if (specular > 0) surfaceColor += hitShape.Specular * Light.Color * Math.Pow(specular, hitShape.Shininess);
-                }               
+                    Vector3d reflectionDirection = tmp - lightDirection;
+                    double specularRatio = -Vector3d.Dot(reflectionDirection, ray.Direction);
+                    if (specularRatio > 0)
+                    {
+                        finalColor += hitShape.ColorSpecular*Light.Color*Math.Pow(specularRatio, hitShape.Shininess);
+                    }
+                }
             }
 
-            // reflected ray
-            if (hitShape.Reflectance != 0 && depth > 0) {
-              Ray reflectanceRay = new Ray(hitPosition, ray.Direction- 2*(ray.Direction * hitNormal) * hitNormal).Shift();
-              
-              Vector3d reflectedColor = TraceRay(reflectanceRay, depth-1);
-                //return reflectedColor *= 1 - hitShape.Reflectance;
-                surfaceColor += reflectedColor*hitShape.Reflectance;                
+            // reflected ray (recursion)
+            if (hitShape.Reflectance > 0 && depth > 0)
+            {
+                var reflectionDirection = ray.Direction - tmp;
+                Ray reflectanceRay = new Ray(hitPosition, reflectionDirection).Shift();
+                Vector3d reflectedColor = TraceRay(reflectanceRay, depth - 1);
+                finalColor += reflectedColor * hitShape.Reflectance;
             }
         
-
-            return surfaceColor;
+            return finalColor;
         }
 
         /// <summary>
@@ -348,13 +352,18 @@ namespace Raytracer
                 var ray = _rayCache[i];
                 var colorVector = TraceRay(ray);
 
-                int r = (int) Math.Round((255.0)*colorVector.X);
-                int g = (int) Math.Round((255.0)*colorVector.Y);
-                int b = (int) Math.Round((255.0)*colorVector.Z);
+                var r = (int) Math.Round((255.0)*colorVector.X);
+                var g = (int) Math.Round((255.0)*colorVector.Y);
+                var b = (int) Math.Round((255.0)*colorVector.Z);
 
+                // TODO better checking for overflow/underflow!
                 if (r > 255) r = 255;
                 if (g > 255) g = 255;
                 if (b > 255) b = 255;
+
+                if (r < 0) r = 0;
+                if (g < 0) g = 0;
+                if (b < 0) b = 0;
 
                 var pixelColor = Color.FromArgb(r, g, b);
 #if PARALLEL

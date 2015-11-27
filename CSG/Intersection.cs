@@ -45,5 +45,21 @@ namespace CSG
 
             return normal;
         }
+
+        /// <summary>
+        /// Gets normal from the shape in the point of intersection, normalizes it and recalculates from inside if necessary
+        /// </summary>
+        /// <param name="hitPosition"></param>
+        /// <returns></returns>
+        public Vector3d ShapeNormal(Vector3d hitPosition)
+        {
+            Vector3d normal = Shape.Normal(hitPosition).Normalized();
+            if (Kind == IntersectionKind.Outfrom)
+            {
+                normal = -normal;
+            }
+
+            return normal;
+        }
     }
 }

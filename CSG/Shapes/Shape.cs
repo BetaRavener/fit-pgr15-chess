@@ -16,6 +16,11 @@ namespace CSG.Shapes
         protected Shape(ISceneObject sceneObject)
         {
             Parent = sceneObject;
+            ColorAmbient = new Vector3d(0.1, 0.1, 0.1);
+            Color = color;
+            ColorSpecular = Vector3d.One;
+            Shininess = 15;
+            Reflectance = 0.5;
         }
 
         public virtual Color4 Color(Vector3d position, Vector3d normal)
@@ -23,6 +28,13 @@ namespace CSG.Shapes
            
             return Parent?.ComputeColor(position, normal) ?? FallbackColor;
         }
+
+        public Vector3d ColorAmbient { get; }
+        public Vector3d Color { get; }
+        public Vector3d ColorSpecular { get; }
+        public double Shininess { get; }
+        public double Reflectance { get; }
+        
 
         /// <summary>
         /// Find set of spans at which the ray intersects this shape.
