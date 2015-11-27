@@ -30,9 +30,9 @@ namespace Raytracer
 
         private List<Ray> _rayCache;
 
-        private static Color Background
+        private static Vector3d Background
         {
-            get { return Color.MidnightBlue; }
+            get { return ColorToVec(Color.MidnightBlue); }
         }
 
         public Camera Eye
@@ -68,6 +68,16 @@ namespace Raytracer
         }
 
         public int NumberOfThreads { get; set; }
+
+        public static Vector3d ColorToVec(Color color)
+        {
+            return new Vector3d
+            {
+                X = color.R / 255.0,
+                Y = color.G / 255.0,
+                Z = color.B / 255.0,
+            };
+        }
 
         public Raytracer()
         {
@@ -175,7 +185,7 @@ namespace Raytracer
                     sphere4,
                     sphere3
                     ),
-                Color4.Green
+                ColorToVec(Color.Green)
                 );
 
             _sceneObjects.Add(obj2);
@@ -243,212 +253,58 @@ namespace Raytracer
             return false;
         }
 
-        private int _maxRecursion = 2;
-
-        private Color4 colorMulScale(ColorExt colA, Color4 colB, double scale = 1)
-        {
-            return new Color4
-            {
-                R = (float) (colA.R*colB.R*scale),
-                G = (float) (colA.G*colB.G*scale),
-                B = (float) (colA.B*colB.B*scale),
-            };
-        }
-
-
-        struct ColorExt
-        {
-            public double R { get; set; }
-            public double G { get; set; }
-            public double B { get; set; }
-            public double A { get; set; }
-
-            public static ColorExt FromColor4(Color4 col)
-            {
-                return new ColorExt(col.R, col.G, col.B);
-            }
-
-            public Color4 ToColor4()
-            {
-                return new Color4((float) R, (float) G, (float) B, (float) A);
-            }
-
-            public ColorExt(double r, double g, double b, double a = 1)
-            {
-                R = r;
-                G = g;
-                B = b;
-                A = a;
-            }
-
-            public static ColorExt operator +(ColorExt left, ColorExt right)
-            {
-                left.R += right.R;
-                left.G += right.G;
-                left.B += right.B;
-                return left;
-            }
-
-            public static ColorExt operator *(ColorExt left, ColorExt right)
-            {
-                left.R *= right.R;
-                left.G *= right.G;
-                left.B *= right.B;
-                return left;
-            }
-
-            public static ColorExt operator *(ColorExt left, double scale)
-            {
-                left.R *= scale;
-                left.G *= scale;
-                left.B *= scale;
-                return left;
-            }
-        }
-
-        private double _reflectance = 0.5;
-
-        private double mix(double a, double b, double mix)
-        {
-            return b*mix + a*(1 - mix);
-        }
-
-        // todo factory na vector3d jako color (wrapper)
-
         /// <summary>
         /// Traces single ray throughout the scene. 
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
-        /// <returns>Color of traced object at the intersection point.</returns>
-        private Color4 TraceRay(Ray ray, int depth = 2)
+        /// <param name="depth"></param>
+        /// <returns>Ambient of traced object at the intersection point.</returns>
+        private Vector3d TraceRay(Ray ray, int depth = 2)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
-            if (closestIntersection.Kind == IntersectionKind.None)
-            {
-                return Background;
-            }
+            if (closestIntersection.Kind == Intersection.IntersectionKind.None) return Background;
 
             Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
-            Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition).Normalized(); //todo bez normalized()
+            Vector3d hitNormal = closestIntersection.Shape.Normal(hitPosition).Normalized();
 
-            ColorExt surfaceColor = ColorExt.FromColor4(Color.Black);
-
-
-            if (depth < _maxRecursion)
+            // If the intersection is from the inside, inverse normal vector
+            if (closestIntersection.Kind == Intersection.IntersectionKind.Outfrom)
             {
-                var facingRatio = Vector3d.Dot(hitNormal, ray.Direction);
-
-                var fresneleffect = mix(Math.Pow(1 - facingRatio, 3), 1, 0.1);
-
-                Vector3d reflectionDirection = -ray.Direction - hitNormal*2*Vector3d.Dot(-ray.Direction, hitNormal);
-                reflectionDirection.Normalize();
-
-                Ray reflectionRay = new Ray(hitPosition, reflectionDirection).Shift();
-                ColorExt reflectionColor = ColorExt.FromColor4(TraceRay(reflectionRay, depth - 1));
-
-                surfaceColor = reflectionColor*fresneleffect;
-            }
-            else
-            {
-                // We have closest intersection, shoot shadow ray
-                /*
-                var lightDirection = (Light.Position - hitPosition).Normalized();                
-                var shadowRay = new Ray(hitPosition, lightDirection).Shift();
-                if (IsInShadow(shadowRay)) return surfaceColor.ToColor4();
-
-                var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
-
-                surfaceColor += ColorExt.FromColor4(closestIntersection.Shape.Color) * brightness;
-                //*/
-                double amount = 1;
-                Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
-                Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
-                if (IsInShadow(shadowRay)) amount = 0.1;
-
-
-                var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
-                // emission = 0.5
-                surfaceColor += ColorExt.FromColor4(closestIntersection.Shape.Color)*amount*brightness;
-                //*/
+                hitNormal = -hitNormal;
+                //shapeInside = true;                
             }
 
-            return (surfaceColor).ToColor4();
+            Shape hitShape = closestIntersection.Shape;
 
-            /*
-            ColorExt ambientColor = ColorExt.FromColor4(closestIntersection.Shape.Color);
+            Vector3d surfaceColor = hitShape.Ambient;
 
-            
-            var brightness = Math.Max(0, facingRatio);
-
-            var hitColor = ambientColor;
-
-
-
-
-
-            hitColor = hitColor * ColorExt.FromColor4(Light.Color) * brightness;
-
-            return hitColor.ToColor4();
-
-            // specular 
-            shadowRay.Direction.Normalize();
-            Vector3d reflectionDirection =  2 * (shadowRay.Direction * hitNormal) * hitNormal * shadowRay.Direction;
-            
-            /*
-            double specular = -Vector3d.Dot(reflectionDirection, ray.Direction);
-            if (specular > 0)
+            Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
+            Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
+            if (!IsInShadow(shadowRay))
             {
-                var hitColorNew = colorMulScale(Color4.White, Light.Color, Math.Pow(specular, 2));
+                var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
+                surfaceColor += (hitShape.Diffuse * Light.Color) * brightness;
 
-                hitColor = colorMulScale(hitColor, hitColorNew);
+                if (hitShape.Shininess != 0)
+                {
+                    Vector3d rlv = 2 * (lightDirection * hitNormal) * hitNormal - lightDirection;                    
+                    double specular = -Vector3d.Dot(rlv, ray.Direction);
+                    if (specular > 0) surfaceColor += hitShape.Specular * Light.Color * Math.Pow(specular, hitShape.Shininess);
+                }               
             }
 
             // reflected ray
-            if (_reflectance > 0 && depth > 0)
-            {
-                Ray rray = new Ray(hitPosition, ray.Direction - 2 * (ray.Direction * hitNormal) * hitNormal).Shift();
-                
-                Color4 rcolor = TraceRay(rray, depth - 1);
-                //        color *= 1-phong.GetReflectance();
-
-                hitColor = new Color4
-                {
-                    R = (float) (hitColor.R *_reflectance),
-                    G = (float) (hitColor.G *_reflectance),
-                    B = (float) (hitColor.B *_reflectance),
-                };
+            if (hitShape.Reflectance != 0 && depth > 0) {
+              Ray reflectanceRay = new Ray(hitPosition, ray.Direction- 2*(ray.Direction * hitNormal) * hitNormal).Shift();
+              
+              Vector3d reflectedColor = TraceRay(reflectanceRay, depth-1);
+                //return reflectedColor *= 1 - hitShape.Reflectance;
+                surfaceColor += reflectedColor*hitShape.Reflectance;                
             }
-            */
-            // We have closest intersection, shoot shadow ray
-            /*
-                       
-            //if (IsInShadow(shadowRay)) return Color.Black;
-            
-            var hitNormal = closestIntersection.ShapeNormal(hitPosition);
+        
 
-            double facingRatio = Vector3d.Dot(hitNormal, lightDirection);
-            var brightness = Math.Max(0, facingRatio);
-            var diffuseColor = colorMulScale(closestIntersection.Shape.Color, Light.Color, brightness);
-
-
-            if (depth < _maxRecursion)
-            {
-                //Vector3d reflectionDirection = ray.Direction - hitNormal * 2 * Vector3d.Dot(ray.Direction, hitNormal);
-
-                Vector3d x = 2*(shadowRay.Direction* hitNormal) * hitNormal - shadowRay.Direction;
-                reflectionDirection.Normalize();
-
-                Color4 specularColor = TraceRay(shadowRay , depth - 1);
-
-            }      
-
-            
-        */
-            // compute color based on intensity, light color and shape color
-
-
-            //return hitColor;
+            return surfaceColor;
         }
 
         /// <summary>
@@ -490,12 +346,22 @@ namespace Raytracer
                 }
 
                 var ray = _rayCache[i];
-                var color = TraceRay(ray);
+                var colorVector = TraceRay(ray);
+
+                int r = (int) Math.Round((255.0)*colorVector.X);
+                int g = (int) Math.Round((255.0)*colorVector.Y);
+                int b = (int) Math.Round((255.0)*colorVector.Z);
+
+                if (r > 255) r = 255;
+                if (g > 255) g = 255;
+                if (b > 255) b = 255;
+
+                var pixelColor = Color.FromArgb(r, g, b);
 #if PARALLEL
                 lock (progressLock)
                 {
 #endif
-                image.EfficientSetPixel(ray.Component, color.ToArgb());
+                image.EfficientSetPixel(ray.Component, pixelColor);
                 progress++;
                 //reportFunc(new Tuple<int, int>(progress, totalPixels));
 
