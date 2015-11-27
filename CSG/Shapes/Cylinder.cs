@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using OpenTK;
+using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
@@ -20,7 +21,7 @@ namespace CSG.Shapes
         private Plane _topCap;
         private Plane _bottomCap;
 
-        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, Vector3d color) : base(color)
+        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, Color4 color) : base(color)
         {
             Start = start;
             Direction = Vector3d.Normalize(dir);

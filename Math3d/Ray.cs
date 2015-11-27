@@ -34,12 +34,10 @@ namespace RayMath
 
         public double DirDot { get { return _dirDot; } }
 
-        public Ray(Vector3d origin, Vector3d direction, bool normalize = true, int component = -1)
+        public Ray(Vector3d origin, Vector3d direction, int component = -1)
         {
             Origin = origin;
             Direction = direction;
-            if (normalize)
-                Direction.Normalize();
 
             Component = component;
         }
