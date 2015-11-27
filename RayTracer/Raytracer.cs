@@ -111,39 +111,34 @@ namespace Raytracer
 
             //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
 
-            var player1 = new Player()
-            {
-                Color = Color4.Black,
-                Name = "Player1"
-            };
 
-            var player2 = new Player()
-            {
-                Color = Color4.White,
-                Name = "Player2"
-            };
 
-            var figure1 = new Figure()
-            {
-                Player = player1,
-                Type = FigureType.King,
-                Position = new ChessboardPosition(0,0)
-            };
 
-            var figure2 = new Figure()
-            {
-                Player = player2,
-                Type = FigureType.King,
-                Position = new ChessboardPosition(1, 0)
-            };
 
-            var game = new Game()
+
+
+
+
+            var game = new Game
             {
                 Chessboard = new Chessboard(),
+                Player1 = new Player()
+                {
+                    Color = Color4.Black,
+                    Name = "Player1"
+                },
+                Player2 = new Player()
+                {
+                    Color = Color4.White,
+                    Name = "Player2"
+                },
             };
 
-            game.Figures.Add(figure1);
-            game.Figures.Add(figure2);
+
+
+
+            game.Player1.CreateFigure(new ChessboardPosition(4, 3), FigureType.King);
+            game.Player2.CreateFigure(new ChessboardPosition(4, 4), FigureType.King);
             game.Start();
 
             var gameLoader = new GameLoader(@".");
@@ -246,7 +241,7 @@ namespace Raytracer
 
             var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
 
-            var color = closestIntersection.Shape.GetColor(hitPosition, hitNormal);
+            var color = closestIntersection.Shape.Color(hitPosition, hitNormal);
 
             // compute color based on intensity, light color and shape color
             var hitColor = new Color4

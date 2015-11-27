@@ -15,13 +15,13 @@ namespace Chess.Scene
 
         public Chessboard Chessboard { get; set; }
 
-        public IList<Figure> Figures { get; set; }
+        public Player Player1 { get; set; }
 
+        public Player Player2 { get; set; }
 
         public Game()
         {
             State = GameState.NotStarted;
-            Figures = new List<Figure>();
         }
 
         public void Start()
@@ -45,7 +45,9 @@ namespace Chess.Scene
         public IList<SceneObject> GetSceneObjects()
         {
             var chessboard = (SceneObject) Chessboard;
-            var sceneObjects = Figures.Select(x => (SceneObject) x).ToList();
+
+            var figures = Player1.Figures.Union(Player2.Figures);
+            var sceneObjects = figures.Select(x => (SceneObject) x).ToList();
 
             if(chessboard != null)
                 sceneObjects.Add(chessboard);

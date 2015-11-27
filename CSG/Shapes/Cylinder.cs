@@ -21,14 +21,15 @@ namespace CSG.Shapes
         private Plane _topCap;
         private Plane _bottomCap;
 
-        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, Color4 color) : base(color)
+        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, ISceneObject sceneObject)
+            : base(sceneObject)
         {
             Start = start;
             Direction = Vector3d.Normalize(dir);
             Radius = radius;
             Height = height;
-            _topCap = new Plane(Direction, Start + Direction * Height, Color);
-            _bottomCap = new Plane(-Direction, Start, Color);
+            _topCap = new Plane(Direction, Start + Direction * Height, sceneObject);
+            _bottomCap = new Plane(-Direction, Start, sceneObject);
         }
 
 

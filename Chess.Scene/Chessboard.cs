@@ -22,8 +22,8 @@ namespace Chess.Scene
 
 
         public Chessboard() 
-            : base(ObjectBuilder.BuildChessboard())
         {
+            CsgTree = ObjectBuilder.BuildChessboard(this);
         }
 
         public override Color4 ComputeColor(Vector3d position, Vector3d normal)

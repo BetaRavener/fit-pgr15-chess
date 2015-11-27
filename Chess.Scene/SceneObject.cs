@@ -12,7 +12,6 @@ namespace Chess.Scene
     /// </summary>
     public class SceneObject : ISceneObject
     {
-        [JsonIgnore]
         public Color4 Color { get; set; }
         [JsonIgnore]
         public CsgNode CsgTree { get; set; }
@@ -23,13 +22,7 @@ namespace Chess.Scene
         {
             Color = color;
             BoundingBox = bbox;
-
-            SetCsgTree(tree);
-        }
-
-        public SceneObject(CsgNode tree)
-        {
-            SetCsgTree(tree);
+            CsgTree = tree;
         }
 
         protected SceneObject()
@@ -66,13 +59,6 @@ namespace Chess.Scene
 
 
             return new Intersection(IntersectionKind.None);
-        }
-
-        protected void SetCsgTree(CsgNode tree)
-        {
-            CsgTree = tree;
-
-            Utilities.SetParentTree(tree, this);
         }
 
     }

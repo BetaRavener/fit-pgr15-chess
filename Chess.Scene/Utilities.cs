@@ -10,18 +10,7 @@ namespace Chess.Scene
 {
     public class Utilities
     {
-        public static void SetParentTree(CsgNode root, ISceneObject parent)
-        {
-            if (root == null)
-                return;
-
-            var shape = root as Shape;
-            if(shape != null)
-                shape.Parent = parent;
-
-            SetParentTree(root.Left, parent);
-            SetParentTree(root.Right, parent);
-        }
+     
 
     }
 }

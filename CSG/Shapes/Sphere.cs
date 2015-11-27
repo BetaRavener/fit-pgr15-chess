@@ -19,7 +19,8 @@ namespace CSG.Shapes
 
         private double _radiusSqr;
 
-        public Sphere(Vector3d center, double radius, Color4 color) : base(color)
+        public Sphere(Vector3d center, double radius, ISceneObject sceneObject)
+            : base(sceneObject)
         {
             Center = center;
             Radius = radius;

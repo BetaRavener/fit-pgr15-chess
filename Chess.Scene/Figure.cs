@@ -44,8 +44,6 @@ namespace Chess.Scene
             }
         }
 
-        public Player Player { get; set; }
-
         public Figure(ChessboardPosition position, FigureType type)
         {
             Type = type;
@@ -58,7 +56,7 @@ namespace Chess.Scene
 
         public override Color4 ComputeColor(Vector3d pos, Vector3d normal)
         {
-            return Player.Color;
+            return Color;
         }
 
         private void CreateBoundingBox(Vector3d pos)
@@ -76,7 +74,7 @@ namespace Chess.Scene
 
         private void CreateFigureOnScene()
         {
-            SetCsgTree(ObjectBuilderResolver.BuildFigure(Type, Position.RealPosition));
+            CsgTree = ObjectBuilderResolver.BuildFigure(Type, Position.RealPosition, this);
             CreateBoundingBox(Position.RealPosition);
         }
     }
