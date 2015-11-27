@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenTK;
 using RayTracer;
 
 namespace Chess.Gui
@@ -106,16 +107,16 @@ namespace Chess.Gui
                 if (_lightChanged)
                 {
                     var lightPos = _raytracer.Light.Position;
-                    lightX.Text = ((int)lightPos.X).ToString();
-                    lightY.Text = ((int)lightPos.Y).ToString();
-                    lightZ.Text = ((int)lightPos.Z).ToString();
+                    lightX.Text = ((int) lightPos.X).ToString();
+                    lightY.Text = ((int) lightPos.Y).ToString();
+                    lightZ.Text = ((int) lightPos.Z).ToString();
                 }
                 if (_viewChanged)
                 {
                     var camPos = _raytracer.Eye.Position;
-                    cameraX.Text = ((int)camPos.X).ToString();
-                    cameraY.Text = ((int)camPos.Y).ToString();
-                    cameraZ.Text = ((int)camPos.Z).ToString();
+                    cameraX.Text = ((int) camPos.X).ToString();
+                    cameraY.Text = ((int) camPos.Y).ToString();
+                    cameraZ.Text = ((int) camPos.Z).ToString();
 
                     _raytracer.BuildRayCache();
                 }
@@ -147,7 +148,7 @@ namespace Chess.Gui
             RenderProgressBar.Value = RenderProgressBar.Minimum;
             RenderButton.Text = "Render";
         }
-        
+
         private int _lastCamX;
         private int _lastCamY;
         private int _lastLightX;
@@ -170,15 +171,15 @@ namespace Chess.Gui
             // Invert Y axis
             var dY = e.Y - _lastY;
 
-            if (e.Button == MouseButtons.Left)
+            if ((ModifierKeys == Keys.Control && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Right)
             {
-                _raytracer.Eye.RotateRelative(new OpenTK.Vector2d(RotationSensitivity * dY, -RotationSensitivity * dX));
-                _viewChanged = true;
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
+                _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity*dX, LightSensitivity*dY, 0);
                 _lightChanged = true;
+            }
+            else if(e.Button == MouseButtons.Left)
+            {
+                _raytracer.Eye.RotateRelative(new OpenTK.Vector2d(RotationSensitivity*dY, -RotationSensitivity*dX));
+                _viewChanged = true;
             }
 
             _lastX = e.X;
@@ -187,8 +188,16 @@ namespace Chess.Gui
 
         private void RenderView_MouseWheel(object sender, MouseEventArgs e)
         {
-            _raytracer.Eye.OrbitDistance += e.Delta * ZoomSensitivity;
-            _viewChanged = true;
+            if (ModifierKeys == Keys.Control)
+            {
+                _raytracer.Light.Position = new Vector3d(_raytracer.Light.Position.X, _raytracer.Light.Position.Y, _raytracer.Light.Position.Z + e.Delta*ZoomSensitivity);
+                _lightChanged = true;
+            }
+            else
+            {
+                _raytracer.Eye.OrbitDistance += e.Delta * ZoomSensitivity;
+                _viewChanged = true;
+            }
         }
     }
 }
