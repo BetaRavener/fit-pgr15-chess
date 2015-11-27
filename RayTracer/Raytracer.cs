@@ -29,9 +29,6 @@ namespace Raytracer
 
         private List<Ray> _rayCache;
 
-        public Vector3d LightPosition { get; set; }
-
-
         private static Color Background
         {
             get { return Color.MidnightBlue; }
@@ -75,12 +72,12 @@ namespace Raytracer
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera(-100, 400, -400);
+            _camera = new Camera(-100, 200, -400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
 
-            //var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, new Vector3d(0.6,0,0.8));
-            //var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, new Vector3d(0.5,1,0));
+            //var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, Color4.Beige);
+            //var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, Color4.Aqua);
             //var csgNode = new CsgNode(CsgNode.Operations.Difference, sphere2, sphere1);
             //var sceneObject = new SceneObject(csgNode, Color4.Azure);
 
@@ -149,7 +146,7 @@ namespace Raytracer
             game.Figures.Add(figure2);
             game.Start();
 
-            var gameLoader = new GameLoader(@"C:\Users\adamj\Desktop\test");
+            var gameLoader = new GameLoader(@".");
 
             gameLoader.SaveGame(game, "test.txt");
 
@@ -158,6 +155,19 @@ namespace Raytracer
 
             _sceneObjects.AddRange(loadedGame.GetSceneObjects());
 
+
+            //var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
+
+            //var obj2 = new SceneObject(
+            //    new CsgNode(
+            //        CsgNode.Operations.Union, 
+            //        sphere2,
+            //        sphere2
+            //        ),
+            //    Color4.Green
+            //);
+
+            //_sceneObjects.Add(obj2);
 
             _rayCache = new List<Ray>();
 
@@ -168,6 +178,21 @@ namespace Raytracer
         {
             _heightInPixels = heightInPixels;
             _widthInPixels = widthInPixels;
+
+            _rayCache.Clear();
+            var firstX = 0;
+            for (var y = 0; y < _heightInPixels; y++)
+            {
+                for (var x = 0; x < _widthInPixels; x++)
+                {
+                    var component = (firstX + x) * ComponentsPerPixel;
+
+                    var ray = new Ray(Eye.Position, Vector3d.UnitZ, component);
+
+                    _rayCache.Add(ray);
+        }
+                firstX += _widthInPixels;
+            }
         }
 
 
@@ -189,53 +214,51 @@ namespace Raytracer
             return closestIntersection;
         }
 
+        private int maxRecursion = 2;
+
         /// <summary>
         /// Traces single ray throughout the scene. 
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <returns>Color of traced object at the intersection point.</returns>
-        private Color TraceRay(Ray ray)
+        private Color4 TraceRay(Ray ray)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
-
             if (closestIntersection.Kind == IntersectionKind.None)
             {
                 return Background;
             }
 
-            var intensity = 0.0;
-            var shapeColor = Color4.Black;
-
-            //This is just to allow rendering of bounding boxes which do not have a shape
-            if (closestIntersection.Shape != null)
-            {
                 // We have closest intersection, shoot shadow ray
-                var hitPosition = ray.Origin + ray.Direction * closestIntersection.Distance;
-                var lightDirection = Light.Position - hitPosition;
-                lightDirection.Normalize();
+            var hitPosition = ray.PointAt(closestIntersection.Distance);            
+            var hitNormal = closestIntersection.ShapeNormal(hitPosition);
 
-                // Calculate intensity and final pixel color
-                var normal = closestIntersection.Shape.Normal(hitPosition);
-                // If the intersection is from the inside, inverse normal vector
-                if (closestIntersection.Kind == IntersectionKind.Outfrom)
-                    normal = -normal;
+            var lightDirection = (Light.Position - hitPosition).Normalized();
 
-                intensity = Math.Max(0.0f, Vector3d.Dot(normal, lightDirection));
-                shapeColor = closestIntersection.Shape.GetColor(hitPosition, normal);
+            Ray shadowRay = new Ray(hitPosition, lightDirection, ray.Component);
+            /*foreach (var sceneObject in _sceneObjects)
+            {
+                if (sceneObject.IntersectFirst(shadowRay).Kind != Intersection.IntersectionKind.None)
+                    return Color.Purple;
             }
-            else
-                intensity = 1.0;
+            //*/
 
-            // unitY is like rGb (0,1,0) color
-            Vector3d vectorColor = new Vector3d(shapeColor.B, shapeColor.G, shapeColor.R);
-            var color = vectorColor * Light.Color;
-            color = color*intensity;
+            var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
 
-            var pixelColor = Color.FromArgb((int) Math.Round((255.0)*color.X),
-                (int) Math.Round((255.0)*color.Y),
-                (int) Math.Round((255.0)*color.Z));
-            return pixelColor;
+            var color = closestIntersection.Shape.GetColor(hitPosition, hitNormal);
+
+            // compute color based on intensity, light color and shape color
+            var hitColor = new Color4
+            {
+                R = (float) (color.R*Light.Color.R*brightness),
+                G = (float) (color.G*Light.Color.G*brightness),
+                B = (float) (color .B*Light.Color.B*brightness),
+                A = 1
+                //A = (float)(closestIntersection.Shape.Color.A * Light.Color.A * intensity),
+            };                       
+
+            return hitColor;
         }
 
         /// <summary>
@@ -278,12 +301,11 @@ namespace Raytracer
 
                 var ray = _rayCache[i];
                 var color = TraceRay(ray);
-
 #if PARALLEL
                 lock (progressLock)
                 {
 #endif
-                image.EfficientSetPixel(ray.Component, color.R, color.G, color.B);
+                image.EfficientSetPixel(ray.Component, color.ToArgb());
                 progress++;
                 //reportFunc(new Tuple<int, int>(progress, totalPixels));
 
@@ -302,8 +324,6 @@ namespace Raytracer
         /// </summary>
         public void BuildRayCache()
         {
-            _rayCache.Clear();
-
             var rightIncrement = Eye.RightVector*PixelSize;
             var rightIncrementHalf = rightIncrement*0.5f;
             var downIncrement = Eye.UpVector*-PixelSize;
@@ -329,10 +349,12 @@ namespace Raytracer
                 {
                     var component = (firstX + x)*ComponentsPerPixel;
                     var direction = pixelCenter - Eye.Position;
+                    direction.Normalize();
 
-                    var ray = new Ray(Eye.Position, direction, true, component);
+                    var ray = _rayCache[firstX + x];
+                    ray.Origin = Eye.Position;
+                    ray.Direction = direction;
 
-                    _rayCache.Add(ray);
                     pixelCenter += rightIncrement;
                 }
 

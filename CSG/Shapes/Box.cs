@@ -15,7 +15,6 @@ namespace CSG.Shapes
         public Vector3d Max { get; protected set; }
 
         public Box(Vector3d min, Vector3d max)
-            : base(Color4.AliceBlue) // Todo: Fallbackvalue 
         {
             Min = min;
             Max = max;

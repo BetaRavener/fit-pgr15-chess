@@ -1,4 +1,6 @@
-﻿namespace Chess.Gui
+﻿using System.Windows.Forms;
+
+namespace Chess.Gui
 {
     partial class ChessForm
     {
@@ -60,6 +62,9 @@
             this.RenderView.TabIndex = 0;
             this.RenderView.TabStop = false;
             this.RenderView.Resize += new System.EventHandler(this.RenderView_Resize);
+            this.RenderView.MouseDown += new MouseEventHandler(this.RenderView_MouseDown);
+            this.RenderView.MouseMove += new MouseEventHandler(this.RenderView_MouseMove);
+            this.RenderView.MouseWheel += new MouseEventHandler(this.RenderView_MouseWheel);
             // 
             // RenderButton
             // 
@@ -127,8 +132,7 @@
             this.labelLightPosition.Name = "labelLightPosition";
             this.labelLightPosition.Size = new System.Drawing.Size(195, 25);
             this.labelLightPosition.TabIndex = 5;
-            this.labelLightPosition.Text = "Light position (x, y, z)";
-            this.labelLightPosition.Click += new System.EventHandler(this.label2_Click);
+            this.labelLightPosition.Text = "Light position (x, y, z)";            
             // 
             // lightX
             // 
@@ -216,8 +220,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(51, 25);
             this.label3.TabIndex = 17;
-            this.label3.Text = "FPS";
-            this.label3.Click += new System.EventHandler(this.label3_Click);
+            this.label3.Text = "FPS";            
             // 
             // FPSlabel
             // 

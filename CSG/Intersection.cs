@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CSG.Shapes;
+using OpenTK;
 
 namespace CSG
 {
@@ -28,11 +29,21 @@ namespace CSG
         /// </summary>
         public double Distance;
 
-        public Intersection(IntersectionKind kind, Shape shape = null, double dist = Double.MaxValue)
+        public Intersection(IntersectionKind kind, Shape shape = null, double dist = double.MaxValue)
         {
             Kind = kind;
             Shape = shape;
             Distance = dist; 
+        }
+
+        public Vector3d ShapeNormal(Vector3d position)
+        {
+            var normal = Shape.Normal(position);
+            // If the intersection is from the inside, inverse normal vector
+            if (Kind == IntersectionKind.Outfrom)
+                normal = -normal;
+
+            return normal;
         }
     }
 }

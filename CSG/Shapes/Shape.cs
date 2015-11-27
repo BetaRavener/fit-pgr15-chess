@@ -24,6 +24,10 @@ namespace CSG.Shapes
             Color = color;
         }
 
+        protected Shape()
+        {
+        }
+
 
         public virtual Color4 GetColor(Vector3d position, Vector3d normal)
         {  

@@ -46,10 +46,12 @@ namespace Chess.Scene
         {
             get
             {
-                var realPos = new Vector3d();
-                realPos.X = X*Chessboard.CroftWidth + Chessboard.CroftWidth/2;
-                realPos.Z = Y * Chessboard.CroftHeight + Chessboard.CroftHeight / 2;
-                realPos.Y = Chessboard.CroftThickness;
+                var realPos = new Vector3d
+                {
+                    X = X*Chessboard.CroftWidth + Chessboard.CroftWidth/2,
+                    Z = Y*Chessboard.CroftHeight + Chessboard.CroftHeight/2,
+                    Y = Chessboard.CroftThickness
+                };
                 return realPos;
             }
         }

@@ -12,18 +12,16 @@ namespace RayTracer
     public class LightSource
     {
         public Vector3d Position { get; set; }
-        public Vector3d Color { get; set; }
+        public Color4 Color { get; set; }
 
-        public LightSource()
-        {
-            Position = Vector3d.Zero;
-            Color = Vector3d.One;
+        public LightSource() : this(0,0,0)
+        {                        
         }
 
         public LightSource(int x, int y, int z)
         {
             Position = new Vector3d(x, y, z);
-            Color = Vector3d.One;
+            Color = Color4.White;
         }
     }
 }
