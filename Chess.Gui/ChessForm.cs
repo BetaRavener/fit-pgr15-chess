@@ -98,6 +98,12 @@ namespace Chess.Gui
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
             {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    await Task.Delay(100);
+                    continue;
+                }
+
                 var begin = DateTime.UtcNow;
 
                 if (_resized)
