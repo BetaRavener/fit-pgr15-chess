@@ -12,50 +12,6 @@ namespace RayMath
         private const double Epsilon = 0.000001f;
 
         /// <summary>
-        /// Finds intersection between ray and axis-aligned bounding box.
-        /// </summary>
-        /// <param name="ray">Tracing ray.</param>
-        /// <param name="bb">Bounding box.</param>
-        /// <param name="distance">Filled with correct distance from origin along ray to intersection.</param>
-        /// <returns>True if intersecting.</returns>
-        /// <author>zacharmarz</author>
-        /// <link>http://gamedev.stackexchange.com/questions/18436/most-efficient-aabb-vs-ray-collision-algorithms</link>
-        public static bool Intersects(this Ray ray, BoundingBox bb, out double distance)
-        {
-            var origin = ray.Origin;
-            var dirfrac = ray.Dirfrac;
-
-            // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
-            // r.org is origin of ray
-            var t1 = (bb.MinX - origin.X) * dirfrac.X;
-            var t2 = (bb.MaxX - origin.X) * dirfrac.X;
-            var t3 = (bb.MinY - origin.Y) * dirfrac.Y;
-            var t4 = (bb.MaxY - origin.Y) * dirfrac.Y;
-            var t5 = (bb.MinZ - origin.Z) * dirfrac.Z;
-            var t6 = (bb.MaxZ - origin.Z) * dirfrac.Z;
-
-            var tmin = Math.Max(Math.Max(Math.Min(t1, t2), Math.Min(t3, t4)), Math.Min(t5, t6));
-            var tmax = Math.Min(Math.Min(Math.Max(t1, t2), Math.Max(t3, t4)), Math.Max(t5, t6));
-
-            // if tmax < 0, ray (line) is intersecting AABB, but whole AABB is behing us
-            if (tmax < 0)
-            {
-                distance = tmax;
-                return false;
-            }
-
-            // if tmin > tmax, ray doesn't intersect AABB
-            if (tmin > tmax)
-            {
-                distance = tmax;
-                return false;
-            }
-
-            distance = tmin;
-            return true;
-        }
-
-        /// <summary>
         /// 
         /// </summary>
         /// <param name="ray"></param>

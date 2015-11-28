@@ -52,6 +52,7 @@
     <Compile Include="RangeEdge.cs" />
     <Compile Include="Ranges.cs" />
     <Compile Include="Shapes\Box.cs" />
+    <Compile Include="Shapes\Cone.cs" />
     <Compile Include="Shapes\Cylinder.cs" />
     <Compile Include="Shapes\Plane.cs" />
     <Compile Include="Shapes\Shape.cs" />

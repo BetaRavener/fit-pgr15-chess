@@ -24,6 +24,8 @@ namespace Chess.Scene
         public Chessboard() 
         {
             CsgTree = ObjectBuilder.BuildChessboard(this);
+            var chessBox = (CSG.Shapes.Box)CsgTree;
+            BoundingBox = new CSG.Shapes.Box(chessBox.Min, chessBox.Max, null);
         }
 
         public override Color4 ComputeColor(Vector3d position, Vector3d normal)

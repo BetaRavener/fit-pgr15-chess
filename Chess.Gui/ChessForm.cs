@@ -15,12 +15,14 @@ namespace Chess.Gui
 
         private const double ZoomSensitivity = 0.05;
         private const double RotationSensitivity = 0.02;
+        private const double MoveSensitivity = 5;
         private const double LightSensitivity = 5;
         private int _lastX;
         private int _lastY;
 
         private bool _resized;
         private bool _viewChanged;
+        private bool _rotating;
         private bool _lightChanged;
 
         public ChessForm()
@@ -40,6 +42,7 @@ namespace Chess.Gui
             _resized = true;
             _viewChanged = true;
             _lightChanged = true;
+            _rotating = false;
         }
 
         /// <summary>
@@ -122,6 +125,8 @@ namespace Chess.Gui
                 _lightChanged = false;
                 _viewChanged = false;
 
+                _raytracer.OnlyBoundingBoxes = _rotating;
+
                 Image img = null;
                 await Task.Run(() => img = Redraw(), _cancelSource.Token);
 
@@ -167,18 +172,25 @@ namespace Chess.Gui
         private void RenderView_MouseMove(object sender, MouseEventArgs e)
         {
             var dX = e.X - _lastX;
-            // Invert Y axis
             var dY = e.Y - _lastY;
 
             if (e.Button == MouseButtons.Left)
             {
+                // Invert Y axis
                 _raytracer.Eye.RotateRelative(new OpenTK.Vector2d(RotationSensitivity * dY, -RotationSensitivity * dX));
                 _viewChanged = true;
+                _rotating = true;
             }
             else if (e.Button == MouseButtons.Right)
             {
                 _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
                 _lightChanged = true;
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                _raytracer.Eye.MoveRelative(new OpenTK.Vector3d(MoveSensitivity * dX, -MoveSensitivity * dY, 0));
+                _viewChanged = true;
+                _rotating = true;
             }
 
             _lastX = e.X;
@@ -189,6 +201,11 @@ namespace Chess.Gui
         {
             _raytracer.Eye.OrbitDistance += e.Delta * ZoomSensitivity;
             _viewChanged = true;
+        }
+
+        private void RenderView_MouseUp(object sender, MouseEventArgs e)
+        {
+            _rotating = false;
         }
     }
 }
