@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using CSG;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -16,9 +17,9 @@ namespace Chess.Scene
         public const int CroftThickness = 50;
 
 
-        public static readonly Color4 BackgroundColor = Color4.Brown;
-        public static readonly Color4 WhiteColor = Color4.White;
-        public static readonly Color4 BlackColor = Color4.Black;
+        public static readonly Vector3d BackgroundColor = Utils.ColorToVector(Color4.Brown);
+        public static readonly Vector3d WhiteColor = Utils.ColorToVector(Color4.White);
+        public static readonly Vector3d BlackColor = Utils.ColorToVector(Color4.Black);
 
 
         public Chessboard() 
@@ -26,7 +27,7 @@ namespace Chess.Scene
             CsgTree = ObjectBuilder.BuildChessboard(this);
         }
 
-        public override Color4 ComputeColor(Vector3d position, Vector3d normal)
+        public override Vector3d ComputeColor(Vector3d position, Vector3d normal)
         {
             // ToDo: implement faster algorithm
             // Normal vector is pointing to the top

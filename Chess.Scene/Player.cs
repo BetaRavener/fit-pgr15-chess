@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using OpenTK;
 using OpenTK.Graphics;
 
 namespace Chess.Scene
 {
     public class Player
     {
-        public Color4 Color { get; set; }
+        public Vector3d Color { get; set; }
 
         public string Name { get; set; }
 

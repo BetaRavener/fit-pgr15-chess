@@ -10,27 +10,25 @@ namespace CSG.Shapes
     /// </summary>
     public abstract class Shape : CsgNode
     {
-        public static Color4 FallbackColor = Color4.Azure;
+        public static Vector3d FallbackColor = Utils.ColorToVector(Color4.Azure);
         public ISceneObject Parent { get; set; }
 
         protected Shape(ISceneObject sceneObject)
         {
             Parent = sceneObject;
             ColorAmbient = new Vector3d(0.1, 0.1, 0.1);
-            Color = color;
             ColorSpecular = Vector3d.One;
             Shininess = 15;
             Reflectance = 0.5;
         }
 
-        public virtual Color4 Color(Vector3d position, Vector3d normal)
+        public virtual Vector3d Color(Vector3d position, Vector3d normal)
         {  
            
             return Parent?.ComputeColor(position, normal) ?? FallbackColor;
         }
 
         public Vector3d ColorAmbient { get; }
-        public Vector3d Color { get; }
         public Vector3d ColorSpecular { get; }
         public double Shininess { get; }
         public double Reflectance { get; }

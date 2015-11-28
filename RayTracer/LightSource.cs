@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CSG;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -21,7 +22,7 @@ namespace RayTracer
         public LightSource(int x, int y, int z)
         {
             Position = new Vector3d(x, y, z);
-            Color = Raytracer.Raytracer.ColorToVec(System.Drawing.Color.White);
+            Color = Utils.ColorToVector(Color4.White);
         }
     }
 }

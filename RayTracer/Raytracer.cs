@@ -32,7 +32,7 @@ namespace Raytracer
 
         private static Vector3d Background
         {
-            get { return ColorToVec(Color.MidnightBlue); }
+            get { return Utils.ColorToVector(Color4.MidnightBlue); }
         }
 
         public Camera Eye
@@ -69,16 +69,6 @@ namespace Raytracer
 
         public int NumberOfThreads { get; set; }
 
-        public static Vector3d ColorToVec(Color color)
-        {
-            return new Vector3d
-            {
-                X = color.R / 255.0,
-                Y = color.G / 255.0,
-                Z = color.B / 255.0,
-            };
-        }
-
         public Raytracer()
         {
             _heightInPixels = 0;
@@ -86,68 +76,21 @@ namespace Raytracer
             _camera = new Camera(-100, 200, -400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
-
-            //var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, Color4.Beige);
-            //var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, Color4.Aqua);
-            //var csgNode = new CsgNode(CsgNode.Operations.Difference, sphere2, sphere1);
-            //var sceneObject = new SceneObject(csgNode, Color4.Azure);
-
-            //_sceneObjects.Add(sceneObject);
-
-
-            //var box1 = new Box(new Vector3d(-200, 0, -200), new Vector3d(200, 20, 200), new Vector3d(0.5, 0.5, 0));
-            //var box2 = new Box(new Vector3d(-90, -10, -90), new Vector3d(90, 30, 90), new Vector3d(0.5, 0.5, 0));
-            //csgNode =  new CsgNode(CsgNode.Operations.Difference, box1, box2);
-            //sceneObject = new SceneObject(csgNode, Color4.Azure);
-
-            //_sceneObjects.Add(sceneObject);
-
-            //var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Vector3d(0.2, 0, 0.8));
-            //var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Vector3d(0.2, 0.8, 0.1));
-            //var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
-            //var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Vector3d(0.8, 0.3, 0.3));
-            //var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
-            //var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
-            ////_sceneObjects.Add(sceneObject);
-
-            //var csgNode3 = new Box(new Vector3d(0, 0, 0), new Vector3d(100, 50, 100), new Vector3d(0.0, 0, 0.0));
-            //var csgNode4 = new Box(new Vector3d(100, 0, 100), new Vector3d(200, 50, 200), new Vector3d(0.0, 0, 0.0));
-            //var csgNode5 = new Box(new Vector3d(0, 0, 100), new Vector3d(100, 50, 200), new Vector3d(1.0, 1, 1.0));
-            //var csgNode6 = new Box(new Vector3d(100, 0, 0), new Vector3d(200, 50, 100), new Vector3d(1.0, 1, 1.0));
-
-
-            //var csgNodefin =  new CsgNode(CsgNode.Operations.Union, csgNode3, csgNode4);
-            //var csgNodefin2 = new CsgNode(CsgNode.Operations.Union, csgNodefin, csgNode5);
-            //var csgNodefin3 = new CsgNode(CsgNode.Operations.Union, csgNodefin2, csgNode6);
-
-
-            //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
-
-
-
-
-
-
-
-
-
+            
             var game = new Game
             {
                 Chessboard = new Chessboard(),
                 Player1 = new Player()
                 {
-                    Color = Color4.Black,
+                    Color = Utils.ColorToVector(Color4.Black),
                     Name = "Player1"
                 },
                 Player2 = new Player()
                 {
-                    Color = Color4.White,
+                    Color = Utils.ColorToVector(Color4.White),
                     Name = "Player2"
                 },
             };
-
-
-
 
             game.Player1.CreateFigure(new ChessboardPosition(4, 3), FigureType.King);
             game.Player2.CreateFigure(new ChessboardPosition(4, 4), FigureType.King);
@@ -161,34 +104,7 @@ namespace Raytracer
 
 
             _sceneObjects.AddRange(loadedGame.GetSceneObjects());
-
-
-            //var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
-
-            //var obj2 = new SceneObject(
-            //    new CsgNode(
-            //        CsgNode.Operations.Union, 
-            //        sphere2,
-            //        sphere2
-            //        ),
-            //    Color4.Green
-            //);
-
-            //_sceneObjects.Add(obj2);
-
-            var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
-            var sphere3 = new Sphere(new Vector3d(200, -50, 0), 60, Color4.Aquamarine);
-
-            var obj2 = new SceneObject(
-                new CsgNode(
-                    CsgNode.Operations.Union,
-                    box,
-                    sphere3
-                    ),
-                ColorToVec(Color.Green)
-                );
-
-            _sceneObjects.Add(obj2);
+            
             _rayCache = new List<Ray>();
 
             NumberOfThreads = 1;
@@ -210,7 +126,7 @@ namespace Raytracer
                     var ray = new Ray(Eye.Position, Vector3d.UnitZ, component);
 
                     _rayCache.Add(ray);
-        }
+                }
                 firstX += _widthInPixels;
             }
         }
@@ -247,7 +163,7 @@ namespace Raytracer
             for (int index = 0; index < _sceneObjects.Count; index++)
             {
                 var sceneObject = _sceneObjects[index];
-                if (sceneObject.IntersectFirst(ray).Kind != Intersection.IntersectionKind.None)
+                if (sceneObject.IntersectFirst(ray).Kind != IntersectionKind.None)
                 {
                     return true;
                 }
@@ -261,12 +177,12 @@ namespace Raytracer
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <param name="depth">Actual level of recurse</param>
-        /// <returns>ColorAmbient of traced object at the intersection point.</returns>
+        /// <returns>color of traced object at the intersection point.</returns>
         private Vector3d TraceRay(Ray ray, int depth = 2)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
-            if (closestIntersection.Kind == Intersection.IntersectionKind.None) return Background;
+            if (closestIntersection.Kind == IntersectionKind.None) return Background;
 
             ray.Direction.Normalize();
 
@@ -285,9 +201,9 @@ namespace Raytracer
             if (!IsInShadow(shadowRay))
             {
                 // diffuse light (default shape color)
-                finalColor += hitShape.Color * Light.Color * Math.Max(0.0, angleToLight);
+                finalColor += hitShape.Color(hitPosition, hitNormal)*Light.Color*Math.Max(0.0, angleToLight);
 
-               // specular
+                // specular
                 if (hitShape.Shininess > 0)
                 {
                     Vector3d reflectionDirection = tmp - lightDirection;
@@ -305,9 +221,9 @@ namespace Raytracer
                 var reflectionDirection = ray.Direction - tmp;
                 Ray reflectanceRay = new Ray(hitPosition, reflectionDirection).Shift();
                 Vector3d reflectedColor = TraceRay(reflectanceRay, depth - 1);
-                finalColor += reflectedColor * hitShape.Reflectance;
+                finalColor += reflectedColor*hitShape.Reflectance;
             }
-        
+
             return finalColor;
         }
 

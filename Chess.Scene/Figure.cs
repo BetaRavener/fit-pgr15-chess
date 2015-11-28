@@ -54,7 +54,7 @@ namespace Chess.Scene
         {
         }
 
-        public override Color4 ComputeColor(Vector3d pos, Vector3d normal)
+        public override Vector3d ComputeColor(Vector3d pos, Vector3d normal)
         {
             return Color;
         }
