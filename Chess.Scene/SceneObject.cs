@@ -16,9 +16,9 @@ namespace Chess.Scene
         [JsonIgnore]
         public CsgNode CsgTree { get; set; }
         [JsonIgnore]
-        public BoundingBox BoundingBox { get; set; }
+        public Box BoundingBox { get; set; }
 
-        public SceneObject(CsgNode tree, Color4 color, BoundingBox bbox = null)
+        public SceneObject(CsgNode tree, Color4 color, Box bbox = null)
         {
             Color = color;
             BoundingBox = bbox;
@@ -43,17 +43,17 @@ namespace Chess.Scene
         /// <returns>Intersection with scene object.</returns>
         public Intersection IntersectFirst(Ray ray, bool renderBBox = false)
         {
-                if (BoundingBox == null)
+            if (BoundingBox == null)
             {
                 return CsgTree.IntersectFirst(ray);
             }
 
 
             double t;
-            if (ray.Intersects(BoundingBox, out t))
+            if (BoundingBox.Intersects(ray, out t))
             {
                 return renderBBox 
-                    ? new Intersection(IntersectionKind.Outfrom, null, t) 
+                    ? new Intersection(IntersectionKind.Into, BoundingBox, t) 
                     : CsgTree.IntersectFirst(ray);
             }
 

@@ -46,6 +46,8 @@ namespace Raytracer
             set { _lightSource = value; }
         }
 
+        public bool OnlyBoundingBoxes { get; set; }
+
         double Ratio
         {
             get { return _widthInPixels/(double) _heightInPixels; }
@@ -108,16 +110,7 @@ namespace Raytracer
             //var csgNodefin2 = new CsgNode(CsgNode.Operations.Union, csgNodefin, csgNode5);
             //var csgNodefin3 = new CsgNode(CsgNode.Operations.Union, csgNodefin2, csgNode6);
 
-
             //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
-
-
-
-
-
-
-
-
 
             var game = new Game
             {
@@ -134,9 +127,6 @@ namespace Raytracer
                 },
             };
 
-
-
-
             game.Player1.CreateFigure(new ChessboardPosition(4, 3), FigureType.King);
             game.Player2.CreateFigure(new ChessboardPosition(4, 4), FigureType.King);
             game.Start();
@@ -149,20 +139,6 @@ namespace Raytracer
 
 
             _sceneObjects.AddRange(loadedGame.GetSceneObjects());
-
-
-            //var sphere2 = new Sphere(new Vector3d(200, 100, 0), 60, Color4.Chocolate);
-
-            //var obj2 = new SceneObject(
-            //    new CsgNode(
-            //        CsgNode.Operations.Union, 
-            //        sphere2,
-            //        sphere2
-            //        ),
-            //    Color4.Green
-            //);
-
-            //_sceneObjects.Add(obj2);
 
             _rayCache = new List<Ray>();
 
@@ -198,7 +174,7 @@ namespace Raytracer
 
             foreach (SceneObject sceneObject in _sceneObjects)
             {
-                var intersection = sceneObject.IntersectFirst(ray);
+                var intersection = sceneObject.IntersectFirst(ray, OnlyBoundingBoxes);
                 if (intersection.Kind != IntersectionKind.None &&
                     intersection.Distance < closestIntersection.Distance)
                 {
@@ -225,9 +201,8 @@ namespace Raytracer
                 return Background;
             }
 
-                // We have closest intersection, shoot shadow ray
-            var hitPosition = ray.PointAt(closestIntersection.Distance);            
-            var hitNormal = closestIntersection.ShapeNormal(hitPosition);
+            // We have closest intersection, shoot shadow ray
+            var hitPosition = ray.PointAt(closestIntersection.Distance);
 
             var lightDirection = (Light.Position - hitPosition).Normalized();
 
@@ -238,7 +213,7 @@ namespace Raytracer
                     return Color.Purple;
             }
             //*/
-
+            var hitNormal = closestIntersection.ShapeNormal(hitPosition);
             var brightness = Math.Max(0, Vector3d.Dot(hitNormal, lightDirection));
 
             var color = closestIntersection.Shape.Color(hitPosition, hitNormal);
@@ -248,7 +223,7 @@ namespace Raytracer
             {
                 R = (float) (color.R*Light.Color.R*brightness),
                 G = (float) (color.G*Light.Color.G*brightness),
-                B = (float) (color .B*Light.Color.B*brightness),
+                B = (float) (color.B*Light.Color.B*brightness),
                 A = 1
                 //A = (float)(closestIntersection.Shape.Color.A * Light.Color.A * intensity),
             };                       

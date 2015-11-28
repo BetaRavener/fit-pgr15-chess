@@ -16,7 +16,7 @@ namespace CSG
         /// <summary>
         /// Holds individual spans.
         /// </summary>
-        private List<RangeShape> _data;
+        public List<RangeShape> _data;
 
         public RangesShape()
         {

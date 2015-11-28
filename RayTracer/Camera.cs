@@ -74,11 +74,14 @@ namespace RayTracer
 
         public void MoveRelative(Vector3d vec)
         {
+            var oldViewVec = ViewVector;
+            var oldDistance = OrbitDistance;
+
             _lookAt += RightVector * vec.X;
             _lookAt += UpVector * vec.Y;
             _lookAt += ViewVector * vec.Z;
 
-            Position = _lookAt - ViewVector * OrbitDistance;
+            Position = _lookAt - oldViewVec * oldDistance;
         }
 
         public void RotateRelative(Vector2d vec)

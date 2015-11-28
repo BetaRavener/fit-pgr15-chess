@@ -69,7 +69,7 @@ namespace Chess.Scene
             var maxZ = pos.Z + (MaxZ / 2);
             var maxY = pos.Y + MaxY;
 
-            BoundingBox = new BoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+            BoundingBox = new CSG.Shapes.Box(new Vector3d(minX, minY, minZ), new Vector3d(maxX, maxY, maxZ), null);
         }
 
         private void CreateFigureOnScene()
