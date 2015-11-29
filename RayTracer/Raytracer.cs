@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CSG;
@@ -30,9 +31,9 @@ namespace Raytracer
 
         private List<Ray> _rayCache;
 
-        private static Vector3d Background
+        private static Color4 Background
         {
-            get { return ColorToVec(Color.MidnightBlue); }
+            get { return Color.MidnightBlue; }
         }
 
         public Camera Eye
@@ -184,8 +185,9 @@ namespace Raytracer
             // Search for closest intersection
             var closestIntersection = new Intersection(IntersectionKind.None);
 
-            foreach (SceneObject sceneObject in _sceneObjects)
+            for (int index = 0; index < _sceneObjects.Count; index++)
             {
+                SceneObject sceneObject = _sceneObjects[index];
                 var intersection = sceneObject.IntersectFirst(ray, OnlyBoundingBoxes);
                 if (intersection.Kind != IntersectionKind.None &&
                     intersection.Distance < closestIntersection.Distance)
@@ -204,9 +206,10 @@ namespace Raytracer
         /// <returns></returns>
         private bool IsInShadow(Ray ray)
         {
-            foreach (var sceneObject in _sceneObjects)
+            for (int index = 0; index < _sceneObjects.Count; index++)
             {
-                if (sceneObject.IntersectFirst(ray).Kind != Intersection.IntersectionKind.None)
+                var sceneObject = _sceneObjects[index];
+                if (sceneObject.IntersectFirst(ray).Kind != IntersectionKind.None)
                 {
                     return true;
                 }
@@ -221,11 +224,11 @@ namespace Raytracer
         /// <param name="ray">Tracing ray.</param>
         /// <param name="depth">Actual level of recurse</param>
         /// <returns>ColorAmbient of traced object at the intersection point.</returns>
-        private Vector3d TraceRay(Ray ray, int depth = 2)
+        private Color4 TraceRay(Ray ray, int depth = 2)
         {
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
-            if (closestIntersection.Kind == Intersection.IntersectionKind.None) return Background;
+            if (closestIntersection.Kind == IntersectionKind.None) return Background;
 
             ray.Direction.Normalize();
 
@@ -234,7 +237,7 @@ namespace Raytracer
             Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
             Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition);
 
-            Vector3d finalColor = hitShape.ColorAmbient; // TODO should use ambient color? or just black
+            Color4 finalColor = Color.Black;//hitShape.ColorAmbient; // TODO should use ambient color? or just black
             Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
 
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
@@ -244,7 +247,11 @@ namespace Raytracer
             if (!IsInShadow(shadowRay))
             {
                 // diffuse light (default shape color)
-                finalColor += hitShape.Color * Light.Color * Math.Max(0.0, angleToLight);
+                //finalColor += hitShape.Color * Light.Color * Math.Max(0.0, angleToLight);
+     
+                var diffuseColor = hitShape.Color(hitPosition,hitNormal).Multiply(Light.Color).Multiply(Math.Max(0.0, angleToLight));
+              
+                finalColor = finalColor.Add(diffuseColor);
 
                // specular
                 if (hitShape.Shininess > 0)
@@ -253,7 +260,9 @@ namespace Raytracer
                     double specularRatio = -Vector3d.Dot(reflectionDirection, ray.Direction);
                     if (specularRatio > 0)
                     {
-                        finalColor += hitShape.ColorSpecular*Light.Color*Math.Pow(specularRatio, hitShape.Shininess);
+                        var specularColor = hitShape.ColorSpecular.Multiply(Light.Color).Multiply(Math.Pow(specularRatio, hitShape.Shininess));
+                        finalColor = finalColor.Add(specularColor);
+                        //finalColor += hitShape.ColorSpecular*Light.Color*Math.Pow(specularRatio, hitShape.Shininess);
                     }
                 }
             }
@@ -263,10 +272,12 @@ namespace Raytracer
             {
                 var reflectionDirection = ray.Direction - tmp;
                 Ray reflectanceRay = new Ray(hitPosition, reflectionDirection).Shift();
-                Vector3d reflectedColor = TraceRay(reflectanceRay, depth - 1);
-                finalColor += reflectedColor * hitShape.Reflectance;
+                Color4 reflectedColor = TraceRay(reflectanceRay, depth - 1);
+
+                finalColor = finalColor.Add(reflectedColor.Multiply(hitShape.Reflectance));
+                //finalColor += reflectedColor * hitShape.Reflectance;
             }
-        
+
             return finalColor;
         }
 
@@ -309,27 +320,12 @@ namespace Raytracer
                 }
 
                 var ray = _rayCache[i];
-                var colorVector = TraceRay(ray);
-
-                var r = (int) Math.Round((255.0)*colorVector.X);
-                var g = (int) Math.Round((255.0)*colorVector.Y);
-                var b = (int) Math.Round((255.0)*colorVector.Z);
-
-                // TODO better checking for overflow/underflow!
-                if (r > 255) r = 255;
-                if (g > 255) g = 255;
-                if (b > 255) b = 255;
-
-                if (r < 0) r = 0;
-                if (g < 0) g = 0;
-                if (b < 0) b = 0;
-
-                var pixelColor = Color.FromArgb(r, g, b);
+                var color = TraceRay(ray);
 #if PARALLEL
                 lock (progressLock)
                 {
 #endif
-                image.EfficientSetPixel(ray.Component, pixelColor);
+                image.EfficientSetPixel(ray.Component, color.ToColor());
                 progress++;
                 //reportFunc(new Tuple<int, int>(progress, totalPixels));
 

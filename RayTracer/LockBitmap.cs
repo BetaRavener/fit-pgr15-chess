@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using OpenTK.Graphics;
 
 namespace RayTracer
 {
@@ -174,7 +175,7 @@ namespace RayTracer
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void EfficientSetPixel(int idx, Color color)
-        {            
+        {
             _pixels[idx] = color.B;
             _pixels[idx + 1] = color.G;
             _pixels[idx + 2] = color.R;
