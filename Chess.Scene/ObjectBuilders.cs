@@ -16,7 +16,8 @@ namespace Chess.Scene
                 min.Z + Chessboard.CroftWidth * 8);
 
 
-            return new Box(min, max, sceneObject);
+            var box = new Box(min, max, sceneObject) {Shininess = 100};
+            return box;
         }
 
         public static CsgNode BuildKing(Vector3d center, ISceneObject sceneObject)

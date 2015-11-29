@@ -3,6 +3,7 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using OpenTK;
 using RayTracer;
 
 namespace Chess.Gui
@@ -98,6 +99,12 @@ namespace Chess.Gui
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
             {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    await Task.Delay(100);
+                    continue;
+                }
+
                 var begin = DateTime.UtcNow;
 
                 if (_resized)
@@ -109,16 +116,16 @@ namespace Chess.Gui
                 if (_lightChanged)
                 {
                     var lightPos = _raytracer.Light.Position;
-                    lightX.Text = ((int)lightPos.X).ToString();
-                    lightY.Text = ((int)lightPos.Y).ToString();
-                    lightZ.Text = ((int)lightPos.Z).ToString();
+                    lightX.Text = ((int) lightPos.X).ToString();
+                    lightY.Text = ((int) lightPos.Y).ToString();
+                    lightZ.Text = ((int) lightPos.Z).ToString();
                 }
                 if (_viewChanged)
                 {
                     var camPos = _raytracer.Eye.Position;
-                    cameraX.Text = ((int)camPos.X).ToString();
-                    cameraY.Text = ((int)camPos.Y).ToString();
-                    cameraZ.Text = ((int)camPos.Z).ToString();
+                    cameraX.Text = ((int) camPos.X).ToString();
+                    cameraY.Text = ((int) camPos.Y).ToString();
+                    cameraZ.Text = ((int) camPos.Z).ToString();
 
                     _raytracer.BuildRayCache();
                 }
@@ -152,7 +159,7 @@ namespace Chess.Gui
             RenderProgressBar.Value = RenderProgressBar.Minimum;
             RenderButton.Text = "Render";
         }
-        
+
         private int _lastCamX;
         private int _lastCamY;
         private int _lastLightX;
@@ -174,17 +181,17 @@ namespace Chess.Gui
             var dX = e.X - _lastX;
             var dY = e.Y - _lastY;
 
-            if (e.Button == MouseButtons.Left)
+            if ((ModifierKeys == Keys.Control && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Right)
+            {
+                _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
+                _lightChanged = true;
+            }
+            else if (e.Button == MouseButtons.Left)
             {
                 // Invert Y axis
                 _raytracer.Eye.RotateRelative(new OpenTK.Vector2d(RotationSensitivity * dY, -RotationSensitivity * dX));
                 _viewChanged = true;
                 _rotating = true;
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
-                _lightChanged = true;
             }
             else if (e.Button == MouseButtons.Middle)
             {
