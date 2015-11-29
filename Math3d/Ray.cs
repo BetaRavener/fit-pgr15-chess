@@ -47,9 +47,15 @@ namespace RayMath
             return Origin + Direction * t;
         }
 
-        public void Shift(double shift = 1e-5f)
+        /// <summary>
+        /// Shifts ray little bit so that it's not countet with intersection
+        /// </summary>
+        /// <param name="shift"></param>
+        /// <returns></returns>
+        public Ray Shift(double shift = 1e-5f)
         {
             Origin += Direction*shift;
+            return this;
         }
     }
 }

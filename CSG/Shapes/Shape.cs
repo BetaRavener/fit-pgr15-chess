@@ -20,9 +20,15 @@ namespace CSG.Shapes
 
         public virtual Color4 Color(Vector3d position, Vector3d normal)
         {  
-           
             return Parent?.ComputeColor(position, normal) ?? FallbackColor;
         }
+
+        public Color4 ColorSpecular { get; set; } = Color4.White;
+
+        public double Shininess { get; set; } = 10;
+
+        public double Reflectance { get; set; } = 0.5;
+        
 
         /// <summary>
         /// Find set of spans at which the ray intersects this shape.

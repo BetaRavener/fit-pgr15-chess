@@ -36,12 +36,18 @@ namespace CSG
             Distance = dist; 
         }
 
-        public Vector3d ShapeNormal(Vector3d position)
+        /// <summary>
+        /// Gets normal from the shape in the point of intersection, normalizes it and recalculates from inside if necessary
+        /// </summary>
+        /// <param name="hitPosition"></param>
+        /// <returns></returns>
+        public Vector3d ShapeNormal(Vector3d hitPosition)
         {
-            var normal = Shape.Normal(position);
-            // If the intersection is from the inside, inverse normal vector
+            Vector3d normal = Shape.Normal(hitPosition).Normalized();
             if (Kind == IntersectionKind.Outfrom)
+            {
                 normal = -normal;
+            }
 
             return normal;
         }
