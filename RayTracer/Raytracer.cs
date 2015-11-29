@@ -112,23 +112,9 @@ namespace Raytracer
 
             //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
 
-            var game = new Game
-            {
-                Chessboard = new Chessboard(),
-                Player1 = new Player()
-                {
-                    Color = Color4.Black,
-                    Name = "Player1"
-                },
-                Player2 = new Player()
-                {
-                    Color = Color4.White,
-                    Name = "Player2"
-                },
-            };
-
-            game.Player1.CreateFigure(new ChessboardPosition(4, 3), FigureType.King);
-            game.Player2.CreateFigure(new ChessboardPosition(4, 4), FigureType.King);
+            var game = new Game();
+            game.BuildBaseLayout();
+            
             game.Start();
 
             var gameLoader = new GameLoader(@".");

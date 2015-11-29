@@ -10,7 +10,7 @@ namespace CSG.Shapes
     /// </summary>
     public abstract class Shape : CsgNode
     {
-        public static Color4 FallbackColor = Color4.Azure;
+        public static Color4 FallbackColor = Color4.Red;
         public ISceneObject Parent { get; set; }
 
         protected Shape(ISceneObject sceneObject)
