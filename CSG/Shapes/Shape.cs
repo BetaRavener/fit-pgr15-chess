@@ -16,9 +16,6 @@ namespace CSG.Shapes
         protected Shape(ISceneObject sceneObject)
         {
             Parent = sceneObject;
-            ColorSpecular = Color4.White;
-            Shininess = 15;
-            Reflectance = 0.5;
         }
 
         public virtual Color4 Color(Vector3d position, Vector3d normal)
@@ -26,9 +23,11 @@ namespace CSG.Shapes
             return Parent?.ComputeColor(position, normal) ?? FallbackColor;
         }
 
-        public Color4 ColorSpecular { get; }
-        public double Shininess { get; }
-        public double Reflectance { get; }
+        public Color4 ColorSpecular { get; set; } = Color4.White;
+
+        public double Shininess { get; set; } = 10;
+
+        public double Reflectance { get; set; } = 0.5;
         
 
         /// <summary>

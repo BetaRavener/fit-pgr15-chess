@@ -89,42 +89,7 @@ namespace Raytracer
             _camera = new Camera(-100, 200, -400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
-
-            //var sphere1 = new Sphere(new Vector3d(-30, 0, 0), 40, Color4.Beige);
-            //var sphere2 = new Sphere(new Vector3d(10, 0, 0), 60, Color4.Aqua);
-            //var csgNode = new CsgNode(CsgNode.Operations.Difference, sphere2, sphere1);
-            //var sceneObject = new SceneObject(csgNode, Color4.Azure);
-
-            //_sceneObjects.Add(sceneObject);
-
-
-            //var box1 = new Box(new Vector3d(-200, 0, -200), new Vector3d(200, 20, 200), new Vector3d(0.5, 0.5, 0));
-            //var box2 = new Box(new Vector3d(-90, -10, -90), new Vector3d(90, 30, 90), new Vector3d(0.5, 0.5, 0));
-            //csgNode =  new CsgNode(CsgNode.Operations.Difference, box1, box2);
-            //sceneObject = new SceneObject(csgNode, Color4.Azure);
-
-            //_sceneObjects.Add(sceneObject);
-
-            //var sphere = new Sphere(new Vector3d(0, 60, 0), 60, new Vector3d(0.2, 0, 0.8));
-            //var cylinder1 = new Cylinder(Vector3d.Zero, Vector3d.UnitY, 100, 60, new Vector3d(0.2, 0.8, 0.1));
-            //var csgNode1 = new CsgNode(CsgNode.Operations.Union, sphere, cylinder1);
-            //var cylinder2 = new Cylinder(new Vector3d(0,40,0), new Vector3d(0, 0.8, -0.2), 40, 100, new Vector3d(0.8, 0.3, 0.3));
-            //var csgNode2 = new CsgNode(CsgNode.Operations.Difference, csgNode1, cylinder2);
-            //var sceneObject = new SceneObject(csgNode2, Color4.Azure, new BoundingBox(-100, 0, -100, 100, 100, 100));
-            ////_sceneObjects.Add(sceneObject);
-
-            //var csgNode3 = new Box(new Vector3d(0, 0, 0), new Vector3d(100, 50, 100), new Vector3d(0.0, 0, 0.0));
-            //var csgNode4 = new Box(new Vector3d(100, 0, 100), new Vector3d(200, 50, 200), new Vector3d(0.0, 0, 0.0));
-            //var csgNode5 = new Box(new Vector3d(0, 0, 100), new Vector3d(100, 50, 200), new Vector3d(1.0, 1, 1.0));
-            //var csgNode6 = new Box(new Vector3d(100, 0, 0), new Vector3d(200, 50, 100), new Vector3d(1.0, 1, 1.0));
-
-
-            //var csgNodefin =  new CsgNode(CsgNode.Operations.Union, csgNode3, csgNode4);
-            //var csgNodefin2 = new CsgNode(CsgNode.Operations.Union, csgNodefin, csgNode5);
-            //var csgNodefin3 = new CsgNode(CsgNode.Operations.Union, csgNodefin2, csgNode6);
-
-            //var sceneObject2 = new SceneObject(csgNodefin2, Color4.Azure, new BoundingBox(0, 0, 0, 200, 50, 200));
-
+          
             var game = new Game
             {
                 Chessboard = new Chessboard(),
@@ -150,8 +115,25 @@ namespace Raytracer
 
             var loadedGame = gameLoader.LoadGame("test.txt");
 
-
             _sceneObjects.AddRange(loadedGame.GetSceneObjects());
+
+            // debug
+            //var y = new CsgNode();
+            //var obj = new SceneObject(y, Color4.Green);
+            //y.Operation = CsgNode.Operations.Union;
+            //y.Left = new Sphere(new ChessboardPosition(4, 4).RealPosition + new Vector3d(0, 55, 0), 50, obj);
+            //y.Right = obj.CsgTree.Left;
+
+            //_sceneObjects.Add(obj);
+
+            //var x = new CsgNode();
+            //var obj2 = new SceneObject(x, Color4.Red);
+            //x.Operation = CsgNode.Operations.Union;
+            //x.Left = new Box(new ChessboardPosition(1, 2).RealPosition, new ChessboardPosition(2, 3).RealPosition + new Vector3d(0, 50, 0), obj2);
+            //x.Right = obj.CsgTree.Left;
+
+            //_sceneObjects.Add(obj2);
+
 
             _rayCache = new List<Ray>();
 
@@ -226,18 +208,19 @@ namespace Raytracer
         /// <returns>ColorAmbient of traced object at the intersection point.</returns>
         private Color4 TraceRay(Ray ray, int depth = 2)
         {
+            // normalize here ray because of recursion
+            ray.Direction.Normalize();
+
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
             if (closestIntersection.Kind == IntersectionKind.None) return Background;
-
-            ray.Direction.Normalize();
 
             Shape hitShape = closestIntersection.Shape;
 
             Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
             Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition);
 
-            Color4 finalColor = Color.Black;//hitShape.ColorAmbient; // TODO should use ambient color? or just black
+            Color4 finalColor = Color.Black;
             Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
 
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
@@ -248,10 +231,8 @@ namespace Raytracer
             {
                 // diffuse light (default shape color)
                 //finalColor += hitShape.Color * Light.Color * Math.Max(0.0, angleToLight);
-     
-                var diffuseColor = hitShape.Color(hitPosition,hitNormal).Multiply(Light.Color).Multiply(Math.Max(0.0, angleToLight));
-              
-                finalColor = finalColor.Add(diffuseColor);
+                var diffuseColor = Color4Extension.Multiply(hitShape.Color(hitPosition,hitNormal), Light.Color).Times((float) Math.Max(0.0, angleToLight));
+               finalColor = finalColor.Add(diffuseColor);
 
                // specular
                 if (hitShape.Shininess > 0)
@@ -260,7 +241,7 @@ namespace Raytracer
                     double specularRatio = -Vector3d.Dot(reflectionDirection, ray.Direction);
                     if (specularRatio > 0)
                     {
-                        var specularColor = hitShape.ColorSpecular.Multiply(Light.Color).Multiply(Math.Pow(specularRatio, hitShape.Shininess));
+                        var specularColor = Color4Extension.Multiply(hitShape.ColorSpecular, Light.Color).Times((float) Math.Pow(specularRatio, hitShape.Shininess));
                         finalColor = finalColor.Add(specularColor);
                         //finalColor += hitShape.ColorSpecular*Light.Color*Math.Pow(specularRatio, hitShape.Shininess);
                     }
@@ -274,7 +255,7 @@ namespace Raytracer
                 Ray reflectanceRay = new Ray(hitPosition, reflectionDirection).Shift();
                 Color4 reflectedColor = TraceRay(reflectanceRay, depth - 1);
 
-                finalColor = finalColor.Add(reflectedColor.Multiply(hitShape.Reflectance));
+                finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, hitShape.Reflectance));
                 //finalColor += reflectedColor * hitShape.Reflectance;
             }
 
