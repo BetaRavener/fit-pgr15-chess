@@ -21,6 +21,7 @@ namespace Chess.Gui
         private int _lastX;
         private int _lastY;
 
+        OpenTK.Vector3d _lightPos;
         private bool _resized;
         private bool _viewChanged;
         private bool _rotating;
@@ -39,6 +40,8 @@ namespace Chess.Gui
             cameraX.Text = ((int) _raytracer.Eye.Position.X).ToString();
             cameraY.Text = ((int) _raytracer.Eye.Position.Y).ToString();
             cameraZ.Text = ((int) _raytracer.Eye.Position.Z).ToString();
+
+            _lightPos = _raytracer.Light.Position;
 
             _resized = true;
             _viewChanged = true;
@@ -115,10 +118,10 @@ namespace Chess.Gui
 
                 if (_lightChanged)
                 {
-                    var lightPos = _raytracer.Light.Position;
-                    lightX.Text = ((int) lightPos.X).ToString();
-                    lightY.Text = ((int) lightPos.Y).ToString();
-                    lightZ.Text = ((int) lightPos.Z).ToString();
+                    _raytracer.Light.Position = _lightPos;
+                    lightX.Text = ((int) _lightPos.X).ToString();
+                    lightY.Text = ((int) _lightPos.Y).ToString();
+                    lightZ.Text = ((int) _lightPos.Z).ToString();
                 }
                 if (_viewChanged)
                 {
@@ -160,20 +163,10 @@ namespace Chess.Gui
             RenderButton.Text = "Render";
         }
 
-        private int _lastCamX;
-        private int _lastCamY;
-        private int _lastLightX;
-        private int _lastLightY;
-
         private void RenderView_MouseDown(object sender, MouseEventArgs e)
         {
             _lastX = e.X;
             _lastY = e.Y;
-
-            _lastCamX = int.Parse(cameraX.Text);
-            _lastCamY = int.Parse(cameraY.Text);
-            _lastLightX = int.Parse(lightX.Text);
-            _lastLightY = int.Parse(lightY.Text);
         }
 
         private void RenderView_MouseMove(object sender, MouseEventArgs e)
@@ -183,7 +176,7 @@ namespace Chess.Gui
 
             if ((ModifierKeys == Keys.Control && e.Button == MouseButtons.Left) || e.Button == MouseButtons.Right)
             {
-                _raytracer.Light.Position += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
+                _lightPos += new OpenTK.Vector3d(LightSensitivity * dX, LightSensitivity * dY, 0);
                 _lightChanged = true;
             }
             else if (e.Button == MouseButtons.Left)
@@ -220,8 +213,7 @@ namespace Chess.Gui
             if (!lightX.Focused)
                 return;
 
-            var pos = _raytracer.Light.Position;
-            _raytracer.Light.Position = new Vector3d(double.Parse(lightX.Text), pos.Y, pos.Z);
+            _lightPos.X = double.Parse(lightX.Text);
             _lightChanged = true;
         }
 
@@ -230,8 +222,7 @@ namespace Chess.Gui
             if (!lightY.Focused)
                 return;
 
-            var pos = _raytracer.Light.Position;
-            _raytracer.Light.Position = new Vector3d(pos.X, double.Parse(lightY.Text), pos.Z);
+            _lightPos.Y = double.Parse(lightY.Text);
             _lightChanged = true;
         }
 
@@ -240,8 +231,7 @@ namespace Chess.Gui
             if (!lightZ.Focused)
                 return;
 
-            var pos = _raytracer.Light.Position;
-            _raytracer.Light.Position = new Vector3d(pos.X, pos.Y, double.Parse(lightZ.Text));
+            _lightPos.Z = double.Parse(lightZ.Text);
             _lightChanged = true;
         }
 

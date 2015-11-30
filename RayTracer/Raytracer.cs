@@ -85,7 +85,8 @@ namespace Raytracer
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera(-100, 200, -400);
+            _camera = new Camera(100, 400, 200);
+            _camera.LookAt = new Vector3d(400, 0, 400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
 
@@ -180,12 +181,14 @@ namespace Raytracer
         /// </summary>
         /// <param name="ray"></param>
         /// <returns></returns>
-        private bool IsInShadow(Ray ray)
+        private bool IsInShadow(Ray ray, double lightDistance)
         {
             for (int index = 0; index < _sceneObjects.Count; index++)
             {
                 var sceneObject = _sceneObjects[index];
-                if (sceneObject.IntersectFirst(ray).Kind != IntersectionKind.None)
+                var inters = sceneObject.IntersectFirst(ray);
+
+                if (inters.Kind != IntersectionKind.None && inters.Distance < lightDistance)
                 {
                     return true;
                 }
@@ -209,15 +212,19 @@ namespace Raytracer
             var closestIntersection = GetClosestIntersection(ray);
             if (closestIntersection.Kind == IntersectionKind.None)
             {
-                return Background;
+                if (depth < 2)
+                    return Color4.Black;
+                else
+                    return Background;
             }
 
             Shape hitShape = closestIntersection.Shape;
 
             Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
             Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition);
-            Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
-            Vector3d eyeDirection = (Eye.Position - hitPosition).Normalized();
+            Vector3d lightDirection = (Light.Position - hitPosition);
+            double lightDistance = lightDirection.Length;
+            lightDirection.Normalize();
             Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
             var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
             if (OnlyBoundingBoxes)
@@ -225,11 +232,11 @@ namespace Raytracer
                 return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
             }
 
-            Color4 finalColor = Color.Black;
+            Color4 finalColor = Light.Color.Times(0.1f);
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
             Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
 
-            if (!IsInShadow(shadowRay))
+            if (!IsInShadow(shadowRay, lightDistance))
             {
                 // diffuse light (default shape color)
                 var diffuseColor = Color4Extension.Multiply(hitShape.Color(hitPosition, hitNormal), Light.Color).Times((float)Math.Max(0.0, angleToLight));
@@ -238,7 +245,7 @@ namespace Raytracer
                 // specular
                 if (hitShape.Shininess > 0)
                 {
-                    double specularRatio = -Vector3d.Dot(lightReflection, eyeDirection);
+                    double specularRatio = Vector3d.Dot(lightReflection, ray.Direction);
                     if (specularRatio > 0)
                     {
                         var specularColor = Color4Extension.Multiply(hitShape.ColorSpecular, Light.Color).Times((float)Math.Pow(specularRatio, hitShape.Shininess));
