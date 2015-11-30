@@ -50,9 +50,11 @@ namespace Chess.Gui
             this.label5 = new System.Windows.Forms.Label();
             this.openFileButton = new System.Windows.Forms.Button();
             this.exportButton = new System.Windows.Forms.Button();
+            this.antialiasingFactor = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.RenderView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThreadsNumber)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.reflectionDepth)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.antialiasingFactor)).BeginInit();
             this.SuspendLayout();
             // 
             // RenderView
@@ -62,7 +64,7 @@ namespace Chess.Gui
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RenderView.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.RenderView.Location = new System.Drawing.Point(0, 0);
-            this.RenderView.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.RenderView.Margin = new System.Windows.Forms.Padding(5);
             this.RenderView.Name = "RenderView";
             this.RenderView.Size = new System.Drawing.Size(820, 543);
             this.RenderView.TabIndex = 0;
@@ -77,7 +79,7 @@ namespace Chess.Gui
             // 
             this.RenderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.RenderButton.Location = new System.Drawing.Point(692, 642);
-            this.RenderButton.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.RenderButton.Margin = new System.Windows.Forms.Padding(5);
             this.RenderButton.Name = "RenderButton";
             this.RenderButton.Size = new System.Drawing.Size(113, 51);
             this.RenderButton.TabIndex = 1;
@@ -90,7 +92,7 @@ namespace Chess.Gui
             this.RenderProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RenderProgressBar.Location = new System.Drawing.Point(204, 658);
-            this.RenderProgressBar.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.RenderProgressBar.Margin = new System.Windows.Forms.Padding(5);
             this.RenderProgressBar.Name = "RenderProgressBar";
             this.RenderProgressBar.Size = new System.Drawing.Size(460, 35);
             this.RenderProgressBar.TabIndex = 2;
@@ -100,7 +102,7 @@ namespace Chess.Gui
             // 
             this.ThreadsNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.ThreadsNumber.Location = new System.Drawing.Point(204, 554);
-            this.ThreadsNumber.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.ThreadsNumber.Margin = new System.Windows.Forms.Padding(5);
             this.ThreadsNumber.Maximum = new decimal(new int[] {
             20,
             0,
@@ -254,7 +256,7 @@ namespace Chess.Gui
             // 
             this.reflectionDepth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.reflectionDepth.Location = new System.Drawing.Point(504, 553);
-            this.reflectionDepth.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.reflectionDepth.Margin = new System.Windows.Forms.Padding(5);
             this.reflectionDepth.Maximum = new decimal(new int[] {
             20,
             0,
@@ -268,35 +270,35 @@ namespace Chess.Gui
             0,
             0,
             0});
-            this.reflectionDepth.TextChanged += new System.EventHandler(this.reflectionDepth_TextChanged);
+            this.reflectionDepth.ValueChanged += new System.EventHandler(this.reflectionDepth_ValueChanged);
             // 
             // label5
             // 
             this.label5.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(357, 595);
+            this.label5.Location = new System.Drawing.Point(357, 590);
             this.label5.Margin = new System.Windows.Forms.Padding(5, 0, 5, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(79, 20);
+            this.label5.Size = new System.Drawing.Size(90, 20);
             this.label5.TabIndex = 22;
-            this.label5.Text = "Scene file";
+            this.label5.Text = "Antialiasing";
             // 
             // openFileButton
             // 
-            this.openFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.openFileButton.Location = new System.Drawing.Point(504, 586);
-            this.openFileButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.openFileButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.openFileButton.Location = new System.Drawing.Point(692, 553);
+            this.openFileButton.Margin = new System.Windows.Forms.Padding(2);
             this.openFileButton.Name = "openFileButton";
-            this.openFileButton.Size = new System.Drawing.Size(61, 39);
+            this.openFileButton.Size = new System.Drawing.Size(113, 39);
             this.openFileButton.TabIndex = 23;
-            this.openFileButton.Text = "Open";
+            this.openFileButton.Text = "Open scene";
             this.openFileButton.UseVisualStyleBackColor = true;
             this.openFileButton.Click += new System.EventHandler(this.openFileButton_Click);
             // 
             // exportButton
             // 
             this.exportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.exportButton.Location = new System.Drawing.Point(692, 586);
+            this.exportButton.Location = new System.Drawing.Point(692, 596);
             this.exportButton.Margin = new System.Windows.Forms.Padding(2);
             this.exportButton.Name = "exportButton";
             this.exportButton.Size = new System.Drawing.Size(113, 39);
@@ -305,12 +307,38 @@ namespace Chess.Gui
             this.exportButton.UseVisualStyleBackColor = true;
             this.exportButton.Click += new System.EventHandler(this.exportButton_Click);
             // 
+            // antialiasingFactor
+            // 
+            this.antialiasingFactor.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.antialiasingFactor.Location = new System.Drawing.Point(504, 587);
+            this.antialiasingFactor.Margin = new System.Windows.Forms.Padding(5);
+            this.antialiasingFactor.Maximum = new decimal(new int[] {
+            3,
+            0,
+            0,
+            0});
+            this.antialiasingFactor.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.antialiasingFactor.Name = "antialiasingFactor";
+            this.antialiasingFactor.Size = new System.Drawing.Size(63, 26);
+            this.antialiasingFactor.TabIndex = 25;
+            this.antialiasingFactor.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.antialiasingFactor.ValueChanged += new System.EventHandler(this.antialiasingFactor_ValueChanged);
+            // 
             // ChessForm
             // 
             this.AcceptButton = this.RenderButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(819, 695);
+            this.Controls.Add(this.antialiasingFactor);
             this.Controls.Add(this.exportButton);
             this.Controls.Add(this.openFileButton);
             this.Controls.Add(this.label5);
@@ -331,12 +359,13 @@ namespace Chess.Gui
             this.Controls.Add(this.RenderProgressBar);
             this.Controls.Add(this.RenderButton);
             this.Controls.Add(this.RenderView);
-            this.Margin = new System.Windows.Forms.Padding(5, 5, 5, 5);
+            this.Margin = new System.Windows.Forms.Padding(5);
             this.Name = "ChessForm";
             this.Text = "Chess";
             ((System.ComponentModel.ISupportInitialize)(this.RenderView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThreadsNumber)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.reflectionDepth)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.antialiasingFactor)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -364,6 +393,7 @@ namespace Chess.Gui
         private Label label5;
         private Button openFileButton;
         private Button exportButton;
+        private NumericUpDown antialiasingFactor;
     }
 }
 

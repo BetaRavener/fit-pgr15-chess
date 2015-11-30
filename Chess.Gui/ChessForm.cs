@@ -268,7 +268,7 @@ namespace Chess.Gui
             _viewChanged = true;
         }
 
-        private void reflectionDepth_TextChanged(object sender, EventArgs e)
+        private void reflectionDepth_ValueChanged(object sender, EventArgs e)
         {
             if (!reflectionDepth.Focused)
                 return;
@@ -342,6 +342,17 @@ namespace Chess.Gui
             }
 
             RenderView.Image.Save(saveFileDialog.FileName, imageType);
+        }
+
+        private void antialiasingFactor_ValueChanged(object sender, EventArgs e)
+        {
+            if (!antialiasingFactor.Focused)
+                return;
+
+            _raytracer.AntialiasFactor = (int) antialiasingFactor.Value;
+            _viewChanged = true;
+
+            // TODO when resize && rendering is on, crashes because ray cache not found
         }
     }
 }

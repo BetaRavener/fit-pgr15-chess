@@ -76,7 +76,7 @@ namespace Raytracer
 
         private int _antialiasFactor = 1;
 
-        private int AntialiasFactor
+        public int AntialiasFactor
         {
             get { return _antialiasFactor; }
             set
