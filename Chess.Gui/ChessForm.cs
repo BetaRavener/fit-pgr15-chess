@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -98,7 +100,7 @@ namespace Chess.Gui
             _cancelSource = new CancellationTokenSource();
 
             _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
-            _raytracer.ReflectionDepth = (int) ReflectionDepth.Value;
+            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
 
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
@@ -268,11 +270,78 @@ namespace Chess.Gui
 
         private void reflectionDepth_TextChanged(object sender, EventArgs e)
         {
-            if (!ReflectionDepth.Focused)
+            if (!reflectionDepth.Focused)
                 return;
 
-            _raytracer.ReflectionDepth = (int) ReflectionDepth.Value;
+            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
             _viewChanged = true;
+        }
+
+        private void openFileButton_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = @"Chess state JSON file|*.JSON";
+            openFileDialog.InitialDirectory = @".";
+
+            string filename = "";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filename = openFileDialog.FileName;
+            }
+
+            if (filename != "")
+            {
+                
+            }
+
+            //Stream fileStream = null;
+            //if (openFileDialog.ShowDialog() == DialogResult.OK) && (fileStream = selectFileDialog.OpenFile()) != null){
+            //    string fileName = selectFileDialog.FileName;
+            //    using (fileStream)
+            //    {
+            //        // TODO
+            //    }
+            //}
+
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            if (RenderView.Image == null)
+            {
+                MessageBox.Show(@"You need to render scene first!");
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = @"Bitmap Image|*.bmp|Jpeg Image|*.jpg|Gif Image|*.gif",
+                Title = @"Export to image file"
+            };
+
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            ImageFormat imageType;
+            switch (saveFileDialog.FilterIndex)
+            {
+                case 1:
+                    imageType = ImageFormat.Bmp;
+                    break;
+
+                case 2:
+                    imageType = ImageFormat.Jpeg;
+                    break;
+
+                case 3:
+                    imageType = ImageFormat.Gif;
+                    break;
+
+                default:
+                    MessageBox.Show(@"Allowed types ar only JPG, BMP, GIF");
+                    return;
+            }
+
+            RenderView.Image.Save(saveFileDialog.FileName, imageType);
         }
     }
 }

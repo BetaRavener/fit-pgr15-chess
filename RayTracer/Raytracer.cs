@@ -74,7 +74,7 @@ namespace Raytracer
             get { return (1.0f/_heightInPixels)*NearPlaneHeight; }
         }
 
-        private int _antialiasFactor;
+        private int _antialiasFactor = 1;
 
         private int AntialiasFactor
         {
@@ -86,11 +86,12 @@ namespace Raytracer
                 BuildRayCache();
             }
         }
+        
         private int AntialiasedWidth { get { return _widthInPixels * AntialiasFactor; } }
 
         private int AntialiasedHeight { get { return _heightInPixels * AntialiasFactor; } }
 
-        public int NumberOfThreads { get; set; }
+        public int NumberOfThreads { get; set; } = 1;
 
         public static Vector3d ColorToVec(Color color)
         {
@@ -118,17 +119,13 @@ namespace Raytracer
 
             var gameLoader = new GameLoader(@".");
 
-            gameLoader.SaveGame(game, "test.txt");
+            gameLoader.SaveGame(game, "scene1.json");
 
-            var loadedGame = gameLoader.LoadGame("test.txt");
+            var loadedGame = gameLoader.LoadGame("scene1.json");
 
             _sceneObjects.AddRange(loadedGame.GetSceneObjects());
-
             _rayCache = new List<Ray>();
             _colorCache = new List<Color4>();
-
-            AntialiasFactor = 1;
-            NumberOfThreads = 1;
         }
 
         public void Resize(int widthInPixels, int heightInPixels)
