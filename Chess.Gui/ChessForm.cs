@@ -98,6 +98,7 @@ namespace Chess.Gui
             _cancelSource = new CancellationTokenSource();
 
             _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
+            _raytracer.ReflectionDepth = (int) ReflectionDepth.Value;
 
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
@@ -262,6 +263,15 @@ namespace Chess.Gui
 
             var pos = _raytracer.Eye.Position;
             _raytracer.Eye.Position = new Vector3d(pos.X, pos.Y, double.Parse(cameraZ.Text));
+            _viewChanged = true;
+        }
+
+        private void reflectionDepth_TextChanged(object sender, EventArgs e)
+        {
+            if (!ReflectionDepth.Focused)
+                return;
+
+            _raytracer.ReflectionDepth = (int) ReflectionDepth.Value;
             _viewChanged = true;
         }
     }

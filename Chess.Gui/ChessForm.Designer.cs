@@ -45,8 +45,11 @@ namespace Chess.Gui
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.FPSlabel = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ReflectionDepth = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.RenderView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThreadsNumber)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ReflectionDepth)).BeginInit();
             this.SuspendLayout();
             // 
             // RenderView
@@ -56,8 +59,9 @@ namespace Chess.Gui
             | System.Windows.Forms.AnchorStyles.Right)));
             this.RenderView.BackColor = System.Drawing.SystemColors.ActiveCaption;
             this.RenderView.Location = new System.Drawing.Point(0, 0);
+            this.RenderView.Margin = new System.Windows.Forms.Padding(6);
             this.RenderView.Name = "RenderView";
-            this.RenderView.Size = new System.Drawing.Size(502, 332);
+            this.RenderView.Size = new System.Drawing.Size(920, 613);
             this.RenderView.TabIndex = 0;
             this.RenderView.TabStop = false;
             this.RenderView.MouseDown += new System.Windows.Forms.MouseEventHandler(this.RenderView_MouseDown);
@@ -69,9 +73,10 @@ namespace Chess.Gui
             // RenderButton
             // 
             this.RenderButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.RenderButton.Location = new System.Drawing.Point(428, 407);
+            this.RenderButton.Location = new System.Drawing.Point(785, 751);
+            this.RenderButton.Margin = new System.Windows.Forms.Padding(6);
             this.RenderButton.Name = "RenderButton";
-            this.RenderButton.Size = new System.Drawing.Size(75, 23);
+            this.RenderButton.Size = new System.Drawing.Size(138, 42);
             this.RenderButton.TabIndex = 1;
             this.RenderButton.Text = "Render";
             this.RenderButton.UseVisualStyleBackColor = true;
@@ -81,15 +86,17 @@ namespace Chess.Gui
             // 
             this.RenderProgressBar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.RenderProgressBar.Location = new System.Drawing.Point(136, 407);
+            this.RenderProgressBar.Location = new System.Drawing.Point(249, 751);
+            this.RenderProgressBar.Margin = new System.Windows.Forms.Padding(6);
             this.RenderProgressBar.Name = "RenderProgressBar";
-            this.RenderProgressBar.Size = new System.Drawing.Size(286, 23);
+            this.RenderProgressBar.Size = new System.Drawing.Size(524, 42);
             this.RenderProgressBar.TabIndex = 2;
             // 
             // ThreadsNumber
             // 
             this.ThreadsNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.ThreadsNumber.Location = new System.Drawing.Point(136, 339);
+            this.ThreadsNumber.Location = new System.Drawing.Point(249, 626);
+            this.ThreadsNumber.Margin = new System.Windows.Forms.Padding(6);
             this.ThreadsNumber.Maximum = new decimal(new int[] {
             20,
             0,
@@ -101,7 +108,7 @@ namespace Chess.Gui
             0,
             0});
             this.ThreadsNumber.Name = "ThreadsNumber";
-            this.ThreadsNumber.Size = new System.Drawing.Size(42, 20);
+            this.ThreadsNumber.Size = new System.Drawing.Size(77, 29);
             this.ThreadsNumber.TabIndex = 3;
             this.ThreadsNumber.Value = new decimal(new int[] {
             4,
@@ -113,9 +120,10 @@ namespace Chess.Gui
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 340);
+            this.label1.Location = new System.Drawing.Point(13, 628);
+            this.label1.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(94, 13);
+            this.label1.Size = new System.Drawing.Size(172, 25);
             this.label1.TabIndex = 4;
             this.label1.Text = "Number of threads";
             // 
@@ -123,20 +131,20 @@ namespace Chess.Gui
             // 
             this.labelLightPosition.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelLightPosition.AutoSize = true;
-            this.labelLightPosition.Location = new System.Drawing.Point(7, 363);
-            this.labelLightPosition.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelLightPosition.Location = new System.Drawing.Point(13, 670);
+            this.labelLightPosition.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLightPosition.Name = "labelLightPosition";
-            this.labelLightPosition.Size = new System.Drawing.Size(105, 13);
+            this.labelLightPosition.Size = new System.Drawing.Size(195, 25);
             this.labelLightPosition.TabIndex = 5;
             this.labelLightPosition.Text = "Light position (x, y, z)";
             // 
             // lightX
             // 
             this.lightX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lightX.Location = new System.Drawing.Point(136, 361);
-            this.lightX.Margin = new System.Windows.Forms.Padding(2);
+            this.lightX.Location = new System.Drawing.Point(249, 666);
+            this.lightX.Margin = new System.Windows.Forms.Padding(4);
             this.lightX.Name = "lightX";
-            this.lightX.Size = new System.Drawing.Size(27, 20);
+            this.lightX.Size = new System.Drawing.Size(46, 29);
             this.lightX.TabIndex = 6;
             this.lightX.Text = "0";
             this.lightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -145,10 +153,10 @@ namespace Chess.Gui
             // lightY
             // 
             this.lightY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lightY.Location = new System.Drawing.Point(165, 361);
-            this.lightY.Margin = new System.Windows.Forms.Padding(2);
+            this.lightY.Location = new System.Drawing.Point(303, 666);
+            this.lightY.Margin = new System.Windows.Forms.Padding(4);
             this.lightY.Name = "lightY";
-            this.lightY.Size = new System.Drawing.Size(27, 20);
+            this.lightY.Size = new System.Drawing.Size(46, 29);
             this.lightY.TabIndex = 7;
             this.lightY.Text = "100";
             this.lightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -157,10 +165,10 @@ namespace Chess.Gui
             // lightZ
             // 
             this.lightZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.lightZ.Location = new System.Drawing.Point(193, 361);
-            this.lightZ.Margin = new System.Windows.Forms.Padding(2);
+            this.lightZ.Location = new System.Drawing.Point(354, 666);
+            this.lightZ.Margin = new System.Windows.Forms.Padding(4);
             this.lightZ.Name = "lightZ";
-            this.lightZ.Size = new System.Drawing.Size(27, 20);
+            this.lightZ.Size = new System.Drawing.Size(46, 29);
             this.lightZ.TabIndex = 8;
             this.lightZ.Text = "-10";
             this.lightZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -169,10 +177,10 @@ namespace Chess.Gui
             // cameraZ
             // 
             this.cameraZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cameraZ.Location = new System.Drawing.Point(193, 384);
-            this.cameraZ.Margin = new System.Windows.Forms.Padding(2);
+            this.cameraZ.Location = new System.Drawing.Point(354, 709);
+            this.cameraZ.Margin = new System.Windows.Forms.Padding(4);
             this.cameraZ.Name = "cameraZ";
-            this.cameraZ.Size = new System.Drawing.Size(27, 20);
+            this.cameraZ.Size = new System.Drawing.Size(46, 29);
             this.cameraZ.TabIndex = 16;
             this.cameraZ.Text = "-150";
             this.cameraZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -181,10 +189,10 @@ namespace Chess.Gui
             // cameraY
             // 
             this.cameraY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cameraY.Location = new System.Drawing.Point(165, 384);
-            this.cameraY.Margin = new System.Windows.Forms.Padding(2);
+            this.cameraY.Location = new System.Drawing.Point(303, 709);
+            this.cameraY.Margin = new System.Windows.Forms.Padding(4);
             this.cameraY.Name = "cameraY";
-            this.cameraY.Size = new System.Drawing.Size(27, 20);
+            this.cameraY.Size = new System.Drawing.Size(46, 29);
             this.cameraY.TabIndex = 15;
             this.cameraY.Text = "70";
             this.cameraY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -193,10 +201,10 @@ namespace Chess.Gui
             // cameraX
             // 
             this.cameraX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cameraX.Location = new System.Drawing.Point(136, 384);
-            this.cameraX.Margin = new System.Windows.Forms.Padding(2);
+            this.cameraX.Location = new System.Drawing.Point(249, 709);
+            this.cameraX.Margin = new System.Windows.Forms.Padding(4);
             this.cameraX.Name = "cameraX";
-            this.cameraX.Size = new System.Drawing.Size(27, 20);
+            this.cameraX.Size = new System.Drawing.Size(46, 29);
             this.cameraX.TabIndex = 14;
             this.cameraX.Text = "0";
             this.cameraX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
@@ -206,10 +214,10 @@ namespace Chess.Gui
             // 
             this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(7, 385);
-            this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label2.Location = new System.Drawing.Point(13, 711);
+            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(118, 13);
+            this.label2.Size = new System.Drawing.Size(223, 25);
             this.label2.TabIndex = 13;
             this.label2.Text = "Camera position (x, y, z)";
             // 
@@ -217,9 +225,10 @@ namespace Chess.Gui
             // 
             this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 412);
+            this.label3.Location = new System.Drawing.Point(22, 761);
+            this.label3.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(27, 13);
+            this.label3.Size = new System.Drawing.Size(51, 25);
             this.label3.TabIndex = 17;
             this.label3.Text = "FPS";
             // 
@@ -227,18 +236,52 @@ namespace Chess.Gui
             // 
             this.FPSlabel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.FPSlabel.AutoSize = true;
-            this.FPSlabel.Location = new System.Drawing.Point(45, 412);
+            this.FPSlabel.Location = new System.Drawing.Point(83, 761);
+            this.FPSlabel.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
             this.FPSlabel.Name = "FPSlabel";
-            this.FPSlabel.Size = new System.Drawing.Size(19, 13);
+            this.FPSlabel.Size = new System.Drawing.Size(34, 25);
             this.FPSlabel.TabIndex = 18;
             this.FPSlabel.Text = "??";
+            // 
+            // label4
+            // 
+            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(404, 628);
+            this.label4.Margin = new System.Windows.Forms.Padding(6, 0, 6, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(168, 25);
+            this.label4.TabIndex = 20;
+            this.label4.Text = "Depth of reflection";
+            // 
+            // ReflectionDepth
+            // 
+            this.ReflectionDepth.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ReflectionDepth.Location = new System.Drawing.Point(584, 625);
+            this.ReflectionDepth.Margin = new System.Windows.Forms.Padding(6);
+            this.ReflectionDepth.Maximum = new decimal(new int[] {
+            20,
+            0,
+            0,
+            0});
+            this.ReflectionDepth.Name = "ReflectionDepth";
+            this.ReflectionDepth.Size = new System.Drawing.Size(77, 29);
+            this.ReflectionDepth.TabIndex = 19;
+            this.ReflectionDepth.Value = new decimal(new int[] {
+            2,
+            0,
+            0,
+            0});
+            this.ReflectionDepth.TextChanged += new System.EventHandler(this.reflectionDepth_TextChanged);
             // 
             // ChessForm
             // 
             this.AcceptButton = this.RenderButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(11F, 24F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(501, 431);
+            this.ClientSize = new System.Drawing.Size(919, 796);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.ReflectionDepth);
             this.Controls.Add(this.FPSlabel);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cameraZ);
@@ -254,10 +297,12 @@ namespace Chess.Gui
             this.Controls.Add(this.RenderProgressBar);
             this.Controls.Add(this.RenderButton);
             this.Controls.Add(this.RenderView);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.Name = "ChessForm";
             this.Text = "Chess";
             ((System.ComponentModel.ISupportInitialize)(this.RenderView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ThreadsNumber)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ReflectionDepth)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -280,6 +325,8 @@ namespace Chess.Gui
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label FPSlabel;
+        private Label label4;
+        private NumericUpDown ReflectionDepth;
     }
 }
 

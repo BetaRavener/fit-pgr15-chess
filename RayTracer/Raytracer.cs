@@ -1,4 +1,6 @@
-﻿using System;
+﻿//#define PARALLEL
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -47,6 +49,8 @@ namespace Raytracer
             get { return _lightSource; }
             set { _lightSource = value; }
         }
+
+        public int ReflectionDepth { get; set; } = 2;
 
         public bool OnlyBoundingBoxes { get; set; }
 
@@ -172,6 +176,7 @@ namespace Raytracer
         /// Check if specified ray intersects any object on the way to light
         /// </summary>
         /// <param name="ray"></param>
+        /// <param name="lightDistance"></param>
         /// <returns></returns>
         private bool IsInShadow(Ray ray, double lightDistance)
         {
@@ -194,8 +199,9 @@ namespace Raytracer
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <param name="depth">Actual level of recurse</param>
-        /// <returns>ColorAmbient of traced object at the intersection point.</returns>
-        private Color4 TraceRay(Ray ray, int depth = 2)
+        /// <param name="noHitColor"></param>
+        /// <returns>color of traced object at the intersection point.</returns>
+        private Color4 TraceRay(Ray ray, int depth, Color4 noHitColor)
         {
             // normalize here ray because of recursion
             ray.Direction.Normalize();
@@ -204,10 +210,7 @@ namespace Raytracer
             var closestIntersection = GetClosestIntersection(ray);
             if (closestIntersection.Kind == IntersectionKind.None)
             {
-                if (depth < 2)
-                    return Color4.Black;
-                else
-                    return Background;
+                return noHitColor;
             }
 
             Shape hitShape = closestIntersection.Shape;
@@ -249,7 +252,7 @@ namespace Raytracer
             // reflected ray (recursion)
             if (hitShape.Reflectance > 0 && depth > 0)
             {
-                Color4 reflectedColor = TraceRay(reflectedRay, depth - 1);
+                Color4 reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
 
                 finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, hitShape.Reflectance));
             }
@@ -305,7 +308,7 @@ namespace Raytracer
                 }
 
                 var ray = _rayCache[i];
-                _colorCache[ray.Fragment] = TraceRay(ray);
+                _colorCache[ray.Fragment] = TraceRay(ray, ReflectionDepth, Background);
 #if PARALLEL
                 lock (progressLock)
                 {
