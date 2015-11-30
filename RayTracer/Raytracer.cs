@@ -1,8 +1,9 @@
-﻿using System;
+﻿#define PARALLEL
+
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CSG;
@@ -30,6 +31,10 @@ namespace Raytracer
         private List<Ray> _rayCache;
         private List<Color4> _colorCache;
 
+        public List<SceneObject> SceneObjects {
+            get { return _sceneObjects; }
+        }
+
         private static Color4 Background
         {
             get { return Color.MidnightBlue; }
@@ -46,6 +51,8 @@ namespace Raytracer
             get { return _lightSource; }
             set { _lightSource = value; }
         }
+
+        public int ReflectionDepth { get; set; } = 2;
 
         public bool OnlyBoundingBoxes { get; set; }
 
@@ -69,9 +76,9 @@ namespace Raytracer
             get { return (1.0f/_heightInPixels)*NearPlaneHeight; }
         }
 
-        private int _antialiasFactor;
+        private int _antialiasFactor = 1;
 
-        private int AntialiasFactor
+        public int AntialiasFactor
         {
             get { return _antialiasFactor; }
             set
@@ -81,43 +88,27 @@ namespace Raytracer
                 BuildRayCache();
             }
         }
+        
         private int AntialiasedWidth { get { return _widthInPixels * AntialiasFactor; } }
 
         private int AntialiasedHeight { get { return _heightInPixels * AntialiasFactor; } }
 
-        public int NumberOfThreads { get; set; }
+        public int NumberOfThreads { get; set; } = 1;
 
-        public static Vector3d ColorToVec(Color color)
-        {
-            return new Vector3d
-            {
-                X = color.R / 255.0,
-                Y = color.G / 255.0,
-                Z = color.B / 255.0,
-            };
-        }
 
-        public Raytracer(List<SceneObject> sceneObjects, LightSource lightSource = null, Camera camera = null)
+        public Raytracer()
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-
-            if ((_camera = camera) == null)
+            _camera = new Camera(100, 400, 200)
             {
-                _camera = new Camera(100, 400, 200)
-                {
-                    LookAt = new Vector3d(400, 0, 400)
-                };
-            }
-            
-            _lightSource = lightSource ?? new LightSource(-300, 300, -700);
-            _sceneObjects = sceneObjects;
+                LookAt = new Vector3d(400, 0, 400)
+            };
+            _lightSource = new LightSource(-300, 300, -700);
 
+            _sceneObjects = new List<SceneObject>();
             _rayCache = new List<Ray>();
             _colorCache = new List<Color4>();
-
-            AntialiasFactor = 1;
-            NumberOfThreads = 1;
         }
 
         public void Resize(int widthInPixels, int heightInPixels)
@@ -165,6 +156,7 @@ namespace Raytracer
         /// Check if specified ray intersects any object on the way to light
         /// </summary>
         /// <param name="ray"></param>
+        /// <param name="lightDistance"></param>
         /// <returns></returns>
         private bool IsInShadow(Ray ray, double lightDistance)
         {
@@ -187,8 +179,9 @@ namespace Raytracer
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <param name="depth">Actual level of recurse</param>
-        /// <returns>ColorAmbient of traced object at the intersection point.</returns>
-        private Color4 TraceRay(Ray ray, int depth = 2)
+        /// <param name="noHitColor"></param>
+        /// <returns>color of traced object at the intersection point.</returns>
+        private Color4 TraceRay(Ray ray, int depth, Color4 noHitColor)
         {
             // normalize here ray because of recursion
             ray.Direction.Normalize();
@@ -197,10 +190,7 @@ namespace Raytracer
             var closestIntersection = GetClosestIntersection(ray);
             if (closestIntersection.Kind == IntersectionKind.None)
             {
-                if (depth < 2)
-                    return Color4.Black;
-                else
-                    return Background;
+                return noHitColor;
             }
 
             Shape hitShape = closestIntersection.Shape;
@@ -242,7 +232,7 @@ namespace Raytracer
             // reflected ray (recursion)
             if (hitShape.Reflectance > 0 && depth > 0)
             {
-                Color4 reflectedColor = TraceRay(reflectedRay, depth - 1);
+                Color4 reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
 
                 finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, hitShape.Reflectance));
             }
@@ -298,7 +288,7 @@ namespace Raytracer
                 }
 
                 var ray = _rayCache[i];
-                _colorCache[ray.Fragment] = TraceRay(ray);
+                _colorCache[ray.Fragment] = TraceRay(ray, ReflectionDepth, Background);
 #if PARALLEL
                 lock (progressLock)
                 {

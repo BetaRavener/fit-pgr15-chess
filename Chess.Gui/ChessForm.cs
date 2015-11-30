@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -29,31 +31,23 @@ namespace Chess.Gui
         private bool _viewChanged;
         private bool _rotating;
         private bool _lightChanged;
+        private int _antialiasFactor;
+        private GameSceneLayout _game;
 
         public ChessForm()
         {
             InitializeComponent();
 
-            // Init game
-            var game = new GameSceneLayout();
-            game.BuildBaseLayout();
+            _game = new GameSceneLayout();
+            _game.BuildBaseLayout();
 
-            game.Light.Position = new Vector3d(400, 400, 400);
-            game.Camera = new Camera(100, 400, 200)
+            _game.Light.Position = new Vector3d(400, 400, 400);
+            _game.Camera = new Camera(100, 400, 200)
             {
                 LookAt = new Vector3d(400, 0, 400)
             };
 
-            game.Start();
-
-            var fileStorage = new FileStorage(@".", "test.txt");
-            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
-
-            gameLoader.SaveGame(game);
-
-            var loadedGame = gameLoader.LoadGame();
-
-            _raytracer = new Raytracer.Raytracer(loadedGame.GetSceneObjects(), loadedGame.Light, loadedGame.Camera);
+            _raytracer = new Raytracer.Raytracer();
 
             _synchronizationContext = SynchronizationContext.Current;
             lightX.Text = ((int) _raytracer.Light.Position.X).ToString();
@@ -65,6 +59,7 @@ namespace Chess.Gui
             cameraZ.Text = ((int) _raytracer.Eye.Position.Z).ToString();
 
             _lightPos = _raytracer.Light.Position;
+            _antialiasFactor = _raytracer.AntialiasFactor;
 
             _resized = true;
             _viewChanged = true;
@@ -121,7 +116,20 @@ namespace Chess.Gui
             _cancelSource = new CancellationTokenSource();
 
             _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
+            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
 
+            // Game should not start multiply times
+            //_game.Start();
+
+            // TODO change with new loader
+            var fileStorage = new FileStorage(@".", "scene1.json");
+            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
+            gameLoader.SaveGame(_game);
+            var loadedGame = gameLoader.LoadGame();
+
+            _raytracer.SceneObjects.AddRange(loadedGame.GetSceneObjects());
+            _raytracer.Light = loadedGame.Light;
+            _raytracer.Eye = loadedGame.Camera;
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
             {
@@ -132,6 +140,8 @@ namespace Chess.Gui
                 }
 
                 var begin = DateTime.UtcNow;
+
+                _raytracer.AntialiasFactor = _antialiasFactor;
 
                 if (_resized)
                 {
@@ -286,6 +296,80 @@ namespace Chess.Gui
             var pos = _raytracer.Eye.Position;
             _raytracer.Eye.Position = new Vector3d(pos.X, pos.Y, double.Parse(cameraZ.Text));
             _viewChanged = true;
+        }
+
+        private void reflectionDepth_ValueChanged(object sender, EventArgs e)
+        {
+            if (!reflectionDepth.Focused)
+                return;
+
+            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
+            _viewChanged = true;
+        }
+
+        private void openFileButton_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = @"Chess state JSON file|*.JSON";
+            openFileDialog.InitialDirectory = @".";
+
+            string filename = "";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filename = openFileDialog.FileName;
+            }
+
+            if (filename != "")
+            {
+                
+            }
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            if (RenderView.Image == null)
+            {
+                MessageBox.Show(@"You need to render scene first!");
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = @"Bitmap Image|*.bmp|Jpeg Image|*.jpg|Gif Image|*.gif",
+                Title = @"Export to image file"
+            };
+
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            ImageFormat imageType;
+            switch (saveFileDialog.FilterIndex)
+            {
+                case 1:
+                    imageType = ImageFormat.Bmp;
+                    break;
+
+                case 2:
+                    imageType = ImageFormat.Jpeg;
+                    break;
+
+                case 3:
+                    imageType = ImageFormat.Gif;
+                    break;
+
+                default:
+                    MessageBox.Show(@"Allowed types ar only JPG, BMP, GIF");
+                    return;
+            }
+
+            RenderView.Image.Save(saveFileDialog.FileName, imageType);
+        }
+
+        private void antialiasingFactor_ValueChanged(object sender, EventArgs e)
+        {
+            if (!antialiasingFactor.Focused)
+                return;
+
+            _antialiasFactor = (int)antialiasingFactor.Value;
         }
     }
 }
