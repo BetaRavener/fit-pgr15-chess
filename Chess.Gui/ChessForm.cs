@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Chess.Scene;
 using OpenTK;
 using RayTracer;
 
@@ -26,10 +29,15 @@ namespace Chess.Gui
         private bool _viewChanged;
         private bool _rotating;
         private bool _lightChanged;
+        private int _antialiasFactor;
+        private Game _game;
 
         public ChessForm()
         {
             InitializeComponent();
+            _game = new Game();
+            _game.BuildBaseLayout();
+
             _raytracer = new Raytracer.Raytracer();
 
             _synchronizationContext = SynchronizationContext.Current;
@@ -42,6 +50,7 @@ namespace Chess.Gui
             cameraZ.Text = ((int) _raytracer.Eye.Position.Z).ToString();
 
             _lightPos = _raytracer.Light.Position;
+            _antialiasFactor = _raytracer.AntialiasFactor;
 
             _resized = true;
             _viewChanged = true;
@@ -98,6 +107,15 @@ namespace Chess.Gui
             _cancelSource = new CancellationTokenSource();
 
             _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
+            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
+
+            _game.Start();
+            // TODO change with new loader
+            var gameLoader = new GameLoader(@".");
+            gameLoader.SaveGame(_game, "scene1.json");
+            var loadedGame = gameLoader.LoadGame("scene1.json");
+
+            _raytracer.SceneObjects.AddRange(loadedGame.GetSceneObjects());
 
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
@@ -109,6 +127,8 @@ namespace Chess.Gui
                 }
 
                 var begin = DateTime.UtcNow;
+
+                _raytracer.AntialiasFactor = _antialiasFactor;
 
                 if (_resized)
                 {
@@ -263,6 +283,80 @@ namespace Chess.Gui
             var pos = _raytracer.Eye.Position;
             _raytracer.Eye.Position = new Vector3d(pos.X, pos.Y, double.Parse(cameraZ.Text));
             _viewChanged = true;
+        }
+
+        private void reflectionDepth_ValueChanged(object sender, EventArgs e)
+        {
+            if (!reflectionDepth.Focused)
+                return;
+
+            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
+            _viewChanged = true;
+        }
+
+        private void openFileButton_Click(object sender, EventArgs e)
+        {
+            var openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = @"Chess state JSON file|*.JSON";
+            openFileDialog.InitialDirectory = @".";
+
+            string filename = "";
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                filename = openFileDialog.FileName;
+            }
+
+            if (filename != "")
+            {
+                
+            }
+        }
+
+        private void exportButton_Click(object sender, EventArgs e)
+        {
+            if (RenderView.Image == null)
+            {
+                MessageBox.Show(@"You need to render scene first!");
+                return;
+            }
+
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = @"Bitmap Image|*.bmp|Jpeg Image|*.jpg|Gif Image|*.gif",
+                Title = @"Export to image file"
+            };
+
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            ImageFormat imageType;
+            switch (saveFileDialog.FilterIndex)
+            {
+                case 1:
+                    imageType = ImageFormat.Bmp;
+                    break;
+
+                case 2:
+                    imageType = ImageFormat.Jpeg;
+                    break;
+
+                case 3:
+                    imageType = ImageFormat.Gif;
+                    break;
+
+                default:
+                    MessageBox.Show(@"Allowed types ar only JPG, BMP, GIF");
+                    return;
+            }
+
+            RenderView.Image.Save(saveFileDialog.FileName, imageType);
+        }
+
+        private void antialiasingFactor_ValueChanged(object sender, EventArgs e)
+        {
+            if (!antialiasingFactor.Focused)
+                return;
+
+            _antialiasFactor = (int)antialiasingFactor.Value;
         }
     }
 }
