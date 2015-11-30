@@ -28,18 +28,18 @@ namespace RayMath
             }
         }
 
-        public int Component { get; private set; }
+        public int Fragment { get; private set; }
 
         public Vector3d Dirfrac { get { return _dirfrac; } }
 
         public double DirDot { get { return _dirDot; } }
 
-        public Ray(Vector3d origin, Vector3d direction, int component = -1)
+        public Ray(Vector3d origin, Vector3d direction, int fragment = -1)
         {
             Origin = origin;
             Direction = direction;
 
-            Component = component;
+            Fragment = fragment;
         }
 
         public Vector3d PointAt(double t)

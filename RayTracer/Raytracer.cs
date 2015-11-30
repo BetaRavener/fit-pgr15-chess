@@ -29,6 +29,7 @@ namespace Raytracer
         private List<SceneObject> _sceneObjects;
 
         private List<Ray> _rayCache;
+        private List<Color4> _colorCache;
 
         private static Color4 Background
         {
@@ -69,6 +70,22 @@ namespace Raytracer
             get { return (1.0f/_heightInPixels)*NearPlaneHeight; }
         }
 
+        private int _antialiasFactor;
+
+        private int AntialiasFactor
+        {
+            get { return _antialiasFactor; }
+            set
+            {
+                _antialiasFactor = value;
+                Resize(_widthInPixels, _heightInPixels);
+                BuildRayCache();
+            }
+        }
+        private int AntialiasedWidth { get { return _widthInPixels * AntialiasFactor; } }
+
+        private int AntialiasedHeight { get { return _heightInPixels * AntialiasFactor; } }
+
         public int NumberOfThreads { get; set; }
 
         public static Vector3d ColorToVec(Color color)
@@ -90,15 +107,6 @@ namespace Raytracer
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
 
-            //var sceneObject = new SceneObject(null, Color4.LimeGreen);
-            //sceneObject.CsgTree = new CsgNode(CsgNode.Operations.Union, new Cone(Vector3d.Zero, Vector3d.UnitY, 20, 30, sceneObject),
-            //    new Sphere(Vector3d.UnitY * 30, 10, sceneObject));
-            //_sceneObjects.Add(sceneObject);
-
-            //var sceneObject = new SceneObject(null, Color4.LimeGreen);
-            //sceneObject.CsgTree = ObjectBuilder.BuildPawn(Vector3d.Zero, sceneObject);
-            //_sceneObjects.Add(sceneObject);
-
             var game = new Game();
             game.BuildBaseLayout();
 
@@ -112,26 +120,10 @@ namespace Raytracer
 
             _sceneObjects.AddRange(loadedGame.GetSceneObjects());
 
-            // debug
-            //var y = new CsgNode();
-            //var obj = new SceneObject(y, Color4.Green);
-            //y.Operation = CsgNode.Operations.Union;
-            //y.Left = new Sphere(new ChessboardPosition(4, 4).RealPosition + new Vector3d(0, 55, 0), 50, obj);
-            //y.Right = obj.CsgTree.Left;
-
-            //_sceneObjects.Add(obj);
-
-            //var x = new CsgNode();
-            //var obj2 = new SceneObject(x, Color4.Red);
-            //x.Operation = CsgNode.Operations.Union;
-            //x.Left = new Box(new ChessboardPosition(1, 2).RealPosition, new ChessboardPosition(2, 3).RealPosition + new Vector3d(0, 50, 0), obj2);
-            //x.Right = obj.CsgTree.Left;
-
-            //_sceneObjects.Add(obj2);
-
-
             _rayCache = new List<Ray>();
+            _colorCache = new List<Color4>();
 
+            AntialiasFactor = 1;
             NumberOfThreads = 1;
         }
 
@@ -141,18 +133,18 @@ namespace Raytracer
             _widthInPixels = widthInPixels;
 
             _rayCache.Clear();
+            _colorCache.Clear();
             var firstX = 0;
-            for (var y = 0; y < _heightInPixels; y++)
+            for (var y = 0; y < AntialiasedHeight; y++)
             {
-                for (var x = 0; x < _widthInPixels; x++)
+                for (var x = 0; x < AntialiasedWidth; x++)
                 {
-                    var component = (firstX + x)*ComponentsPerPixel;
-
-                    var ray = new Ray(Eye.Position, Vector3d.UnitZ, component);
+                    var ray = new Ray(Eye.Position, Vector3d.UnitZ, firstX + x);
 
                     _rayCache.Add(ray);
-        }
-                firstX += _widthInPixels;
+                    _colorCache.Add(Color4.Black);
+                }
+                firstX += AntialiasedWidth;
             }
         }
 
@@ -265,6 +257,17 @@ namespace Raytracer
             return finalColor;
         }
 
+        private void Index1d(int x, int y, int width, out int idx)
+        {
+            idx = y * width + x;
+        }
+
+        private void Index2d(int idx, int width, out int x, out int y)
+        {
+            x = idx % width;
+            y = idx / width;
+        }
+
         /// <summary>
         /// Renders image of scene using raytracing.
         /// </summary>
@@ -278,8 +281,6 @@ namespace Raytracer
             image.LockBits();
             if (image.ColorComponents != ComponentsPerPixel)
                 throw new InvalidOperationException("The bitmap doesn't have 3 components, check system!");
-
-            //TODO: Antialiasing - Cast 4 rays for each pixel and save average color 
 
             var totalPixels = _widthInPixels*_heightInPixels;
             var progressLock = new Object();
@@ -304,21 +305,36 @@ namespace Raytracer
                 }
 
                 var ray = _rayCache[i];
-                var color = TraceRay(ray);
+                _colorCache[ray.Fragment] = TraceRay(ray);
 #if PARALLEL
                 lock (progressLock)
                 {
 #endif
-                image.EfficientSetPixel(ray.Component, color.ToColor());
                 progress++;
                 //reportFunc(new Tuple<int, int>(progress, totalPixels));
-
 #if PARALLEL
                 }
             });
 #else
             }
 #endif
+            // Reduce colorCache to antialiased image
+            for (int i = 0; i < totalPixels; i++)
+            {
+                var color = Color4.Black;
+                int x, y, idx;
+                Index2d(i, _widthInPixels, out x, out y);
+                for (var dx = 0; dx < AntialiasFactor; dx++)
+                {
+                    for (var dy = 0; dy < AntialiasFactor; dy++)
+                    {
+                        Index1d(x * AntialiasFactor + dx, y * AntialiasFactor + dy, AntialiasedWidth, out idx);
+                        color = color.Add(_colorCache[idx]);
+                    }
+                }
+                color = color.Times((float)(1.0 / (AntialiasFactor * AntialiasFactor)));
+                image.EfficientSetPixel(i * ComponentsPerPixel, color.ToColor());
+            }
             image.UnlockBits();
             return sourceImg;
         }
@@ -328,9 +344,9 @@ namespace Raytracer
         /// </summary>
         public void BuildRayCache()
         {
-            var rightIncrement = Eye.RightVector*PixelSize;
+            var rightIncrement = Eye.RightVector*(PixelSize / AntialiasFactor);
             var rightIncrementHalf = rightIncrement*0.5f;
-            var downIncrement = Eye.UpVector*-PixelSize;
+            var downIncrement = Eye.UpVector*-(PixelSize / AntialiasFactor);
             var downIncrementHalf = downIncrement*0.5f;
             var nearPlaneHeightHalf = NearPlaneHeight*0.5f;
             var nearPlaneWidthtHalf = NearPlaneWidth*0.5f;
@@ -346,12 +362,11 @@ namespace Raytracer
             firstPixelCenter += rightIncrementHalf + downIncrementHalf;
 
             var firstX = 0;
-            for (var y = 0; y < _heightInPixels; y++)
+            for (var y = 0; y < AntialiasedHeight; y++)
             {
                 var pixelCenter = new Vector3d(firstPixelCenter);
-                for (var x = 0; x < _widthInPixels; x++)
+                for (var x = 0; x < AntialiasedWidth; x++)
                 {
-                    var component = (firstX + x)*ComponentsPerPixel;
                     var direction = pixelCenter - Eye.Position;
                     direction.Normalize();
 
@@ -362,7 +377,7 @@ namespace Raytracer
                     pixelCenter += rightIncrement;
                 }
 
-                firstX += _widthInPixels;
+                firstX += AntialiasedWidth;
                 firstPixelCenter += downIncrement;
             }
         }
