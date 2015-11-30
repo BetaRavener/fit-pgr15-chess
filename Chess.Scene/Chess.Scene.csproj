@@ -52,14 +52,18 @@
     <Compile Include="ChessboardPosition.cs" />
     <Compile Include="Figure.cs" />
     <Compile Include="FigureType.cs" />
-    <Compile Include="Game.cs" />
-    <Compile Include="GameLoader.cs" />
-    <Compile Include="GameState.cs" />
+    <Compile Include="DataStorage\FileStorage.cs" />
+    <Compile Include="IStateLoader.cs" />
+    <Compile Include="State\Game.cs" />
+    <Compile Include="JsonLoader.cs" />
+    <Compile Include="State\GameState.cs" />
+    <Compile Include="DataStorage\IDataStorage.cs" />
+    <Compile Include="State\GameSceneLayout.cs" />
     <Compile Include="ObjectBuilderResolver.cs" />
     <Compile Include="ObjectBuilders.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SceneObject.cs" />
+    <Compile Include="State\JsonConvertor\VectorConvertor.cs" />
     <Compile Include="Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -73,6 +77,10 @@
     <ProjectReference Include="..\Math3d\RayMath.csproj">
       <Project>{A519AFFE-C6CF-4B9E-9DC1-5F3E6B5D6B91}</Project>
       <Name>RayMath</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RayTracer\Raytracer.csproj">
+      <Project>{0d7b8ce9-fc6c-4c92-949a-ee26402e928e}</Project>
+      <Name>Raytracer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

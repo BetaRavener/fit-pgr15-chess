@@ -3,6 +3,9 @@ using System.Drawing;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Chess.Scene;
+using Chess.Scene.DataStorage;
+using Chess.Scene.State;
 using OpenTK;
 using RayTracer;
 
@@ -30,7 +33,27 @@ namespace Chess.Gui
         public ChessForm()
         {
             InitializeComponent();
-            _raytracer = new Raytracer.Raytracer();
+
+            // Init game
+            var game = new GameSceneLayout();
+            game.BuildBaseLayout();
+
+            game.Light.Position = new Vector3d(400, 400, 400);
+            game.Camera = new Camera(100, 400, 200)
+            {
+                LookAt = new Vector3d(400, 0, 400)
+            };
+
+            game.Start();
+
+            var fileStorage = new FileStorage(@".", "test.txt");
+            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
+
+            gameLoader.SaveGame(game);
+
+            var loadedGame = gameLoader.LoadGame();
+
+            _raytracer = new Raytracer.Raytracer(loadedGame.GetSceneObjects(), loadedGame.Light, loadedGame.Camera);
 
             _synchronizationContext = SynchronizationContext.Current;
             lightX.Text = ((int) _raytracer.Light.Position.X).ToString();

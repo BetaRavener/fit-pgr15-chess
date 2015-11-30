@@ -86,6 +86,14 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Chess.Scene\Chess.Scene.csproj">
+      <Project>{528B8909-0A46-4037-866F-3E1A0BDCF0F7}</Project>
+      <Name>Chess.Scene</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CSG\CSG.csproj">
+      <Project>{a9581c82-e600-469f-8ff0-5fca3c3ca11f}</Project>
+      <Name>CSG</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RayTracer\Raytracer.csproj">
       <Project>{0D7B8CE9-FC6C-4C92-949A-EE26402E928E}</Project>
       <Name>Raytracer</Name>

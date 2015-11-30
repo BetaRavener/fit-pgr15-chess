@@ -1,4 +1,4 @@
-namespace Chess.Scene
+namespace Chess.Scene.State
 {
     public enum GameState
     {

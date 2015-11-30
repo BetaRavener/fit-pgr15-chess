@@ -59,10 +59,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Chess.Scene\Chess.Scene.csproj">
-      <Project>{528b8909-0a46-4037-866f-3e1a0bdcf0f7}</Project>
-      <Name>Chess.Scene</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CSG\CSG.csproj">
       <Project>{a9581c82-e600-469f-8ff0-5fca3c3ca11f}</Project>
       <Name>CSG</Name>

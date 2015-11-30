@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using CSG;
 using OpenTK.Graphics;
 
-namespace Chess.Scene
+namespace Chess.Scene.State
 {
     public class Game
     {
@@ -43,7 +43,7 @@ namespace Chess.Scene
             State = GameState.Ended;
         }
 
-        public IList<SceneObject> GetSceneObjects()
+        public List<SceneObject> GetSceneObjects()
         {
             var chessboard = (SceneObject) Chessboard;
 

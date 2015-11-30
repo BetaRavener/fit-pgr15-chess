@@ -11,7 +11,6 @@ using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
 using RayTracer;
-using Chess.Scene;
 
 namespace Raytracer
 {
@@ -98,27 +97,21 @@ namespace Raytracer
             };
         }
 
-        public Raytracer()
+        public Raytracer(List<SceneObject> sceneObjects, LightSource lightSource = null, Camera camera = null)
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera(100, 400, 200);
-            _camera.LookAt = new Vector3d(400, 0, 400);
-            _lightSource = new LightSource(-300, 300, -700);
-            _sceneObjects = new List<SceneObject>();
 
-            var game = new Game();
-            game.BuildBaseLayout();
-
-            game.Start();
-
-            var gameLoader = new GameLoader(@".");
-
-            gameLoader.SaveGame(game, "test.txt");
-
-            var loadedGame = gameLoader.LoadGame("test.txt");
-
-            _sceneObjects.AddRange(loadedGame.GetSceneObjects());
+            if ((_camera = camera) == null)
+            {
+                _camera = new Camera(100, 400, 200)
+                {
+                    LookAt = new Vector3d(400, 0, 400)
+                };
+            }
+            
+            _lightSource = lightSource ?? new LightSource(-300, 300, -700);
+            _sceneObjects = sceneObjects;
 
             _rayCache = new List<Ray>();
             _colorCache = new List<Color4>();

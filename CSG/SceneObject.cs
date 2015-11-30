@@ -1,11 +1,10 @@
-﻿using CSG;
-using CSG.Shapes;
+﻿using CSG.Shapes;
 using Newtonsoft.Json;
 using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
 
-namespace Chess.Scene
+namespace CSG
 {
     /// <summary>
     /// Class holding the shape and its boundary box
