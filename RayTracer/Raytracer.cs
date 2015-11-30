@@ -1,4 +1,4 @@
-﻿#define PARALLEL
+﻿//#define PARALLEL
 
 using System;
 using System.Collections.Generic;
@@ -142,8 +142,7 @@ namespace Raytracer
             {
                 SceneObject sceneObject = _sceneObjects[index];
                 var intersection = sceneObject.IntersectFirst(ray, OnlyBoundingBoxes);
-                if (intersection.Kind != IntersectionKind.None &&
-                    intersection.Distance < closestIntersection.Distance)
+                if (intersection != null && intersection.Distance < closestIntersection.Distance)
                 {
                     closestIntersection = intersection;
                 }
@@ -165,7 +164,7 @@ namespace Raytracer
                 var sceneObject = _sceneObjects[index];
                 var inters = sceneObject.IntersectFirst(ray);
 
-                if (inters.Kind != IntersectionKind.None && inters.Distance < lightDistance)
+                if (inters != null && inters.Distance < lightDistance)
                 {
                     return true;
                 }

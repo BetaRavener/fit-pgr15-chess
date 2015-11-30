@@ -66,8 +66,7 @@ namespace CSG
                     : CsgTree.IntersectFirst(ray);
             }
 
-
-            return new Intersection(IntersectionKind.None);
+            return null;
         }
 
     }
