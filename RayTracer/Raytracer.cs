@@ -93,16 +93,6 @@ namespace Raytracer
 
         public int NumberOfThreads { get; set; } = 1;
 
-        public static Vector3d ColorToVec(Color color)
-        {
-            return new Vector3d
-            {
-                X = color.R / 255.0,
-                Y = color.G / 255.0,
-                Z = color.B / 255.0,
-            };
-        }
-
         public Raytracer()
         {
             _heightInPixels = 0;

@@ -28,6 +28,7 @@ namespace Chess.Gui
         private bool _viewChanged;
         private bool _rotating;
         private bool _lightChanged;
+        private int _antialiasFactor;
 
         public ChessForm()
         {
@@ -44,6 +45,7 @@ namespace Chess.Gui
             cameraZ.Text = ((int) _raytracer.Eye.Position.Z).ToString();
 
             _lightPos = _raytracer.Light.Position;
+            _antialiasFactor = _raytracer.AntialiasFactor;
 
             _resized = true;
             _viewChanged = true;
@@ -112,6 +114,8 @@ namespace Chess.Gui
                 }
 
                 var begin = DateTime.UtcNow;
+
+                _raytracer.AntialiasFactor = _antialiasFactor;
 
                 if (_resized)
                 {
@@ -349,10 +353,7 @@ namespace Chess.Gui
             if (!antialiasingFactor.Focused)
                 return;
 
-            _raytracer.AntialiasFactor = (int) antialiasingFactor.Value;
-            _viewChanged = true;
-
-            // TODO when resize && rendering is on, crashes because ray cache not found
+            _antialiasFactor = (int)antialiasingFactor.Value;
         }
     }
 }
