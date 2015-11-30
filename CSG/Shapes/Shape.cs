@@ -11,9 +11,12 @@ namespace CSG.Shapes
     public abstract class Shape : CsgNode
     {
         public static Color4 FallbackColor = Color4.Red;
-        public ISceneObject Parent { get; set; }
+        public static double FallbackShininess = 0;
+        public static double FallbackReflectance = 0;
 
-        protected Shape(ISceneObject sceneObject)
+        public SceneObject Parent { get; set; }
+
+        protected Shape(SceneObject sceneObject)
         {
             Parent = sceneObject;
         }
@@ -25,10 +28,10 @@ namespace CSG.Shapes
 
         public Color4 ColorSpecular { get; set; } = Color4.White;
 
-        public double Shininess { get; set; } = 10;
+        public double Shininess => Parent?.Shininess ?? FallbackShininess;
 
-        public double Reflectance { get; set; } = 0.5;
-        
+        public double Reflectance => Parent?.Reflectance ?? FallbackReflectance;
+
 
         /// <summary>
         /// Find set of spans at which the ray intersects this shape.

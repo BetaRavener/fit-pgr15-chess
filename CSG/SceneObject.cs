@@ -9,7 +9,7 @@ namespace CSG
     /// <summary>
     /// Class holding the shape and its boundary box
     /// </summary>
-    public class SceneObject : ISceneObject
+    public class SceneObject
     {
         public Color4 Color { get; set; }
         [JsonIgnore]
@@ -29,10 +29,20 @@ namespace CSG
 
         }
 
+        /// <summary>
+        /// Compute color for given position
+        /// </summary>
+        /// <param name="position">position of hit on surface of object</param>
+        /// <param name="normal">normal vector of hit</param>
+        /// <returns>Computed color for position.</returns>
         public virtual Color4 ComputeColor(Vector3d position, Vector3d normal)
         {
             return Color;
         }
+
+        public virtual double Shininess => 0;
+
+        public virtual double Reflectance => 0;
 
         /// <summary>
         /// Finds first intersection with this scene object.

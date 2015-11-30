@@ -5,7 +5,7 @@ namespace Chess.Scene
 {
     public class ObjectBuilderResolver
     {
-        public static CsgNode BuildFigure(FigureType type, Vector3d position, ISceneObject sceneObject)
+        public static CsgNode BuildFigure(FigureType type, Vector3d position, SceneObject sceneObject)
         {
             switch (type)
             {

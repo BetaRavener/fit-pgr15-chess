@@ -21,7 +21,7 @@ namespace CSG.Shapes
         private double _sin2Alpha;
         private double _cos2Alpha;
 
-        public Cone(Vector3d start, Vector3d dir, double radius, double height, ISceneObject sceneObject)
+        public Cone(Vector3d start, Vector3d dir, double radius, double height, SceneObject sceneObject)
             : base(sceneObject)
         {
             Start = start;

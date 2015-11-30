@@ -21,7 +21,7 @@ namespace CSG.Shapes
         private Plane _topCap;
         private Plane _bottomCap;
 
-        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, ISceneObject sceneObject)
+        public Cylinder(Vector3d start, Vector3d dir, double radius, double height, SceneObject sceneObject)
             : base(sceneObject)
         {
             Start = start;

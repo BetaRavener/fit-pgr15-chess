@@ -8,7 +8,7 @@ namespace Chess.Scene
 {
     public class ObjectBuilder
     {
-        public static CsgNode BuildChessboard(ISceneObject sceneObject)
+        public static CsgNode BuildChessboard(SceneObject sceneObject)
         {
             var min = new Vector3d(0, 0, 0);
             var max = new Vector3d(min.X + Chessboard.CroftHeight * 8,
@@ -16,11 +16,11 @@ namespace Chess.Scene
                 min.Z + Chessboard.CroftWidth * 8);
 
 
-            var box = new Box(min, max, sceneObject) {Shininess = 100};
+            var box = new Box(min, max, sceneObject);
             return box;
         }
 
-        public static CsgNode BuildKing(Vector3d center, ISceneObject sceneObject)
+        public static CsgNode BuildKing(Vector3d center, SceneObject sceneObject)
         {
             var dir = new Vector3d(0, 1, 0);
 
@@ -65,7 +65,7 @@ namespace Chess.Scene
             return new CsgNode(CsgNode.Operations.Union, bodyUnion, headUnion);
         }
 
-        public static CsgNode BuildPawn(Vector3d center, ISceneObject sceneObject)
+        public static CsgNode BuildPawn(Vector3d center, SceneObject sceneObject)
         {
             var dir = new Vector3d(0, 1, 0);
 
@@ -82,7 +82,7 @@ namespace Chess.Scene
             return new CsgNode(CsgNode.Operations.Union, base1, mainUnion);
         }
 
-        public static CsgNode BuildBishop(Vector3d center, ISceneObject sceneObject)
+        public static CsgNode BuildBishop(Vector3d center, SceneObject sceneObject)
         {
             var dir = new Vector3d(0, 1, 0);
 
@@ -119,7 +119,7 @@ namespace Chess.Scene
             return new CsgNode(CsgNode.Operations.Union, baseUniun, mainUnion3);
         }
 
-        public static CsgNode BuildQueen(Vector3d center, ISceneObject sceneObject)
+        public static CsgNode BuildQueen(Vector3d center, SceneObject sceneObject)
         {
             var dir = new Vector3d(0, 1, 0);
 
@@ -170,7 +170,7 @@ namespace Chess.Scene
             return new CsgNode(CsgNode.Operations.Union, bodyWithHeadUnion, crownDiff);
         }
 
-        public static CsgNode BuildRook(Vector3d center, ISceneObject sceneObject)
+        public static CsgNode BuildRook(Vector3d center, SceneObject sceneObject)
         {
             var base1Position1 = center + new Vector3d(-20, 0, -20);
             var base1Position2 = center + new Vector3d(20, 10, 20);
@@ -246,7 +246,7 @@ namespace Chess.Scene
             return new CsgNode(CsgNode.Operations.Union, topDiff4V, baseUnion);
         }
 
-        public static CsgNode BuildKnight(Vector3d center, ISceneObject sceneObject)
+        public static CsgNode BuildKnight(Vector3d center, SceneObject sceneObject)
         {
             const int horseWidth = 10;
 

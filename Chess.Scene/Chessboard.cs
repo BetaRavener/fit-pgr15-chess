@@ -49,5 +49,9 @@ namespace Chess.Scene
 
             return BackgroundColor;
         }
+
+        public override double Shininess => 100;
+
+        public override double Reflectance => 0.5;
     }
 }

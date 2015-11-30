@@ -9,7 +9,7 @@ namespace CSG.Shapes
         protected Vector3d _normal;
         protected double _d;
 
-        public Plane(Vector3d normal, Vector3d point, ISceneObject sceneObject)
+        public Plane(Vector3d normal, Vector3d point, SceneObject sceneObject)
             : base(sceneObject)
         { 
             normal.Normalize();
