@@ -214,5 +214,65 @@ namespace Chess.Gui
         {
             _rotating = false;
         }
+
+        private void lightX_TextChanged(object sender, EventArgs e)
+        {
+            if (!lightX.Focused)
+                return;
+
+            var pos = _raytracer.Light.Position;
+            _raytracer.Light.Position = new Vector3d(double.Parse(lightX.Text), pos.Y, pos.Z);
+            _lightChanged = true;
+        }
+
+        private void lightY_TextChanged(object sender, EventArgs e)
+        {
+            if (!lightY.Focused)
+                return;
+
+            var pos = _raytracer.Light.Position;
+            _raytracer.Light.Position = new Vector3d(pos.X, double.Parse(lightY.Text), pos.Z);
+            _lightChanged = true;
+        }
+
+        private void lightZ_TextChanged(object sender, EventArgs e)
+        {
+            if (!lightZ.Focused)
+                return;
+
+            var pos = _raytracer.Light.Position;
+            _raytracer.Light.Position = new Vector3d(pos.X, pos.Y, double.Parse(lightZ.Text));
+            _lightChanged = true;
+        }
+
+        private void cameraX_TextChanged(object sender, EventArgs e)
+        {
+            if (!cameraX.Focused)
+                return;
+
+            var pos = _raytracer.Eye.Position;
+            _raytracer.Eye.Position = new Vector3d(double.Parse(cameraX.Text), pos.Y, pos.Z);
+            _viewChanged = true;
+        }
+
+        private void cameraY_TextChanged(object sender, EventArgs e)
+        {
+            if (!cameraY.Focused)
+                return;
+
+            var pos = _raytracer.Eye.Position;
+            _raytracer.Eye.Position = new Vector3d(pos.X, double.Parse(cameraY.Text), pos.Z);
+            _viewChanged = true;
+        }
+
+        private void cameraZ_TextChanged(object sender, EventArgs e)
+        {
+            if (!cameraZ.Focused)
+                return;
+
+            var pos = _raytracer.Eye.Position;
+            _raytracer.Eye.Position = new Vector3d(pos.X, pos.Y, double.Parse(cameraZ.Text));
+            _viewChanged = true;
+        }
     }
 }

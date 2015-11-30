@@ -65,28 +65,70 @@ namespace CSG.Shapes
                 double sD = Math.Sqrt(D);
                 double t1 = (-B - sD) / (2 * A);
                 double t2 = (-B + sD) / (2 * A);
+                bool withCone1 = true;
+                bool withCone2 = true;
 
-                if (!(Vector3d.Dot(Direction, ray.PointAt(t1) - Start) > 0 && Vector3d.Dot(Direction, ray.PointAt(t1) - _apex) < 0))
-                    t1 = RangeShape.Inf;
-                    
-                if (!(Vector3d.Dot(Direction, ray.PointAt(t2) - Start) > 0 && Vector3d.Dot(Direction, ray.PointAt(t2) - _apex) < 0))
-                    t2 = RangeShape.Inf;
-
-                var minT = Math.Min(t1, t2);
-                var maxT = Math.Max(t1, t2);
-                // If looking from bottom and there's only one intersection, we need to cap the cone
-                if (Vector3d.Dot(Direction, Start - ray.Origin) > 0)
+                if (Vector3d.Dot(Direction, ray.PointAt(t1) - Start) > 0 && Vector3d.Dot(Direction, ray.PointAt(t1) - _apex) > 0)
                 {
-                    if (minT != RangeShape.Inf && maxT == RangeShape.Inf )
-                    {
-                        var inters = _cap.IntersectFirst(ray);
-                        ranges.Add(new RangeShape(inters.Distance, minT, _cap, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
-                    }
-                    else if (minT != RangeShape.Inf && maxT != RangeShape.Inf)
-                        ranges.Add(new RangeShape(minT, maxT, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                    if (Vector3d.Dot(Direction, ray.Direction) < 0)
+                        t1 = RangeShape.Inf;
+                    else
+                        t1 = -RangeShape.Inf;
                 }
-                else if (minT != RangeShape.Inf)
-                    ranges.Add(new RangeShape(minT, maxT, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                if (Vector3d.Dot(Direction, ray.PointAt(t2) - Start) > 0 && Vector3d.Dot(Direction, ray.PointAt(t2) - _apex) > 0)
+                {
+                    if (Vector3d.Dot(Direction, ray.Direction) < 0)
+                        t2 = RangeShape.Inf;
+                    else
+                        t2 = -RangeShape.Inf;
+                }
+
+                if (Vector3d.Dot(Direction, ray.PointAt(t1) - Start) < 0 && Vector3d.Dot(Direction, ray.PointAt(t1) - _apex) < 0)
+                {
+                    withCone1 = false;
+                }
+                if (Vector3d.Dot(Direction, ray.PointAt(t2) - Start) < 0 && Vector3d.Dot(Direction, ray.PointAt(t2) - _apex) < 0)
+                {
+                    withCone2 = false;
+                }
+
+                //if (!(Vector3d.Dot(Direction, ray.PointAt(t1) - Start) > 0 && Vector3d.Dot(Direction, ray.PointAt(t1) - _apex) < 0))
+                //{
+                //    if (Vector3d.Dot(Direction, Start - ray.Origin) > 0)
+                //        t1 = -RangeShape.Inf;
+                //    else
+                //        t1 = RangeShape.Inf;
+                //}  
+                //if (!(Vector3d.Dot(Direction, ray.PointAt(t2) - Start) > 0 && Vector3d.Dot(Direction, ray.PointAt(t2) - _apex) < 0))
+                //{
+                //    if (Vector3d.Dot(Direction, Start - ray.Origin) > 0)
+                //        t2 = -RangeShape.Inf;
+                //    else
+                //        t2 = RangeShape.Inf;
+                //}
+
+                //var minT = Math.Min(t1, t2);
+                //var maxT = Math.Max(t1, t2);
+                //// If looking from bottom and there's only one intersection, we need to cap the cone
+                //if (Vector3d.Dot(Direction, Start - ray.Origin) > 0)
+                //{
+                //    if (minT != RangeShape.Inf && maxT == RangeShape.Inf )
+                //    {
+                //        var inters = _cap.IntersectFirst(ray);
+                //        ranges.Add(new RangeShape(inters.Distance, minT, _cap, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //    }
+                //    else if (minT != RangeShape.Inf && maxT != RangeShape.Inf)
+                //        ranges.Add(new RangeShape(minT, maxT, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                //}
+                //else if (minT != RangeShape.Inf)
+                //    ranges.Add(new RangeShape(minT, maxT, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                if (withCone1 || withCone2)
+                {
+                    ranges.Add(new RangeShape(t1, t2, this, this, RangeShape.Sides.Exterior, RangeShape.Sides.Interior));
+                    var capRanges = _cap.Intersect(ray);
+                    capRanges.Inverse();
+                    ranges.Intersection(capRanges);
+                }
             }
 
             return ranges;

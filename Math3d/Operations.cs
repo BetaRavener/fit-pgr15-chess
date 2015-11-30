@@ -66,5 +66,10 @@ namespace RayMath
             // No hit, no win
             return false;
         }
+
+        public static Vector3d Reflect(this Vector3d v, Vector3d normal)
+        {
+            return -2 * Vector3d.Dot(v, normal) * normal + v;
+        }
     }
 }

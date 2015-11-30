@@ -88,7 +88,16 @@ namespace Raytracer
             _camera = new Camera(-100, 200, -400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
-   
+
+            //var sceneObject = new SceneObject(null, Color4.LimeGreen);
+            //sceneObject.CsgTree = new CsgNode(CsgNode.Operations.Union, new Cone(Vector3d.Zero, Vector3d.UnitY, 20, 30, sceneObject),
+            //    new Sphere(Vector3d.UnitY * 30, 10, sceneObject));
+            //_sceneObjects.Add(sceneObject);
+
+            //var sceneObject = new SceneObject(null, Color4.LimeGreen);
+            //sceneObject.CsgTree = ObjectBuilder.BuildPawn(Vector3d.Zero, sceneObject);
+            //_sceneObjects.Add(sceneObject);
+
             var game = new Game();
             game.BuildBaseLayout();
 
@@ -198,37 +207,42 @@ namespace Raytracer
 
             // Search for closest intersection
             var closestIntersection = GetClosestIntersection(ray);
-            if (closestIntersection.Kind == IntersectionKind.None) return Background;
+            if (closestIntersection.Kind == IntersectionKind.None)
+            {
+                return Background;
+            }
 
             Shape hitShape = closestIntersection.Shape;
 
             Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
             Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition);
+            Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
+            Vector3d eyeDirection = (Eye.Position - hitPosition).Normalized();
+            Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
+            var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
+            if (OnlyBoundingBoxes)
+            {
+                return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
+            }
 
             Color4 finalColor = Color.Black;
-            Vector3d lightDirection = (Light.Position - hitPosition).Normalized();
-
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
-            var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
-            var tmp = 2*angleToLight*hitNormal;
+            Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
 
             if (!IsInShadow(shadowRay))
             {
                 // diffuse light (default shape color)
-                //finalColor += hitShape.Color * Light.Color * Math.Max(0.0, angleToLight);
-                var diffuseColor = Color4Extension.Multiply(hitShape.Color(hitPosition,hitNormal), Light.Color).Times((float) Math.Max(0.0, angleToLight));
-               finalColor = finalColor.Add(diffuseColor);
+                var diffuseColor = Color4Extension.Multiply(hitShape.Color(hitPosition, hitNormal), Light.Color).Times((float)Math.Max(0.0, angleToLight));
+                finalColor = finalColor.Add(diffuseColor);
 
-               // specular
+                // specular
                 if (hitShape.Shininess > 0)
                 {
-                    Vector3d reflectionDirection = tmp - lightDirection;
-                    double specularRatio = -Vector3d.Dot(reflectionDirection, ray.Direction);
+                    double specularRatio = -Vector3d.Dot(lightReflection, eyeDirection);
                     if (specularRatio > 0)
-            {
-                        var specularColor = Color4Extension.Multiply(hitShape.ColorSpecular, Light.Color).Times((float) Math.Pow(specularRatio, hitShape.Shininess));
+                    {
+                        var specularColor = Color4Extension.Multiply(hitShape.ColorSpecular, Light.Color).Times((float)Math.Pow(specularRatio, hitShape.Shininess));
                         finalColor = finalColor.Add(specularColor);
-                        //finalColor += hitShape.ColorSpecular*Light.Color*Math.Pow(specularRatio, hitShape.Shininess);
                     }
                 }
             }
@@ -236,12 +250,9 @@ namespace Raytracer
             // reflected ray (recursion)
             if (hitShape.Reflectance > 0 && depth > 0)
             {
-                var reflectionDirection = ray.Direction - tmp;
-                Ray reflectanceRay = new Ray(hitPosition, reflectionDirection).Shift();
-                Color4 reflectedColor = TraceRay(reflectanceRay, depth - 1);
+                Color4 reflectedColor = TraceRay(reflectedRay, depth - 1);
 
                 finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, hitShape.Reflectance));
-                //finalColor += reflectedColor * hitShape.Reflectance;
             }
 
             return finalColor;

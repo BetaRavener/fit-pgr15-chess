@@ -52,7 +52,7 @@ namespace RayMath
         /// </summary>
         /// <param name="shift"></param>
         /// <returns></returns>
-        public Ray Shift(double shift = 1e-5f)
+        public Ray Shift(double shift = 1e-5)
         {
             Origin += Direction*shift;
             return this;

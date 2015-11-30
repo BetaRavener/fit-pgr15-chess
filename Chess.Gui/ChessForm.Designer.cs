@@ -134,67 +134,73 @@ namespace Chess.Gui
             // 
             this.lightX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lightX.Location = new System.Drawing.Point(136, 361);
-            this.lightX.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lightX.Margin = new System.Windows.Forms.Padding(2);
             this.lightX.Name = "lightX";
             this.lightX.Size = new System.Drawing.Size(27, 20);
             this.lightX.TabIndex = 6;
             this.lightX.Text = "0";
             this.lightX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.lightX.TextChanged += new System.EventHandler(this.lightX_TextChanged);
             // 
             // lightY
             // 
             this.lightY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lightY.Location = new System.Drawing.Point(165, 361);
-            this.lightY.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lightY.Margin = new System.Windows.Forms.Padding(2);
             this.lightY.Name = "lightY";
             this.lightY.Size = new System.Drawing.Size(27, 20);
             this.lightY.TabIndex = 7;
             this.lightY.Text = "100";
             this.lightY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.lightY.TextChanged += new System.EventHandler(this.lightY_TextChanged);
             // 
             // lightZ
             // 
             this.lightZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.lightZ.Location = new System.Drawing.Point(193, 361);
-            this.lightZ.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.lightZ.Margin = new System.Windows.Forms.Padding(2);
             this.lightZ.Name = "lightZ";
             this.lightZ.Size = new System.Drawing.Size(27, 20);
             this.lightZ.TabIndex = 8;
             this.lightZ.Text = "-10";
             this.lightZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.lightZ.TextChanged += new System.EventHandler(this.lightZ_TextChanged);
             // 
             // cameraZ
             // 
             this.cameraZ.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cameraZ.Location = new System.Drawing.Point(193, 384);
-            this.cameraZ.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cameraZ.Margin = new System.Windows.Forms.Padding(2);
             this.cameraZ.Name = "cameraZ";
             this.cameraZ.Size = new System.Drawing.Size(27, 20);
             this.cameraZ.TabIndex = 16;
             this.cameraZ.Text = "-150";
             this.cameraZ.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.cameraZ.TextChanged += new System.EventHandler(this.cameraZ_TextChanged);
             // 
             // cameraY
             // 
             this.cameraY.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cameraY.Location = new System.Drawing.Point(165, 384);
-            this.cameraY.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cameraY.Margin = new System.Windows.Forms.Padding(2);
             this.cameraY.Name = "cameraY";
             this.cameraY.Size = new System.Drawing.Size(27, 20);
             this.cameraY.TabIndex = 15;
             this.cameraY.Text = "70";
             this.cameraY.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.cameraY.TextChanged += new System.EventHandler(this.cameraY_TextChanged);
             // 
             // cameraX
             // 
             this.cameraX.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cameraX.Location = new System.Drawing.Point(136, 384);
-            this.cameraX.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.cameraX.Margin = new System.Windows.Forms.Padding(2);
             this.cameraX.Name = "cameraX";
             this.cameraX.Size = new System.Drawing.Size(27, 20);
             this.cameraX.TabIndex = 14;
             this.cameraX.Text = "0";
             this.cameraX.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.cameraX.TextChanged += new System.EventHandler(this.cameraX_TextChanged);
             // 
             // label2
             // 
