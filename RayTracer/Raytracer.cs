@@ -1,10 +1,9 @@
-﻿//#define PARALLEL
+﻿#define PARALLEL
 
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CSG;
@@ -32,6 +31,10 @@ namespace Raytracer
 
         private List<Ray> _rayCache;
         private List<Color4> _colorCache;
+
+        public List<SceneObject> SceneObjects {
+            get { return _sceneObjects; }
+        }
 
         private static Color4 Background
         {
@@ -101,19 +104,6 @@ namespace Raytracer
             _camera.LookAt = new Vector3d(400, 0, 400);
             _lightSource = new LightSource(-300, 300, -700);
             _sceneObjects = new List<SceneObject>();
-
-            var game = new Game();
-            game.BuildBaseLayout();
-
-            game.Start();
-
-            var gameLoader = new GameLoader(@".");
-
-            gameLoader.SaveGame(game, "scene1.json");
-
-            var loadedGame = gameLoader.LoadGame("scene1.json");
-
-            _sceneObjects.AddRange(loadedGame.GetSceneObjects());
             _rayCache = new List<Ray>();
             _colorCache = new List<Color4>();
         }

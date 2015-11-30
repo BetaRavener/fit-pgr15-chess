@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Chess.Scene;
 using OpenTK;
 using RayTracer;
 
@@ -29,10 +30,14 @@ namespace Chess.Gui
         private bool _rotating;
         private bool _lightChanged;
         private int _antialiasFactor;
+        private Game _game;
 
         public ChessForm()
         {
             InitializeComponent();
+            _game = new Game();
+            _game.BuildBaseLayout();
+
             _raytracer = new Raytracer.Raytracer();
 
             _synchronizationContext = SynchronizationContext.Current;
@@ -103,6 +108,14 @@ namespace Chess.Gui
 
             _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
             _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
+
+            _game.Start();
+            // TODO change with new loader
+            var gameLoader = new GameLoader(@".");
+            gameLoader.SaveGame(_game, "scene1.json");
+            var loadedGame = gameLoader.LoadGame("scene1.json");
+
+            _raytracer.SceneObjects.AddRange(loadedGame.GetSceneObjects());
 
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
@@ -297,16 +310,6 @@ namespace Chess.Gui
             {
                 
             }
-
-            //Stream fileStream = null;
-            //if (openFileDialog.ShowDialog() == DialogResult.OK) && (fileStream = selectFileDialog.OpenFile()) != null){
-            //    string fileName = selectFileDialog.FileName;
-            //    using (fileStream)
-            //    {
-            //        // TODO
-            //    }
-            //}
-
         }
 
         private void exportButton_Click(object sender, EventArgs e)
