@@ -29,8 +29,10 @@ namespace Raytracer
         private List<Ray> _rayCache;
         private List<Color4> _colorCache;
 
-        public List<SceneObject> SceneObjects {
+        public List<SceneObject> SceneObjects
+        {
             get { return _sceneObjects; }
+            set { _sceneObjects = value; }
         }
 
         private static Color4 Background

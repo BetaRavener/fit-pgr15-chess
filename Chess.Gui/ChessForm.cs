@@ -35,20 +35,12 @@ namespace Chess.Gui
         private GameSceneLayout _game;
         private bool _antialiasFactorChanged = false;
         private int _reflectionDepth;
+        private GameSceneLayout _gameLoaded;
 
         public ChessForm()
         {
             InitializeComponent();
-
-            _game = new GameSceneLayout();
-            _game.BuildBaseLayout();
-
-            _game.Light.Position = new Vector3d(400, 400, 400);
-            _game.Camera = new Camera(100, 400, 200)
-            {
-                LookAt = new Vector3d(400, 0, 400)
-            };
-
+           
             _raytracer = new Raytracer.Raytracer();
 
             _synchronizationContext = SynchronizationContext.Current;
@@ -105,10 +97,12 @@ namespace Chess.Gui
         {
             if (_cancelSource == null)
             {
+                RenderButton.BackColor = System.Drawing.Color.OrangeRed;
                 Render();
             }
             else
             {
+                RenderButton.BackColor = System.Drawing.Color.YellowGreen;
                 _cancelSource.Cancel();
             }
         }
@@ -118,21 +112,27 @@ namespace Chess.Gui
             RenderButton.Text = "Cancel";
             _cancelSource = new CancellationTokenSource();
 
-            _raytracer.NumberOfThreads = (int) ThreadsNumber.Value;
-            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
+            // if no game was specified, creates base layout game
+            if (_game == null)
+            {
+                _game = new GameSceneLayout
+                {
+                    Light = { Position = new Vector3d(400, 400, 400) },
+                    Camera = new Camera(100, 500, 200)
+                    {
+                        LookAt = new Vector3d(400, 0, 400)
+                    }
+                };
+                _game.BuildBaseLayout();
+            }
 
-            // Game should not start multiply times
-            //_game.Start();
+            _raytracer.SceneObjects = _game.GetSceneObjects();
+            _raytracer.Light = _game.Light;
+            _raytracer.Eye = _game.Camera;
 
-            // TODO change with new loader
-            var fileStorage = new FileStorage(@".", "scene1.json");
-            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
-            gameLoader.SaveGame(_game);
-            var loadedGame = gameLoader.LoadGame();
+            _raytracer.NumberOfThreads = (int)ThreadsNumber.Value;
+            _raytracer.ReflectionDepth = (int)reflectionDepth.Value;
 
-            _raytracer.SceneObjects.AddRange(loadedGame.GetSceneObjects());
-            _raytracer.Light = loadedGame.Light;
-            _raytracer.Eye = loadedGame.Camera;
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
             {
@@ -320,22 +320,47 @@ namespace Chess.Gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void openFileButton_Click(object sender, EventArgs e)
+        private void openSceneButton_Click(object sender, EventArgs e)
         {
-            var openFileDialog = new OpenFileDialog();
-            openFileDialog.Filter = @"Chess state JSON file|*.JSON";
-            openFileDialog.InitialDirectory = @".";
-
-            string filename = "";
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            var openFileDialog = new OpenFileDialog
             {
-                filename = openFileDialog.FileName;
+                Filter = @"Chess state JSON file|*.JSON",
+                InitialDirectory = @"."
+            };
+
+            if (openFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            var filename = openFileDialog.FileName;
+            if (filename == "") return;
+
+            _cancelSource?.Cancel();
+            RenderButton.BackColor = System.Drawing.Color.YellowGreen;
+
+            loadedSceneLabel.Text = openFileDialog.SafeFileName;
+            var fileStorage = new FileStorage(filename);
+            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
+            _game = gameLoader.LoadGame();
+        }
+
+        private void saveSceneButton_Click(object sender, EventArgs e)
+        {
+            if (RenderView.Image == null || _game == null)
+            {
+                MessageBox.Show(@"You need to render scene first!");
+                return;
             }
 
-            if (filename != "")
+            var saveFileDialog = new SaveFileDialog
             {
-                
-            }
+                Filter = @"Chess scene state|*.json",
+                Title = @"Export scene to JSON file"
+            };
+
+            if (saveFileDialog.ShowDialog() != DialogResult.OK) return;
+
+            var fileStorage = new FileStorage(saveFileDialog.FileName);
+            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
+            gameLoader.SaveGame(_game);
         }
 
         /// <summary>
@@ -343,7 +368,7 @@ namespace Chess.Gui
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void exportButton_Click(object sender, EventArgs e)
+        private void exportImageButton_Click(object sender, EventArgs e)
         {
             if (RenderView.Image == null)
             {

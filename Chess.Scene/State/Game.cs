@@ -89,5 +89,18 @@ namespace Chess.Scene.State
             }
         }
 
+        public void BuildOnlyPawns()
+        {
+            Chessboard = new Chessboard();
+            Player1 = new Player() { Color = Color4.White, Name = "Player1" };
+            Player2 = new Player() { Color = Color4.Black, Name = "Player2" };
+
+            for (uint i = 0; i < 8; i++)
+            {
+                Player1.CreateFigure(new ChessboardPosition(i, 1), FigureType.Pawn);
+                Player2.CreateFigure(new ChessboardPosition(i, 6), FigureType.Pawn);
+            }
+        }
+
     }
 }
