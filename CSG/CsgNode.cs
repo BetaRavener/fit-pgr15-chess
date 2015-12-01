@@ -56,7 +56,8 @@ namespace CSG
             {
                 case IntersectionKind.Into: return new Intersection(IntersectionKind.Into, re.Node, re.Distance);
                 case IntersectionKind.Outfrom: return new Intersection(IntersectionKind.Outfrom, re.Node, re.Distance);
-                default: return new Intersection(IntersectionKind.None);
+                default:
+                    return null;
             }
         }
 

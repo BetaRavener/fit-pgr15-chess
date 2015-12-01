@@ -22,7 +22,7 @@ namespace CSG.Shapes
             double np = Vector3d.Dot(_normal, ray.Direction);
             if (np == 0) return null;
             double t = -(_d + Vector3d.Dot(_normal, ray.Origin)) / np;
-            return t > 0 ? new Intersection((np > 0) ? IntersectionKind.Into : IntersectionKind.Outfrom, this, t) : new Intersection(IntersectionKind.None);
+            return t > 0 ? new Intersection((np > 0) ? IntersectionKind.Into : IntersectionKind.Outfrom, this, t) : null;
         }
 
         public override RangesShape Intersect(Ray ray)

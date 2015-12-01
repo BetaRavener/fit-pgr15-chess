@@ -47,7 +47,7 @@ namespace CSG.Shapes
                 double t2 = (-bb + sD) / (2 * aa);
                 if (t2 > 0) return new Intersection(IntersectionKind.Outfrom, this, t2);
             }
-            return new Intersection(IntersectionKind.None);
+            return null;
         }
 
         /// <summary>

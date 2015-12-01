@@ -33,6 +33,8 @@ namespace Chess.Gui
         private bool _lightChanged;
         private int _antialiasFactor;
         private GameSceneLayout _game;
+        private bool _antialiasFactorChanged = false;
+        private int _reflectionDepth;
 
         public ChessForm()
         {
@@ -60,6 +62,7 @@ namespace Chess.Gui
 
             _lightPos = _raytracer.Light.Position;
             _antialiasFactor = _raytracer.AntialiasFactor;
+            _reflectionDepth = _raytracer.ReflectionDepth;
 
             _resized = true;
             _viewChanged = true;
@@ -141,8 +144,14 @@ namespace Chess.Gui
 
                 var begin = DateTime.UtcNow;
 
-                _raytracer.AntialiasFactor = _antialiasFactor;
+                _raytracer.ReflectionDepth = _reflectionDepth;
 
+                if (_antialiasFactorChanged)
+                {
+                    _raytracer.AntialiasFactor = _antialiasFactor;
+                }
+                _antialiasFactorChanged = false;
+            
                 if (_resized)
                 {
                     _raytracer.Resize(RenderView.Width, RenderView.Height);
@@ -303,10 +312,14 @@ namespace Chess.Gui
             if (!reflectionDepth.Focused)
                 return;
 
-            _raytracer.ReflectionDepth = (int) reflectionDepth.Value;
-            _viewChanged = true;
+            _reflectionDepth = (int)reflectionDepth.Value;
         }
 
+        /// <summary>
+        /// Open scene from JSON file
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void openFileButton_Click(object sender, EventArgs e)
         {
             var openFileDialog = new OpenFileDialog();
@@ -325,6 +338,11 @@ namespace Chess.Gui
             }
         }
 
+        /// <summary>
+        /// Export to image
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void exportButton_Click(object sender, EventArgs e)
         {
             if (RenderView.Image == null)
@@ -370,6 +388,7 @@ namespace Chess.Gui
                 return;
 
             _antialiasFactor = (int)antialiasingFactor.Value;
+            _antialiasFactorChanged = true;
         }
     }
 }
