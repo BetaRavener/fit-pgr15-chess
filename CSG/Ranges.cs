@@ -191,7 +191,7 @@ namespace CSG
                 }
             }
 
-            return new RangeEdgeShape(t, null, IntersectionKind.None);
+            return new RangeEdgeShape(t);
         }
     }
 }

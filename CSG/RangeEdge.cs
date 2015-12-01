@@ -33,5 +33,10 @@ namespace CSG
             Node = node;
             Kind = kind;
         }
+
+        public RangeEdgeShape(double dist)
+        {
+            Distance = dist;
+        }
     }
 }

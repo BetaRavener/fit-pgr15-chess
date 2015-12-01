@@ -24,15 +24,15 @@ namespace Raytracer
         private int _heightInPixels;
         private int _widthInPixels;
 
-        private LightSource _lightSource;
-        private Camera _camera;
         private List<SceneObject> _sceneObjects;
 
         private List<Ray> _rayCache;
         private List<Color4> _colorCache;
 
-        public List<SceneObject> SceneObjects {
+        public List<SceneObject> SceneObjects
+        {
             get { return _sceneObjects; }
+            set { _sceneObjects = value; }
         }
 
         private static Color4 Background
@@ -40,17 +40,9 @@ namespace Raytracer
             get { return Color.MidnightBlue; }
         }
 
-        public Camera Eye
-        {
-            get { return _camera; }
-            set { _camera = value; }
-        }
+        public Camera Eye { get; set; }
 
-        public LightSource Light
-        {
-            get { return _lightSource; }
-            set { _lightSource = value; }
-        }
+        public LightSource Light { get; set; }
 
         public int ReflectionDepth { get; set; } = 2;
 
@@ -100,11 +92,11 @@ namespace Raytracer
         {
             _heightInPixels = 0;
             _widthInPixels = 0;
-            _camera = new Camera(100, 400, 200)
+            Eye = new Camera(100, 400, 200)
             {
                 LookAt = new Vector3d(400, 0, 400)
             };
-            _lightSource = new LightSource(-300, 300, -700);
+            Light = new LightSource(-300, 300, -700);
 
             _sceneObjects = new List<SceneObject>();
             _rayCache = new List<Ray>();
@@ -142,8 +134,7 @@ namespace Raytracer
             {
                 SceneObject sceneObject = _sceneObjects[index];
                 var intersection = sceneObject.IntersectFirst(ray, OnlyBoundingBoxes);
-                if (intersection.Kind != IntersectionKind.None &&
-                    intersection.Distance < closestIntersection.Distance)
+                if (intersection != null && intersection.Distance < closestIntersection.Distance)
                 {
                     closestIntersection = intersection;
                 }
@@ -165,7 +156,7 @@ namespace Raytracer
                 var sceneObject = _sceneObjects[index];
                 var inters = sceneObject.IntersectFirst(ray);
 
-                if (inters.Kind != IntersectionKind.None && inters.Distance < lightDistance)
+                if (inters != null && inters.Distance < lightDistance)
                 {
                     return true;
                 }
@@ -200,17 +191,14 @@ namespace Raytracer
             Vector3d lightDirection = (Light.Position - hitPosition);
             double lightDistance = lightDirection.Length;
             lightDirection.Normalize();
-            Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
             var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
             if (OnlyBoundingBoxes)
             {
                 return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
             }
 
-            Color4 finalColor = Light.Color.Times(0.1f);
+            Color4 finalColor = Light.AmbientColor;
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
-            Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
-
             if (!IsInShadow(shadowRay, lightDistance))
             {
                 // diffuse light (default shape color)
@@ -220,6 +208,7 @@ namespace Raytracer
                 // specular
                 if (hitShape.Shininess > 0)
                 {
+                    Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
                     double specularRatio = Vector3d.Dot(lightReflection, ray.Direction);
                     if (specularRatio > 0)
                     {
@@ -232,6 +221,7 @@ namespace Raytracer
             // reflected ray (recursion)
             if (hitShape.Reflectance > 0 && depth > 0)
             {
+                Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
                 Color4 reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
 
                 finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, hitShape.Reflectance));

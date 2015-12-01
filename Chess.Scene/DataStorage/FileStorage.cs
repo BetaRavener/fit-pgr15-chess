@@ -8,20 +8,26 @@ namespace Chess.Scene.DataStorage
 
         public string FileName { get; set; }
 
+        public string FilePath { get; set; }
+
         public FileStorage(string currentDir, string fileName)
         {
-            CurrentDirectory = currentDir;
-            FileName = fileName;
+            FilePath = Path.Combine(currentDir, fileName);
+        }
+
+        public FileStorage(string filePath)
+        {
+            FilePath = filePath;
         }
 
         public string Read()
         {
-            return File.ReadAllText(Path.Combine(CurrentDirectory, FileName));
+            return File.ReadAllText(FilePath);
         }
 
         public void Write(string content)
         {
-            File.WriteAllText(Path.Combine(CurrentDirectory, FileName), content);
+            File.WriteAllText(FilePath, content);
         }
     }
 }
