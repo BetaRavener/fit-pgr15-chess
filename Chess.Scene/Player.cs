@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CSG.Material;
 using OpenTK.Graphics;
 
 namespace Chess.Scene
@@ -18,7 +19,11 @@ namespace Chess.Scene
 
         public void CreateFigure(ChessboardPosition position, FigureType type)
         {
-            var figure = new Figure(position, type) {Color = Color};
+            var material = new GlassMaterial(new CSG.Color.Color(Color));
+
+            var figure = new Figure(position, type) {
+                Material= material
+            };
 
             Figures.Add(figure);
         }

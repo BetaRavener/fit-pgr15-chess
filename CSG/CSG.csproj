@@ -48,9 +48,25 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Color\Color.cs" />
+    <Compile Include="Color\ColorMap.cs" />
+    <Compile Include="Color\PhongMap.cs" />
+    <Compile Include="Color\PongInfo.cs" />
     <Compile Include="CsgNode.cs" />
     <Compile Include="Intersection.cs" />
     <Compile Include="IntersectionKind.cs" />
+    <Compile Include="Material\Checker.cs" />
+    <Compile Include="Material\Clouds.cs" />
+    <Compile Include="Material\GlassMaterial.cs" />
+    <Compile Include="Material\Material.cs" />
+    <Compile Include="Material\NoiseDisplace.cs" />
+    <Compile Include="Material\PhongMaterial.cs" />
+    <Compile Include="Material\Wood.cs" />
+    <Compile Include="Noise\ImprovedNoise.cs" />
+    <Compile Include="Noise\Noise.cs" />
+    <Compile Include="Noise\NoiseUtilities.cs" />
+    <Compile Include="Noise\PerlinNoise.cs" />
+    <Compile Include="Noise\ValueNoise.cs" />
     <Compile Include="Range.cs" />
     <Compile Include="RangeEdge.cs" />
     <Compile Include="Ranges.cs" />

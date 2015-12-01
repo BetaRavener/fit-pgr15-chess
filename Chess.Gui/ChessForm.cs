@@ -9,6 +9,7 @@ using Chess.Scene;
 using Chess.Scene.DataStorage;
 using Chess.Scene.State;
 using OpenTK;
+using OpenTK.Graphics;
 using RayTracer;
 
 namespace Chess.Gui
@@ -40,7 +41,11 @@ namespace Chess.Gui
 
             _game = new GameSceneLayout();
             _game.BuildBaseLayout();
-
+            //_game.Chessboard = new Chessboard();
+            //_game.Player1 = new Player() {Color = Color4.White};
+            //_game.Player2 = new Player() { Color = Color4.White };
+            //_game.Player1.CreateFigure(new ChessboardPosition(3,3), FigureType.Knight);
+            
             _game.Light.Position = new Vector3d(400, 400, 400);
             _game.Camera = new Camera(100, 400, 200)
             {
@@ -122,14 +127,14 @@ namespace Chess.Gui
             //_game.Start();
 
             // TODO change with new loader
-            var fileStorage = new FileStorage(@".", "scene1.json");
-            var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
-            gameLoader.SaveGame(_game);
-            var loadedGame = gameLoader.LoadGame();
+            //var fileStorage = new FileStorage(@".", "scene1.json");
+            //var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
+            //gameLoader.SaveGame(_game);
+            //var loadedGame = gameLoader.LoadGame();
 
-            _raytracer.SceneObjects.AddRange(loadedGame.GetSceneObjects());
-            _raytracer.Light = loadedGame.Light;
-            _raytracer.Eye = loadedGame.Camera;
+            _raytracer.SceneObjects.AddRange(_game.GetSceneObjects());
+            _raytracer.Light = _game.Light;
+            _raytracer.Eye = _game.Camera;
             // Repeat rendering until cancelled
             while (!_cancelSource.IsCancellationRequested)
             {

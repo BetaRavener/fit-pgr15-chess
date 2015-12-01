@@ -59,10 +59,6 @@ namespace Chess.Scene
             return Color;
         }
 
-        public override double Shininess => 6;
-
-        public override double Reflectance => 0.5;
-
         private void CreateBoundingBox(Vector3d pos)
         {
             var minX = pos.X - (MaxX / 2);

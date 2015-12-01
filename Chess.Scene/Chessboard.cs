@@ -5,6 +5,8 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
 using CSG;
+using CSG.Color;
+using CSG.Material;
 using OpenTK;
 using OpenTK.Graphics;
 
@@ -27,7 +29,12 @@ namespace Chess.Scene
             CsgTree = ObjectBuilder.BuildChessboard(this);
             var chessBox = (CSG.Shapes.Box)CsgTree;
             BoundingBox = new CSG.Shapes.Box(chessBox.Min, chessBox.Max, null);
-        }
+
+            var phong1 = new PhongInfo(new CSG.Color.Color(WhiteColor), new CSG.Color.Color(WhiteColor), 0.5, 100);
+            var phong2 = new PhongInfo(new CSG.Color.Color(BlackColor), new CSG.Color.Color(BlackColor), 0.5, 100);
+            Material = new Checker(phong1, phong2, CroftWidth, CroftHeight);
+            
+    }
 
         public override Color4 ComputeColor(Vector3d position, Vector3d normal)
         {
@@ -49,9 +56,5 @@ namespace Chess.Scene
 
             return BackgroundColor;
         }
-
-        public override double Shininess => 100;
-
-        public override double Reflectance => 0.5;
     }
 }

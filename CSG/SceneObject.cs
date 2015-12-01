@@ -40,9 +40,7 @@ namespace CSG
             return Color;
         }
 
-        public virtual double Shininess => 0;
-
-        public virtual double Reflectance => 0;
+        public Material.Material Material { get; set; }
 
         /// <summary>
         /// Finds first intersection with this scene object.
@@ -61,8 +59,8 @@ namespace CSG
             double t;
             if (BoundingBox.Intersects(ray, out t))
             {
-                return renderBBox 
-                    ? new Intersection(IntersectionKind.Into, BoundingBox, t) 
+                return renderBBox
+                    ? new Intersection(IntersectionKind.Into, BoundingBox, t)
                     : CsgTree.IntersectFirst(ray);
             }
 
