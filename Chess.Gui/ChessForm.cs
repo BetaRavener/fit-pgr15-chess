@@ -36,6 +36,7 @@ namespace Chess.Gui
         private bool _antialiasFactorChanged = false;
         private int _reflectionDepth;
         private GameSceneLayout _gameLoaded;
+        private bool _shininessFactor;
 
         public ChessForm()
         {
@@ -55,6 +56,7 @@ namespace Chess.Gui
             _lightPos = _raytracer.Light.Position;
             _antialiasFactor = _raytracer.AntialiasFactor;
             _reflectionDepth = _raytracer.ReflectionDepth;
+            _shininessFactor = _raytracer.ShininessFactor;
 
             _resized = true;
             _viewChanged = true;
@@ -145,6 +147,7 @@ namespace Chess.Gui
                 var begin = DateTime.UtcNow;
 
                 _raytracer.ReflectionDepth = _reflectionDepth;
+                _raytracer.ShininessFactor = _shininessFactor;
 
                 if (_antialiasFactorChanged)
                 {
@@ -414,6 +417,11 @@ namespace Chess.Gui
 
             _antialiasFactor = (int)antialiasingFactor.Value;
             _antialiasFactorChanged = true;
+        }
+
+        private void shininessFactor_CheckedChanged(object sender, EventArgs e)
+        {
+            _shininessFactor = shininessFactor.Checked;
         }
     }
 }

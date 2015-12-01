@@ -80,7 +80,9 @@ namespace Raytracer
                 BuildRayCache();
             }
         }
-        
+
+        public bool ShininessFactor { get; set; } = true;
+
         private int AntialiasedWidth { get { return _widthInPixels * AntialiasFactor; } }
 
         private int AntialiasedHeight { get { return _heightInPixels * AntialiasFactor; } }
@@ -206,7 +208,7 @@ namespace Raytracer
                 finalColor = finalColor.Add(diffuseColor);
 
                 // specular
-                if (hitShape.Shininess > 0)
+                if (ShininessFactor && hitShape.Shininess > 0)
                 {
                     Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
                     double specularRatio = Vector3d.Dot(lightReflection, ray.Direction);
