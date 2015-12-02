@@ -6,22 +6,34 @@ namespace Chess.Scene
 {
     public class Player
     {
-        public Color4 Color { get; set; }
+        public Color4 Color
+        {
+            get { return _color; }
+            set
+            {
+                _color = value;
+                _figureMaterial = new ConstMaterial(new PhongInfo(_color, _color, Color4.White, 6, 0.1));
+            }
+        }
 
         public string Name { get; set; }
 
         public IList<Figure> Figures { get; private set; }
+
+        private Material _figureMaterial;
+        private Color4 _color;
 
         public Player()
         {
             Figures = new List<Figure>();
         }
 
+
         public void CreateFigure(ChessboardPosition position, FigureType type)
         {
             var figure = new Figure(position, type)
             {
-                Material = new ConstMaterial(new PhongInfo(Color, Color, Color4.White, 6, 0.1))
+                Material = _figureMaterial
             };
 
             Figures.Add(figure);
