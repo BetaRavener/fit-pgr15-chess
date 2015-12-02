@@ -1,6 +1,7 @@
 ﻿using OpenTK;
 using RayMath;
 using System;
+using CSG.Materials;
 using OpenTK.Graphics;
 
 namespace CSG.Shapes
@@ -10,9 +11,9 @@ namespace CSG.Shapes
     /// </summary>
     public abstract class Shape : CsgNode
     {
-        public static Color4 FallbackColor = Color4.Red;
-        public static double FallbackShininess = 0;
-        public static double FallbackReflectance = 0;
+        private readonly Material fallbackMaterial = new ConstMaterial(new PhongInfo(Color4.Red, Color4.Red)); 
+
+        public Material LocalMaterial { get; set; }
 
         public SceneObject Parent { get; set; }
 
@@ -21,17 +22,10 @@ namespace CSG.Shapes
             Parent = sceneObject;
         }
 
-        public virtual Color4 Color(Vector3d position, Vector3d normal)
+        public virtual Material GetMaterial()
         {  
-            return Parent?.ComputeColor(position, normal) ?? FallbackColor;
+            return LocalMaterial ?? Parent?.Material ?? fallbackMaterial;
         }
-
-        public Color4 ColorSpecular { get; set; } = Color4.White;
-
-        public double Shininess => Parent?.Shininess ?? FallbackShininess;
-
-        public double Reflectance => Parent?.Reflectance ?? FallbackReflectance;
-
 
         /// <summary>
         /// Find set of spans at which the ray intersects this shape.

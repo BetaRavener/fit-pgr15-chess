@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using CSG.Materials;
 using OpenTK.Graphics;
 
 namespace Chess.Scene
@@ -18,7 +19,10 @@ namespace Chess.Scene
 
         public void CreateFigure(ChessboardPosition position, FigureType type)
         {
-            var figure = new Figure(position, type) {Color = Color};
+            var figure = new Figure(position, type)
+            {
+                Material = new ConstMaterial(new PhongInfo(Color, Color, Color4.White, 6, 0.1))
+            };
 
             Figures.Add(figure);
         }

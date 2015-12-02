@@ -193,10 +193,13 @@ namespace Raytracer
             Vector3d lightDirection = (Light.Position - hitPosition);
             double lightDistance = lightDirection.Length;
             lightDirection.Normalize();
+
+            var phongInfo = hitShape.GetMaterial().GetPhongInfo(hitPosition, hitNormal);
             var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
+
             if (OnlyBoundingBoxes)
             {
-                return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
+                return phongInfo.Ambient.Times((float)angleToLight);
             }
 
             Color4 finalColor = Light.AmbientColor;
@@ -204,29 +207,29 @@ namespace Raytracer
             if (!IsInShadow(shadowRay, lightDistance))
             {
                 // diffuse light (default shape color)
-                var diffuseColor = Color4Extension.Multiply(hitShape.Color(hitPosition, hitNormal), Light.Color).Times((float)Math.Max(0.0, angleToLight));
+                var diffuseColor = Color4Extension.Multiply(phongInfo.Diffuse, Light.Color).Times((float)Math.Max(0.0, angleToLight));
                 finalColor = finalColor.Add(diffuseColor);
 
                 // specular
-                if (ShininessFactor && hitShape.Shininess > 0)
+                if (ShininessFactor && phongInfo.Shininess > 0)
                 {
                     Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
                     double specularRatio = Vector3d.Dot(lightReflection, ray.Direction);
                     if (specularRatio > 0)
                     {
-                        var specularColor = Color4Extension.Multiply(hitShape.ColorSpecular, Light.Color).Times((float)Math.Pow(specularRatio, hitShape.Shininess));
+                        var specularColor = Color4Extension.Multiply(phongInfo.Specular, Light.Color).Times((float)Math.Pow(specularRatio, phongInfo.Shininess));
                         finalColor = finalColor.Add(specularColor);
                     }
                 }
             }
 
             // reflected ray (recursion)
-            if (hitShape.Reflectance > 0 && depth > 0)
+            if (phongInfo.Reflectance > 0 && depth > 0)
             {
                 Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
                 Color4 reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
 
-                finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, hitShape.Reflectance));
+                finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, phongInfo.Reflectance));
             }
 
             return finalColor;

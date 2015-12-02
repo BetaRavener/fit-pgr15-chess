@@ -60,7 +60,7 @@ namespace Chess.Scene.State
         {
             Chessboard = new Chessboard();
             Player1 = new Player() { Color = Color4.White, Name = "Player1"};
-            Player2 = new Player() { Color = Color4.Black, Name = "Player2"};
+            Player2 = new Player() { Color = Color4.Red, Name = "Player2"};
 
 
             Player1.CreateFigure(new ChessboardPosition(0, 0), FigureType.Rook);

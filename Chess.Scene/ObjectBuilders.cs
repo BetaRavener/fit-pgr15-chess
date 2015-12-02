@@ -1,7 +1,9 @@
 using CSG;
+using CSG.Materials;
 using CSG.Shapes;
 using OpenTK;
 using OpenTK.Graphics;
+using OpenTK.Graphics.OpenGL;
 using RayMath;
 
 namespace Chess.Scene
@@ -15,9 +17,29 @@ namespace Chess.Scene
                 Chessboard.CroftThickness,
                 min.Z + Chessboard.CroftWidth * 8);
 
-
             var box = new Box(min, max, sceneObject);
-            return box;
+
+            var borderMin1 = min + new Vector3d(-10, 0, -10);
+            var borderMax1 = max + new Vector3d(10, -1, 10);
+
+            var border1 = new Box(borderMin1, borderMax1, sceneObject)
+            {
+                LocalMaterial = new ConstMaterial(new PhongInfo(Color4.Red, Color4.Red, 0.5, 100))
+            };
+
+            var borderMin2 = min + new Vector3d(-Chessboard.CroftHeight, 0, -Chessboard.CroftWidth);
+            var borderMax2 = max + new Vector3d(Chessboard.CroftHeight, -2, Chessboard.CroftWidth);
+
+            var border2 = new Box(borderMin2, borderMax2, sceneObject)
+            {
+                LocalMaterial =
+                    new ConstMaterial(new PhongInfo(new Color4(61, 21, 8, 0), new Color4(61, 21, 8, 0), 0.5, 100))
+            };
+
+
+            var union = new CsgNode(CsgNode.Operations.Union, box, border1);
+
+            return new CsgNode(CsgNode.Operations.Union, union, border2);
         }
 
         public static CsgNode BuildKing(Vector3d center, SceneObject sceneObject)
@@ -264,7 +286,7 @@ namespace Chess.Scene
             var baseUnion = new CsgNode(CsgNode.Operations.Union, base1, baseDiff);
 
             // Body
-            var box1Position1 = base3Position + new Vector3d(-18, 0,-5);
+            var box1Position1 = base3Position + new Vector3d(-18, 0, -5);
             var box1Position2 = base3Position + new Vector3d(18, 30, 5); ;
             var box1 = new Box(box1Position1, box1Position2, sceneObject);
 
@@ -296,7 +318,7 @@ namespace Chess.Scene
             var box3 = new Box(box3Position1, box3Position2, sceneObject);
 
             var plane1Dir = new Vector3d(-1, -1.7, 0);
-            var plane1Position = box3Position1 + new Vector3d(12,0,0);
+            var plane1Position = box3Position1 + new Vector3d(12, 0, 0);
             var plane1 = new Plane(plane1Dir, plane1Position, sceneObject);
 
             var horseHeadDiff1 = new CsgNode(CsgNode.Operations.Difference, box3, plane1);

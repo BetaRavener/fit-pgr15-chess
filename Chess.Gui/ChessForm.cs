@@ -41,17 +41,17 @@ namespace Chess.Gui
         public ChessForm()
         {
             InitializeComponent();
-           
+
             _raytracer = new Raytracer.Raytracer();
 
             _synchronizationContext = SynchronizationContext.Current;
-            lightX.Text = ((int) _raytracer.Light.Position.X).ToString();
-            lightY.Text = ((int) _raytracer.Light.Position.Y).ToString();
-            lightZ.Text = ((int) _raytracer.Light.Position.Z).ToString();
+            lightX.Text = ((int)_raytracer.Light.Position.X).ToString();
+            lightY.Text = ((int)_raytracer.Light.Position.Y).ToString();
+            lightZ.Text = ((int)_raytracer.Light.Position.Z).ToString();
 
-            cameraX.Text = ((int) _raytracer.Eye.Position.X).ToString();
-            cameraY.Text = ((int) _raytracer.Eye.Position.Y).ToString();
-            cameraZ.Text = ((int) _raytracer.Eye.Position.Z).ToString();
+            cameraX.Text = ((int)_raytracer.Eye.Position.X).ToString();
+            cameraY.Text = ((int)_raytracer.Eye.Position.Y).ToString();
+            cameraZ.Text = ((int)_raytracer.Eye.Position.Z).ToString();
 
             _lightPos = _raytracer.Light.Position;
             _antialiasFactor = _raytracer.AntialiasFactor;
@@ -72,7 +72,7 @@ namespace Chess.Gui
         {
             _synchronizationContext.Post(@object =>
             {
-                var valMax = (Tuple<int, int>) @object;
+                var valMax = (Tuple<int, int>)@object;
                 RenderProgressBar.Value = valMax.Item1;
                 RenderProgressBar.Maximum = valMax.Item2;
             }, value);
@@ -154,7 +154,7 @@ namespace Chess.Gui
                     _raytracer.AntialiasFactor = _antialiasFactor;
                 }
                 _antialiasFactorChanged = false;
-            
+
                 if (_resized)
                 {
                     _raytracer.Resize(RenderView.Width, RenderView.Height);
@@ -164,16 +164,16 @@ namespace Chess.Gui
                 if (_lightChanged)
                 {
                     _raytracer.Light.Position = _lightPos;
-                    lightX.Text = ((int) _lightPos.X).ToString();
-                    lightY.Text = ((int) _lightPos.Y).ToString();
-                    lightZ.Text = ((int) _lightPos.Z).ToString();
+                    lightX.Text = ((int)_lightPos.X).ToString();
+                    lightY.Text = ((int)_lightPos.Y).ToString();
+                    lightZ.Text = ((int)_lightPos.Z).ToString();
                 }
                 if (_viewChanged)
                 {
                     var camPos = _raytracer.Eye.Position;
-                    cameraX.Text = ((int) camPos.X).ToString();
-                    cameraY.Text = ((int) camPos.Y).ToString();
-                    cameraZ.Text = ((int) camPos.Z).ToString();
+                    cameraX.Text = ((int)camPos.X).ToString();
+                    cameraY.Text = ((int)camPos.Y).ToString();
+                    cameraZ.Text = ((int)camPos.Z).ToString();
 
                     _raytracer.BuildRayCache();
                 }
@@ -196,11 +196,11 @@ namespace Chess.Gui
                 // Calculate time it took to render scene
                 var elapsed = (end - begin).TotalMilliseconds;
 
-                FPSlabel.Text = (1000.0/elapsed).ToString("#.##");
+                FPSlabel.Text = (1000.0 / elapsed).ToString("#.##");
 
                 // If scene drawn under 30 miliseconds, wait with next rendering
                 if (elapsed < 30)
-                    await Task.Delay((int) (30 - elapsed));
+                    await Task.Delay((int)(30 - elapsed));
             }
 
             _cancelSource = null;

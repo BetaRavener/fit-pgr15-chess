@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Media;
 using CSG;
+using CSG.Materials;
 using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
@@ -53,15 +54,6 @@ namespace Chess.Scene
         public Figure()
         {
         }
-
-        public override Color4 ComputeColor(Vector3d pos, Vector3d normal)
-        {
-            return Color;
-        }
-
-        public override double Shininess => 6;
-
-        public override double Reflectance => 0.5;
 
         private void CreateBoundingBox(Vector3d pos)
         {
