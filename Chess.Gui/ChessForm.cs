@@ -348,6 +348,10 @@ namespace Chess.Gui
             var fileStorage = new FileStorage(filename);
             var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
             _game = gameLoader.LoadGame();
+
+            _lightPos = _game.Light.Position;
+            _viewChanged = true;
+            _lightChanged = true;
         }
 
         private void saveSceneButton_Click(object sender, EventArgs e)
