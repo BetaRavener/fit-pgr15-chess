@@ -7,6 +7,7 @@ using System.Drawing.Imaging;
 using System.Threading;
 using System.Threading.Tasks;
 using CSG;
+using Math3d;
 using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
@@ -105,6 +106,11 @@ namespace Raytracer
 
         public int NumberOfThreads { get; set; } = 1;
 
+        /// <summary>
+        /// When window is resized this handles correct recounting of pixels
+        /// </summary>
+        /// <param name="widthInPixels"></param>
+        /// <param name="heightInPixels"></param>
         public void Resize(int widthInPixels, int heightInPixels)
         {
             _heightInPixels = heightInPixels;
@@ -127,6 +133,11 @@ namespace Raytracer
         }
 
 
+        /// <summary>
+        /// Checks if exists any intersection with specified ray and returns closest one
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <returns>closest intersection with specified ray</returns>
         private Intersection GetClosestIntersection(Ray ray)
         {
             // Search for closest intersection
@@ -226,14 +237,14 @@ namespace Raytracer
                 }
             }
 
-            // reflected ray (recursion)
-            if (phongInfo.Reflectance > 0 && depth > 0)
-            {
-                var reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
-                var reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
+            // if not reflected or recursion reached specified maximum
+            if (!(phongInfo.Reflectance > 0) || depth <= 0) return finalColor;
 
-                finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, phongInfo.Reflectance));
-            }
+            // reflected ray (recursion)
+            var reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
+            var reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
+
+            finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, phongInfo.Reflectance));
 
             return finalColor;
         }

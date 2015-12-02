@@ -1,6 +1,6 @@
 ﻿using OpenTK;
 
-namespace RayMath
+namespace Math3d
 {
     public static class Operations
     {
