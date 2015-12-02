@@ -1,4 +1,5 @@
-﻿using CSG;
+﻿using System.Collections.Generic;
+using CSG;
 using CSG.Shapes;
 using OpenTK;
 
@@ -26,6 +27,33 @@ namespace Chess.Scene.Figures
             var mainUnion = new CSGNode(CSGNode.Operations.Union, cone, sphere);
 
             return new CSGNode(CSGNode.Operations.Union, base1, mainUnion);
+        }
+
+        public override List<Box> BuildBoundingBox(Vector3d pos)
+        {
+            var bboxes = new List<Box>();
+
+            var minX = pos.X - 16;
+            var minZ = pos.Z - 16;
+            var minY = pos.Y + 30;
+
+            var maxX = pos.X + 16;
+            var maxZ = pos.Z + 16;
+            var maxY = pos.Y + 46 + 16;
+
+            bboxes.Add(new Box(new Vector3d(minX, minY, minZ), new Vector3d(maxX, maxY, maxZ), null));
+
+            minX = pos.X - 30;
+            minZ = pos.Z - 30;
+            minY = pos.Y;
+
+            maxX = pos.X + 30;
+            maxZ = pos.Z + 30;
+            maxY = pos.Y + 30;
+
+            bboxes.Add(new Box(new Vector3d(minX, minY, minZ), new Vector3d(maxX, maxY, maxZ), null));
+
+            return bboxes;
         }
     }
 }

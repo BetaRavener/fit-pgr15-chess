@@ -26,7 +26,7 @@ namespace Chess.Gui
         private int _lastX;
         private int _lastY;
 
-        OpenTK.Vector3d _lightPos;
+        Vector3d _lightPos;
         private bool _resized;
         private bool _viewChanged;
         private bool _rotating;
@@ -35,7 +35,6 @@ namespace Chess.Gui
         private GameSceneLayout _game;
         private bool _antialiasFactorChanged = false;
         private int _reflectionDepth;
-        private GameSceneLayout _gameLoaded;
         private bool _shininessFactor;
 
         public ChessForm()

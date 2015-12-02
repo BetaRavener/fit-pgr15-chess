@@ -1,4 +1,7 @@
-﻿using CSG.Materials;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using CSG.Materials;
 using CSG.Shapes;
 using Newtonsoft.Json;
 using OpenTK;
@@ -14,18 +17,25 @@ namespace CSG
     {
         [JsonIgnore]
         public CSGNode CsgTree { get; set; }
+
         [JsonIgnore]
-        public Box BoundingBox { get; set; }
+        public List<Box> BoundingBoxes { get; } = new List<Box>();
 
         public SceneObject(CSGNode tree, Box bbox = null)
         {
-            BoundingBox = bbox;
+            if (bbox != null)
+                BoundingBoxes.Add(bbox);
+            CsgTree = tree;
+        }
+
+        public SceneObject(CSGNode tree, List<Box> bboxes)
+        {
+            BoundingBoxes = bboxes;
             CsgTree = tree;
         }
 
         protected SceneObject()
         {
-
         }
 
         public Material Material { get; set; }
@@ -39,17 +49,28 @@ namespace CSG
         /// <returns>Intersection with scene object.</returns>
         public Intersection IntersectFirst(Ray ray, bool renderBBox = false)
         {
-            if (BoundingBox == null)
+            if (BoundingBoxes == null)
             {
                 return CsgTree.IntersectFirst(ray);
             }
 
 
-            double t;
-            if (BoundingBox.Intersects(ray, out t))
+            double t = double.PositiveInfinity;
+            double min = double.PositiveInfinity;
+            Box bb = null;
+            foreach (var boundingbox in BoundingBoxes.Where(boundingbox => boundingbox.Intersects(ray, out t)))
             {
-                return renderBBox 
-                    ? new Intersection(IntersectionKind.Into, BoundingBox, t) 
+                if(t < min)
+                { 
+                    bb = boundingbox;
+                    min = t;
+                }
+            }
+
+            if (bb != null)
+            {
+                return renderBBox
+                    ? new Intersection(IntersectionKind.Into, bb, min)
                     : CsgTree.IntersectFirst(ray);
             }
 

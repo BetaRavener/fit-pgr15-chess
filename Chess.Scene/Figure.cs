@@ -55,7 +55,7 @@ namespace Chess.Scene
         {
             var builder = ObjectBuilderResolver.GetBuilder(Type);
             CsgTree = builder.Build(position.RealPosition, this);
-            BoundingBox = builder.BuildBoundingBox(position.RealPosition);
+            BoundingBoxes.AddRange(builder.BuildBoundingBox(position.RealPosition));
         }
     }
 }

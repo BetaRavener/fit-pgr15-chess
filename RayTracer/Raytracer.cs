@@ -261,11 +261,11 @@ namespace Raytracer
                 throw new InvalidOperationException("The bitmap doesn't have 3 components, check system!");
 
             var totalPixels = _widthInPixels*_heightInPixels;
-            var progressLock = new Object();
-            var progress = 0;
 
-            var options = new ParallelOptions();
-            options.MaxDegreeOfParallelism = NumberOfThreads;
+            var options = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = NumberOfThreads
+            };
 
 #if PARALLEL
             Parallel.For(0, _rayCache.Count, options, (i, loopState) =>
@@ -284,14 +284,8 @@ namespace Raytracer
 
                 var ray = _rayCache[i];
                 _colorCache[ray.Fragment] = TraceRay(ray, ReflectionDepth, Background);
+
 #if PARALLEL
-                lock (progressLock)
-                {
-#endif
-                progress++;
-                //reportFunc(new Tuple<int, int>(progress, totalPixels));
-#if PARALLEL
-                }
             });
 #else
             }

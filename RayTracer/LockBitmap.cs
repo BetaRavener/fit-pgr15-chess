@@ -21,7 +21,7 @@ namespace RayTracer
         Bitmap source = null;
         IntPtr Iptr = IntPtr.Zero;
         BitmapData bitmapData = null;
-        public byte[] _pixels;
+        private byte[] _pixels;
 
         public int Depth { get; private set; }
         public int Width { get; private set; }
@@ -45,13 +45,13 @@ namespace RayTracer
                 Height = source.Height;
 
                 // get total locked pixels count
-                int PixelCount = Width * Height;
+                int pixelCount = Width * Height;
 
                 // Create rectangle to lock
                 Rectangle rect = new Rectangle(0, 0, Width, Height);
 
                 // get source bitmap pixel format size
-                Depth = System.Drawing.Bitmap.GetPixelFormatSize(source.PixelFormat);
+                Depth = Image.GetPixelFormatSize(source.PixelFormat);
                 ColorComponents = Depth/8;
 
                 // Check if bpp (Bits Per Pixel) is 8, 24, or 32
@@ -65,7 +65,7 @@ namespace RayTracer
                                                 source.PixelFormat);
 
                 // create byte array to copy pixel values
-                _pixels = new byte[PixelCount * ColorComponents];
+                _pixels = new byte[pixelCount * ColorComponents];
                 Iptr = bitmapData.Scan0;
 
                 // Copy data from pointer to array

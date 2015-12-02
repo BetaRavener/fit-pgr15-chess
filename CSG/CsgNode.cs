@@ -61,6 +61,12 @@ namespace CSG
             }
         }
 
+        /// <summary>
+        /// Find set of spans at which the ray intersects this shape.
+        /// This is an abstract method and must be implemented.
+        /// </summary>
+        /// <param name="ray">Tracing ray.</param>
+        /// <returns>Set of spans.</returns>
         public virtual RangesShape Intersect(Ray ray)
         {
             var rangesLeft = Left.Intersect(ray);
