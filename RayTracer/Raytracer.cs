@@ -37,7 +37,7 @@ namespace Raytracer
 
         private static Color4 Background
         {
-            get { return Color.MidnightBlue; }
+            get { return Color.DimGray; }
         }
 
         public Camera Eye { get; set; }
