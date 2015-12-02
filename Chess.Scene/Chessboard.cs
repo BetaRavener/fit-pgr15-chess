@@ -27,7 +27,7 @@ namespace Chess.Scene
         public Chessboard() 
         {
             CsgTree = ObjectBuilder.BuildChessboard(this);
-            BoundingBoxes.Add(new Box(new Vector3d(-100, 0, -100), new Vector3d(900, 50, 900), null));
+            MasterBoundingBox = new Box(new Vector3d(-100, 0, -100), new Vector3d(900, 50, 900), null);
             Material = new Checker(
                 new PhongInfo(WhiteColor, WhiteColor, 0.5, 100),
                 new PhongInfo(BlackColor, BlackColor, 0.5, 100),

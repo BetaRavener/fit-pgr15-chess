@@ -29,7 +29,7 @@ namespace Chess.Scene.Figures
             return new CSGNode(CSGNode.Operations.Union, base1, mainUnion);
         }
 
-        public override List<Box> BuildBoundingBox(Vector3d pos)
+        public override List<Box> BuildMinorBoundingBoxes(Vector3d pos)
         {
             var bboxes = new List<Box>();
 

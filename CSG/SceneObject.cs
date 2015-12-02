@@ -19,18 +19,14 @@ namespace CSG
         public CSGNode CsgTree { get; set; }
 
         [JsonIgnore]
-        public List<Box> BoundingBoxes { get; } = new List<Box>();
+        public Box MasterBoundingBox { get; set; }
+
+        [JsonIgnore]
+        public List<Box> MinorBoundingBoxes { get; set; }
 
         public SceneObject(CSGNode tree, Box bbox = null)
         {
-            if (bbox != null)
-                BoundingBoxes.Add(bbox);
-            CsgTree = tree;
-        }
-
-        public SceneObject(CSGNode tree, List<Box> bboxes)
-        {
-            BoundingBoxes = bboxes;
+            MasterBoundingBox = bbox;
             CsgTree = tree;
         }
 
@@ -49,7 +45,7 @@ namespace CSG
         /// <returns>Intersection with scene object.</returns>
         public Intersection IntersectFirst(Ray ray, bool renderBBox = false)
         {
-            if (BoundingBoxes == null)
+            if (MasterBoundingBox == null)
             {
                 return CsgTree.IntersectFirst(ray);
             }
@@ -58,12 +54,23 @@ namespace CSG
             double t = double.PositiveInfinity;
             double min = double.PositiveInfinity;
             Box bb = null;
-            foreach (var boundingbox in BoundingBoxes.Where(boundingbox => boundingbox.Intersects(ray, out t)))
+            if (MasterBoundingBox.Intersects(ray, out t))
             {
-                if(t < min)
+                if (MinorBoundingBoxes == null)
                 { 
-                    bb = boundingbox;
+                    bb = MasterBoundingBox;
                     min = t;
+                }
+                else
+                {
+                    foreach (var boundingbox in MinorBoundingBoxes.Where(boundingbox => boundingbox.Intersects(ray, out t)))
+                    {
+                        if (t < min)
+                        {
+                            bb = boundingbox;
+                            min = t;
+                        }
+                    }
                 }
             }
 
@@ -76,6 +83,5 @@ namespace CSG
 
             return null;
         }
-
     }
 }
