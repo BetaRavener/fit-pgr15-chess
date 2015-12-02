@@ -33,7 +33,7 @@ namespace Chess.Scene
             var border2 = new Box(borderMin2, borderMax2, sceneObject)
             {
                 LocalMaterial =
-                    new ConstMaterial(new PhongInfo(new Color4(61, 21, 8, 0), new Color4(61, 21, 8, 0), 0.5, 100))
+                    new ConstMaterial(new PhongInfo(new Color4(61, 21, 8, 0), new Color4(61, 21, 8, 0), 0, 100))
             };
 
 

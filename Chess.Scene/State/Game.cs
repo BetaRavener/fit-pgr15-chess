@@ -85,22 +85,113 @@ namespace Chess.Scene.State
             {
                 Player1.CreateFigure(new ChessboardPosition(i, 1), FigureType.Pawn);
                 Player2.CreateFigure(new ChessboardPosition(i, 6), FigureType.Pawn);
-
             }
         }
 
-        public void BuildOnlyPawns()
+        public void BuildImmortalGame()
         {
             Chessboard = new Chessboard();
             Player1 = new Player() { Color = Color4.White, Name = "Player1" };
-            Player2 = new Player() { Color = Color4.Black, Name = "Player2" };
+            Player2 = new Player() { Color = Color4.Red, Name = "Player2" };
 
-            for (uint i = 0; i < 8; i++)
-            {
-                Player1.CreateFigure(new ChessboardPosition(i, 1), FigureType.Pawn);
-                Player2.CreateFigure(new ChessboardPosition(i, 6), FigureType.Pawn);
-            }
+            // white
+            Player1.CreateFigure(new ChessboardPosition(0, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(2, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(3, 2), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(4, 4), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(6, 3), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(7, 4), FigureType.Pawn);
+
+            Player1.CreateFigure(new ChessboardPosition(4, 1), FigureType.King);
+            Player1.CreateFigure(new ChessboardPosition(3, 4), FigureType.Knight);
+            Player1.CreateFigure(new ChessboardPosition(3, 5), FigureType.Bishop);
+            Player1.CreateFigure(new ChessboardPosition(5, 5), FigureType.Queen);
+            Player1.CreateFigure(new ChessboardPosition(6, 6), FigureType.Knight);
+
+            // black
+            Player2.CreateFigure(new ChessboardPosition(0, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(3, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(5, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(7, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(1, 4), FigureType.Pawn);
+
+            Player2.CreateFigure(new ChessboardPosition(0, 0), FigureType.Queen);
+            Player2.CreateFigure(new ChessboardPosition(6, 0), FigureType.Bishop);
+            Player2.CreateFigure(new ChessboardPosition(0, 5), FigureType.Knight);
+            Player2.CreateFigure(new ChessboardPosition(0, 7), FigureType.Rook);
+            Player2.CreateFigure(new ChessboardPosition(2, 7), FigureType.Bishop);
+            Player2.CreateFigure(new ChessboardPosition(3, 7), FigureType.King);
+            Player2.CreateFigure(new ChessboardPosition(6, 7), FigureType.Knight);
+            Player2.CreateFigure(new ChessboardPosition(7, 7), FigureType.Rook);
         }
 
+        public void BuildEvergreenGame()
+        {
+            Chessboard = new Chessboard();
+            Player1 = new Player() { Color = Color4.White, Name = "Player1" };
+            Player2 = new Player() { Color = Color4.Red, Name = "Player2" };
+
+            // white
+            Player1.CreateFigure(new ChessboardPosition(0, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(2, 2), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(5, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(6, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(7, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(5, 5), FigureType.Pawn);
+
+            Player1.CreateFigure(new ChessboardPosition(4, 6), FigureType.Bishop);
+            Player1.CreateFigure(new ChessboardPosition(3, 6), FigureType.Bishop);
+            Player1.CreateFigure(new ChessboardPosition(3, 0), FigureType.Rook);
+            Player1.CreateFigure(new ChessboardPosition(6, 0), FigureType.King);
+
+            // black
+            Player2.CreateFigure(new ChessboardPosition(0, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(2, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(5, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(7, 6), FigureType.Pawn);
+
+            Player2.CreateFigure(new ChessboardPosition(1, 6), FigureType.Bishop);
+            Player2.CreateFigure(new ChessboardPosition(1, 5), FigureType.Bishop);
+            Player2.CreateFigure(new ChessboardPosition(1, 7), FigureType.Rook);
+            Player2.CreateFigure(new ChessboardPosition(6, 7), FigureType.Rook);
+            Player2.CreateFigure(new ChessboardPosition(5, 7), FigureType.King);
+            Player2.CreateFigure(new ChessboardPosition(5, 2), FigureType.Queen);
+       }
+
+        public void BuildRotlewiVsRubinstein()
+        {
+            Chessboard = new Chessboard();
+            Player1 = new Player() { Color = Color4.White, Name = "Player1" };
+            Player2 = new Player() { Color = Color4.Red, Name = "Player2" };
+
+            // white
+            Player1.CreateFigure(new ChessboardPosition(0, 2), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(1, 3), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(7, 1), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(7, 3), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(5, 3), FigureType.Pawn);
+            Player1.CreateFigure(new ChessboardPosition(4, 4), FigureType.Pawn);
+
+            Player1.CreateFigure(new ChessboardPosition(0, 0), FigureType.Rook);
+            Player1.CreateFigure(new ChessboardPosition(5, 0), FigureType.Rook);
+            Player1.CreateFigure(new ChessboardPosition(1, 1), FigureType.Bishop);
+            Player1.CreateFigure(new ChessboardPosition(7, 0), FigureType.King);
+            Player1.CreateFigure(new ChessboardPosition(6, 1), FigureType.Queen);
+
+            // black
+            Player2.CreateFigure(new ChessboardPosition(0, 5), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(1, 4), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(4, 5), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(5, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(6, 6), FigureType.Pawn);
+            Player2.CreateFigure(new ChessboardPosition(7, 6), FigureType.Pawn);
+
+            Player2.CreateFigure(new ChessboardPosition(6, 7), FigureType.King);
+            Player2.CreateFigure(new ChessboardPosition(1, 5), FigureType.Bishop);
+            Player2.CreateFigure(new ChessboardPosition(4, 3), FigureType.Bishop);
+            Player2.CreateFigure(new ChessboardPosition(6, 3), FigureType.Knight);
+            Player2.CreateFigure(new ChessboardPosition(7, 2), FigureType.Rook);
+
+        }
     }
 }

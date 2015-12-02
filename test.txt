@@ -1,1 +1,0 @@
-{"State":1,"StatedAt":"2015-11-26T18:28:43.0593338+01:00","EndedAt":null,"Chessboard":{},"Figures":[{"Position":{"X":0,"Y":0},"Type":1,"Player":{"Color":{"R":0.0,"G":0.0,"B":0.0,"A":1.0},"Name":"Player1"}},{"Position":{"X":1,"Y":0},"Type":1,"Player":{"Color":{"R":1.0,"G":1.0,"B":1.0,"A":1.0},"Name":"Player2"}}]}
