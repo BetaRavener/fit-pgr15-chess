@@ -41,7 +41,7 @@ namespace Chess.Gui
         public ChessForm()
         {
             InitializeComponent();
-           
+
             _raytracer = new Raytracer.Raytracer();
 
             _synchronizationContext = SynchronizationContext.Current;

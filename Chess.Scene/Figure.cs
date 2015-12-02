@@ -9,9 +9,9 @@ namespace Chess.Scene
 {
     public class Figure : SceneObject
     {
-        public const int MaxY = 100;
-        public const int MaxX = 60;
-        public const int MaxZ = 60;
+        public double MaxY = 100;
+        public double MaxX = 60;
+        public double MaxZ = 60;
 
         private ChessboardPosition position;
         private FigureType type;
@@ -47,6 +47,30 @@ namespace Chess.Scene
         public Figure(ChessboardPosition position, FigureType type)
         {
             Type = type;
+            switch (Type)
+            {
+                case FigureType.Pawn:
+                    MaxY = 62;
+                    break;
+                case FigureType.Rook:
+                    MaxX = 48;
+                    MaxY = 85;
+                    MaxZ = 48;
+                    break;
+                case FigureType.Knight:
+                    MaxY = 86;
+                    break;
+                case FigureType.Bishop:
+                    MaxY = 86;
+                    break;
+                case FigureType.King:
+                    MaxY = 96;
+                    break;
+                case FigureType.Queen:
+                    MaxY = 92;
+                    break;
+            }
+
             Position = position;
         }
 
