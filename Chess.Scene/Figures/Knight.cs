@@ -31,7 +31,8 @@ namespace Chess.Scene.Figures
 
             // Body
             var box1Position1 = base3Position + new Vector3d(-18, 0, -5);
-            var box1Position2 = base3Position + new Vector3d(18, 30, 5); ;
+            var box1Position2 = base3Position + new Vector3d(18, 30, 5);
+            ;
             var box1 = new Box(box1Position1, box1Position2, sceneObject);
 
             var cylinderPosition = base3Position + new Vector3d(36, 16, -10);
@@ -45,7 +46,8 @@ namespace Chess.Scene.Figures
             var bodyDiff2 = new CSGNode(CSGNode.Operations.Difference, bodyDiff1, cylinder3);
 
             var box2Position1 = base3Position + new Vector3d(-18, 30, -5);
-            var box2Position2 = base3Position + new Vector3d(18, 50, 5); ;
+            var box2Position2 = base3Position + new Vector3d(18, 50, 5);
+            ;
             var box2 = new Box(box2Position1, box2Position2, sceneObject);
 
             var cylinder2Position = base3Position + new Vector3d(0, 30, -10);
@@ -58,7 +60,8 @@ namespace Chess.Scene.Figures
 
             // head
             var box3Position1 = base3Position + new Vector3d(-26, 20, -5);
-            var box3Position2 = base3Position + new Vector3d(-6, 48, 5); ;
+            var box3Position2 = base3Position + new Vector3d(-6, 48, 5);
+            ;
             var box3 = new Box(box3Position1, box3Position2, sceneObject);
 
             var plane1Dir = new Vector3d(-1, -1.7, 0);
@@ -148,7 +151,8 @@ namespace Chess.Scene.Figures
             var bodyUnion2 = new CSGNode(CSGNode.Operations.Union, bodyUnion1, headUnion4);
 
             var box4Position1 = base3Position + new Vector3d(-6, 40, -5);
-            var box4Position2 = base3Position + new Vector3d(0, 48, 5); ;
+            var box4Position2 = base3Position + new Vector3d(0, 48, 5);
+            ;
             var box4 = new Box(box4Position1, box4Position2, sceneObject);
 
             var bodyUnion3 = new CSGNode(CSGNode.Operations.Union, bodyUnion2, box4);

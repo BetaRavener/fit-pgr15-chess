@@ -8,6 +8,11 @@ namespace Chess.Scene.State
 {
     public class Game
     {
+        public Game()
+        {
+            State = GameState.NotStarted;
+        }
+
         public GameState State { get; set; }
 
         public DateTime? StatedAt { get; set; }
@@ -20,14 +25,9 @@ namespace Chess.Scene.State
 
         public Player Player2 { get; set; }
 
-        public Game()
-        {
-            State = GameState.NotStarted;
-        }
-
         public void Start()
         {
-            if(State != GameState.NotStarted)
+            if (State != GameState.NotStarted)
                 throw new Exception("Game already started or already ended.");
 
             StatedAt = DateTime.Now;
@@ -36,7 +36,7 @@ namespace Chess.Scene.State
 
         public void End()
         {
-            if(State != GameState.Running)
+            if (State != GameState.Running)
                 throw new Exception("Game not started, so it can't be ended.");
 
             EndedAt = DateTime.Now;
@@ -50,7 +50,7 @@ namespace Chess.Scene.State
             var figures = Player1.Figures.Union(Player2.Figures);
             var sceneObjects = figures.Select(x => (SceneObject) x).ToList();
 
-            if(chessboard != null)
+            if (chessboard != null)
                 sceneObjects.Add(chessboard);
 
             return sceneObjects;
@@ -59,8 +59,8 @@ namespace Chess.Scene.State
         public void BuildBaseLayout()
         {
             Chessboard = new Chessboard();
-            Player1 = new Player() { Color = Color4.White, Name = "Player1"};
-            Player2 = new Player() { Color = Color4.Red, Name = "Player2"};
+            Player1 = new Player {Color = Color4.White, Name = "Player1"};
+            Player2 = new Player {Color = Color4.Red, Name = "Player2"};
 
 
             Player1.CreateFigure(new ChessboardPosition(0, 0), FigureType.Rook);
@@ -91,8 +91,8 @@ namespace Chess.Scene.State
         public void BuildImmortalGame()
         {
             Chessboard = new Chessboard();
-            Player1 = new Player() { Color = Color4.White, Name = "Player1" };
-            Player2 = new Player() { Color = Color4.Red, Name = "Player2" };
+            Player1 = new Player {Color = Color4.White, Name = "Player1"};
+            Player2 = new Player {Color = Color4.Red, Name = "Player2"};
 
             // white
             Player1.CreateFigure(new ChessboardPosition(0, 1), FigureType.Pawn);
@@ -128,8 +128,8 @@ namespace Chess.Scene.State
         public void BuildEvergreenGame()
         {
             Chessboard = new Chessboard();
-            Player1 = new Player() { Color = Color4.White, Name = "Player1" };
-            Player2 = new Player() { Color = Color4.Red, Name = "Player2" };
+            Player1 = new Player {Color = Color4.White, Name = "Player1"};
+            Player2 = new Player {Color = Color4.Red, Name = "Player2"};
 
             // white
             Player1.CreateFigure(new ChessboardPosition(0, 1), FigureType.Pawn);
@@ -156,13 +156,13 @@ namespace Chess.Scene.State
             Player2.CreateFigure(new ChessboardPosition(6, 7), FigureType.Rook);
             Player2.CreateFigure(new ChessboardPosition(5, 7), FigureType.King);
             Player2.CreateFigure(new ChessboardPosition(5, 2), FigureType.Queen);
-       }
+        }
 
         public void BuildRotlewiVsRubinstein()
         {
             Chessboard = new Chessboard();
-            Player1 = new Player() { Color = Color4.White, Name = "Player1" };
-            Player2 = new Player() { Color = Color4.Red, Name = "Player2" };
+            Player1 = new Player {Color = Color4.White, Name = "Player1"};
+            Player2 = new Player {Color = Color4.Red, Name = "Player2"};
 
             // white
             Player1.CreateFigure(new ChessboardPosition(0, 2), FigureType.Pawn);
@@ -191,7 +191,6 @@ namespace Chess.Scene.State
             Player2.CreateFigure(new ChessboardPosition(4, 3), FigureType.Bishop);
             Player2.CreateFigure(new ChessboardPosition(6, 3), FigureType.Knight);
             Player2.CreateFigure(new ChessboardPosition(7, 2), FigureType.Rook);
-
         }
     }
 }

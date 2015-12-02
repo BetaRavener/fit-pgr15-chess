@@ -6,6 +6,15 @@ namespace Chess.Scene
 {
     public class Player
     {
+        private Color4 _color;
+
+        private Material _figureMaterial;
+
+        public Player()
+        {
+            Figures = new List<Figure>();
+        }
+
         public Color4 Color
         {
             get { return _color; }
@@ -18,15 +27,7 @@ namespace Chess.Scene
 
         public string Name { get; set; }
 
-        public IList<Figure> Figures { get; private set; }
-
-        private Material _figureMaterial;
-        private Color4 _color;
-
-        public Player()
-        {
-            Figures = new List<Figure>();
-        }
+        public IList<Figure> Figures { get; }
 
 
         public void CreateFigure(ChessboardPosition position, FigureType type)

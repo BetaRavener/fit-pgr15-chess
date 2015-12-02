@@ -1,40 +1,35 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK.Graphics;
 
 namespace RayTracer
 {
     /// <summary>
-    /// Class designed for working with bitmaps efficiently
-    /// <Author>Vano Maisuradze</Author> 
-    /// <Link>http://www.codeproject.com/Tips/240428/Work-with-bitmap-faster-with-Csharp</Link> 
+    ///     Class designed for working with bitmaps efficiently
+    ///     <Author>Vano Maisuradze</Author>
+    ///     <Link>http://www.codeproject.com/Tips/240428/Work-with-bitmap-faster-with-Csharp</Link>
     /// </summary>
     public class LockBitmap
     {
-        Bitmap source = null;
-        IntPtr Iptr = IntPtr.Zero;
-        BitmapData bitmapData = null;
         private byte[] _pixels;
-
-        public int Depth { get; private set; }
-        public int Width { get; private set; }
-        public int Height { get; private set; }
-        public int ColorComponents { get; private set; }
+        private BitmapData bitmapData;
+        private IntPtr Iptr = IntPtr.Zero;
+        private readonly Bitmap source;
 
         public LockBitmap(Bitmap source)
         {
             this.source = source;
         }
 
+        public int Depth { get; private set; }
+        public int Width { get; private set; }
+        public int Height { get; private set; }
+        public int ColorComponents { get; private set; }
+
         /// <summary>
-        /// Lock bitmap data
+        ///     Lock bitmap data
         /// </summary>
         public void LockBits()
         {
@@ -45,10 +40,10 @@ namespace RayTracer
                 Height = source.Height;
 
                 // get total locked pixels count
-                int pixelCount = Width * Height;
+                var pixelCount = Width*Height;
 
                 // Create rectangle to lock
-                Rectangle rect = new Rectangle(0, 0, Width, Height);
+                var rect = new Rectangle(0, 0, Width, Height);
 
                 // get source bitmap pixel format size
                 Depth = Image.GetPixelFormatSize(source.PixelFormat);
@@ -62,10 +57,10 @@ namespace RayTracer
 
                 // Lock bitmap and return bitmap data
                 bitmapData = source.LockBits(rect, ImageLockMode.ReadWrite,
-                                                source.PixelFormat);
+                    source.PixelFormat);
 
                 // create byte array to copy pixel values
-                _pixels = new byte[pixelCount * ColorComponents];
+                _pixels = new byte[pixelCount*ColorComponents];
                 Iptr = bitmapData.Scan0;
 
                 // Copy data from pointer to array
@@ -78,7 +73,7 @@ namespace RayTracer
         }
 
         /// <summary>
-        /// Unlock bitmap data
+        ///     Unlock bitmap data
         /// </summary>
         public void UnlockBits()
         {
@@ -97,44 +92,44 @@ namespace RayTracer
         }
 
         /// <summary>
-        /// Get the color of the specified pixel
+        ///     Get the color of the specified pixel
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         /// <returns></returns>
         public Color GetPixel(int x, int y)
         {
-            Color clr = Color.Empty;
+            var clr = Color.Empty;
 
             // Get start index of the specified pixel
-            int i = ((y * Width) + x) * ColorComponents;
+            var i = (y*Width + x)*ColorComponents;
 
             if (Depth == 32) // For 32 bpp get Red, Green, Blue and Alpha
             {
-                byte b = _pixels[i];
-                byte g = _pixels[i + 1];
-                byte r = _pixels[i + 2];
-                byte a = _pixels[i + 3]; // a
+                var b = _pixels[i];
+                var g = _pixels[i + 1];
+                var r = _pixels[i + 2];
+                var a = _pixels[i + 3]; // a
                 clr = Color.FromArgb(a, r, g, b);
             }
             if (Depth == 24) // For 24 bpp get Red, Green and Blue
             {
-                byte b = _pixels[i];
-                byte g = _pixels[i + 1];
-                byte r = _pixels[i + 2];
+                var b = _pixels[i];
+                var g = _pixels[i + 1];
+                var r = _pixels[i + 2];
                 clr = Color.FromArgb(r, g, b);
             }
             if (Depth == 8)
-            // For 8 bpp get color value (Red, Green and Blue values are the same)
+                // For 8 bpp get color value (Red, Green and Blue values are the same)
             {
-                byte c = _pixels[i];
+                var c = _pixels[i];
                 clr = Color.FromArgb(c, c, c);
             }
             return clr;
         }
 
         /// <summary>
-        /// Set the color of the specified pixel
+        ///     Set the color of the specified pixel
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
@@ -142,7 +137,7 @@ namespace RayTracer
         public void SetPixel(int x, int y, Color color)
         {
             // Get start index of the specified pixel
-            int i = ((y * Width) + x) * ColorComponents;
+            var i = (y*Width + x)*ColorComponents;
 
             if (Depth == 32) // For 32 bpp set Red, Green, Blue and Alpha
             {
@@ -158,7 +153,7 @@ namespace RayTracer
                 _pixels[i + 2] = color.R;
             }
             if (Depth == 8)
-            // For 8 bpp set color value (Red, Green and Blue values are the same)
+                // For 8 bpp set color value (Red, Green and Blue values are the same)
             {
                 _pixels[i] = color.B;
             }

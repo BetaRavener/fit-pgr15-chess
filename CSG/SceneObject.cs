@@ -1,29 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CSG.Materials;
 using CSG.Shapes;
 using Newtonsoft.Json;
-using OpenTK;
-using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG
 {
     /// <summary>
-    /// Class holding the shape and its boundary box
+    ///     Class holding the shape and its boundary box
     /// </summary>
     public class SceneObject
     {
-        [JsonIgnore]
-        public CSGNode CsgTree { get; set; }
-
-        [JsonIgnore]
-        public Box MasterBoundingBox { get; set; }
-
-        [JsonIgnore]
-        public List<Box> MinorBoundingBoxes { get; set; }
-
         public SceneObject(CSGNode tree, Box bbox = null)
         {
             MasterBoundingBox = bbox;
@@ -34,11 +22,20 @@ namespace CSG
         {
         }
 
+        [JsonIgnore]
+        public CSGNode CsgTree { get; set; }
+
+        [JsonIgnore]
+        public Box MasterBoundingBox { get; set; }
+
+        [JsonIgnore]
+        public List<Box> MinorBoundingBoxes { get; set; }
+
         public Material Material { get; set; }
 
 
         /// <summary>
-        /// Finds first intersection with this scene object.
+        ///     Finds first intersection with this scene object.
         /// </summary>
         /// <param name="ray">Tracing ray</param>
         /// <param name="renderBBox">If true, the bounding box is rendered</param>
@@ -51,19 +48,20 @@ namespace CSG
             }
 
 
-            double t = double.PositiveInfinity;
-            double min = double.PositiveInfinity;
+            var t = double.PositiveInfinity;
+            var min = double.PositiveInfinity;
             Box bb = null;
             if (MasterBoundingBox.Intersects(ray, out t))
             {
                 if (MinorBoundingBoxes == null)
-                { 
+                {
                     bb = MasterBoundingBox;
                     min = t;
                 }
                 else
                 {
-                    foreach (var boundingbox in MinorBoundingBoxes.Where(boundingbox => boundingbox.Intersects(ray, out t)))
+                    foreach (
+                        var boundingbox in MinorBoundingBoxes.Where(boundingbox => boundingbox.Intersects(ray, out t)))
                     {
                         if (t < min)
                         {

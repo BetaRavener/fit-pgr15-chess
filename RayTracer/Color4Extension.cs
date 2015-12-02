@@ -7,13 +7,12 @@ namespace RayTracer
 {
     public static class Color4Extension
     {
-
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Color ToColor(this Color4 left)
         {
-            var r = (byte)Math.Floor(left.R >= 1.0 ? 255 : left.R * 256);
-            var g = (byte)Math.Floor(left.G >= 1.0 ? 255 : left.G * 256);
-            var b = (byte)Math.Floor(left.B >= 1.0 ? 255 : left.B * 256);
+            var r = (byte) Math.Floor(left.R >= 1.0 ? 255 : left.R*256);
+            var g = (byte) Math.Floor(left.G >= 1.0 ? 255 : left.G*256);
+            var b = (byte) Math.Floor(left.B >= 1.0 ? 255 : left.B*256);
 
             return Color.FromArgb(r, g, b);
         }
@@ -59,7 +58,7 @@ namespace RayTracer
         }
 
         /// <summary>
-        /// Multiplies 2 colors
+        ///     Multiplies 2 colors
         /// </summary>
         /// <param name="left"></param>
         /// <param name="right"></param>
@@ -69,9 +68,9 @@ namespace RayTracer
         {
             return new Color4
             {
-                R = left.R * right.R,
-                G = left.G * right.G,
-                B = left.B * right.B
+                R = left.R*right.R,
+                G = left.G*right.G,
+                B = left.B*right.B
             };
         }
 
@@ -79,9 +78,9 @@ namespace RayTracer
         {
             return new Color4
             {
-                R = (float)(left.R * scale),
-                G = (float)(left.G * scale),
-                B = (float)(left.B * scale)
+                R = (float) (left.R*scale),
+                G = (float) (left.G*scale),
+                B = (float) (left.B*scale)
             };
         }
 

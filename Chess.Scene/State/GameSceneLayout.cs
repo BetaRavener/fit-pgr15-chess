@@ -4,10 +4,6 @@ namespace Chess.Scene.State
 {
     public class GameSceneLayout : Game
     {
-        public Camera Camera { get; set; }
-        
-        public LightSource Light { get; set; }
-
         public GameSceneLayout()
         {
             Camera = new Camera();
@@ -19,5 +15,9 @@ namespace Chess.Scene.State
             Camera = camera;
             Light = light;
         }
+
+        public Camera Camera { get; set; }
+
+        public LightSource Light { get; set; }
     }
 }

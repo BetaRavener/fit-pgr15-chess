@@ -3,8 +3,6 @@ using CSG.Materials;
 using CSG.Shapes;
 using OpenTK;
 using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL;
-using RayMath;
 
 namespace Chess.Scene
 {
@@ -13,9 +11,9 @@ namespace Chess.Scene
         public static CSGNode BuildChessboard(SceneObject sceneObject)
         {
             var min = new Vector3d(0, 0, 0);
-            var max = new Vector3d(min.X + Chessboard.CroftHeight * 8,
+            var max = new Vector3d(min.X + Chessboard.CroftHeight*8,
                 Chessboard.CroftThickness,
-                min.Z + Chessboard.CroftWidth * 8);
+                min.Z + Chessboard.CroftWidth*8);
 
             var box = new Box(min, max, sceneObject);
 

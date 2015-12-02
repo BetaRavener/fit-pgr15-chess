@@ -1,6 +1,4 @@
 using Chess.Scene.Figures;
-using CSG;
-using OpenTK;
 
 namespace Chess.Scene
 {
@@ -25,6 +23,5 @@ namespace Chess.Scene
             }
             return null;
         }
-
     }
 }

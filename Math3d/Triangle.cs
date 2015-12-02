@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
+﻿using OpenTK;
 
 namespace RayMath
 {
@@ -21,6 +16,6 @@ namespace RayMath
             V2 = v2;
             V3 = v3;
             Normal = n;
-        } 
+        }
     }
 }

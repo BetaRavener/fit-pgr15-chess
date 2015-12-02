@@ -7,7 +7,21 @@ namespace Chess.Scene
     public class ChessboardPosition
     {
         private uint x;
-        public uint X {
+
+        private uint y;
+
+        public ChessboardPosition()
+        {
+        }
+
+        public ChessboardPosition(uint x, uint y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public uint X
+        {
             get { return x; }
             set
             {
@@ -18,7 +32,6 @@ namespace Chess.Scene
             }
         }
 
-        private uint y;
         public uint Y
         {
             get { return y; }
@@ -29,16 +42,6 @@ namespace Chess.Scene
 
                 y = value;
             }
-        }
-
-        public ChessboardPosition()
-        {
-        }
-
-        public ChessboardPosition(uint x, uint y)
-        {
-            X = x;
-            Y = y;
         }
 
         [JsonIgnore]
