@@ -9,7 +9,7 @@ namespace CSG.Shapes
     /// <summary>
     /// Represents general traceable shape.
     /// </summary>
-    public abstract class Shape : CsgNode
+    public abstract class Shape : CSGNode
     {
         private readonly Material fallbackMaterial = new ConstMaterial(new PhongInfo(Color4.Red, Color4.Red)); 
 

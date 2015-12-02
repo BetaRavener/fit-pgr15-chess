@@ -8,7 +8,7 @@ using OpenTK;
 
 namespace CSG
 {
-    public class CsgNode
+    public class CSGNode
     {
         public enum Operations
         {
@@ -18,8 +18,8 @@ namespace CSG
         }
 
         public Operations Operation { get; set; }
-        public CsgNode Left { get; set; }
-        public CsgNode Right { get; set; }
+        public CSGNode Left { get; set; }
+        public CSGNode Right { get; set; }
 
         /// <summary>
         /// Constructs CSG node from 2 previous nodes and operation between them. 
@@ -27,7 +27,7 @@ namespace CSG
         /// <param name="operation">Operation that is performed between the nodes.</param>
         /// <param name="left">Left node (Operand A)</param>
         /// <param name="right">Right node (Operand B)</param>
-        public CsgNode(Operations operation, CsgNode left, CsgNode right)
+        public CSGNode(Operations operation, CSGNode left, CSGNode right)
         {
             Operation = operation;
             Left = left;
@@ -37,7 +37,7 @@ namespace CSG
         /// <summary>
         /// Constructs a CSG leaf.
         /// </summary>
-        public CsgNode()
+        public CSGNode()
         {
             Left = null;
             Right = null;

@@ -128,6 +128,12 @@ namespace Chess.Gui
                 _game.BuildBaseLayout();
             }
 
+            //var fileStorage = new FileStorage(@".", "test.txt");
+            //var gameLoader = new JsonLoader<GameSceneLayout>(fileStorage);
+            //gameLoader.SaveGame(_game);
+            //_game = gameLoader.LoadGame();
+
+
             _raytracer.SceneObjects = _game.GetSceneObjects();
             _raytracer.Light = _game.Light;
             _raytracer.Eye = _game.Camera;

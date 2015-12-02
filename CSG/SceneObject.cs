@@ -13,11 +13,11 @@ namespace CSG
     public class SceneObject
     {
         [JsonIgnore]
-        public CsgNode CsgTree { get; set; }
+        public CSGNode CsgTree { get; set; }
         [JsonIgnore]
         public Box BoundingBox { get; set; }
 
-        public SceneObject(CsgNode tree, Box bbox = null)
+        public SceneObject(CSGNode tree, Box bbox = null)
         {
             BoundingBox = bbox;
             CsgTree = tree;

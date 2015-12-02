@@ -1,3 +1,4 @@
+using Chess.Scene.Figures;
 using CSG;
 using OpenTK;
 
@@ -5,22 +6,22 @@ namespace Chess.Scene
 {
     public class ObjectBuilderResolver
     {
-        public static CsgNode BuildFigure(FigureType type, Vector3d position, SceneObject sceneObject)
+        public static FigureObject GetBuilder(FigureType type)
         {
             switch (type)
             {
                 case FigureType.King:
-                    return ObjectBuilder.BuildKing(position, sceneObject);
+                    return new King();
                 case FigureType.Bishop:
-                    return ObjectBuilder.BuildBishop(position, sceneObject);
+                    return new Bishop();
                 case FigureType.Pawn:
-                    return ObjectBuilder.BuildPawn(position, sceneObject);
+                    return new Pawn();
                 case FigureType.Queen:
-                    return ObjectBuilder.BuildQueen(position, sceneObject);
+                    return new Queen();
                 case FigureType.Rook:
-                    return ObjectBuilder.BuildRook(position, sceneObject);
+                    return new Rook();
                 case FigureType.Knight:
-                    return ObjectBuilder.BuildKnight(position, sceneObject);
+                    return new Knight();
             }
             return null;
         }

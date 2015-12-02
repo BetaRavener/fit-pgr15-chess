@@ -51,6 +51,13 @@
     <Compile Include="Chessboard.cs" />
     <Compile Include="ChessboardPosition.cs" />
     <Compile Include="Figure.cs" />
+    <Compile Include="Figures\Bishop.cs" />
+    <Compile Include="Figures\FigureObject.cs" />
+    <Compile Include="Figures\King.cs" />
+    <Compile Include="Figures\Knight.cs" />
+    <Compile Include="Figures\Pawn.cs" />
+    <Compile Include="Figures\Queen.cs" />
+    <Compile Include="Figures\Rook.cs" />
     <Compile Include="FigureType.cs" />
     <Compile Include="DataStorage\FileStorage.cs" />
     <Compile Include="IStateLoader.cs" />
