@@ -4,12 +4,6 @@ namespace Chess.Scene.DataStorage
 {
     public class FileStorage : IDataStorage
     {
-        public string CurrentDirectory { get; set; }
-
-        public string FileName { get; set; }
-
-        public string FilePath { get; set; }
-
         public FileStorage(string currentDir, string fileName)
         {
             FilePath = Path.Combine(currentDir, fileName);
@@ -19,6 +13,12 @@ namespace Chess.Scene.DataStorage
         {
             FilePath = filePath;
         }
+
+        public string CurrentDirectory { get; set; }
+
+        public string FileName { get; set; }
+
+        public string FilePath { get; set; }
 
         public string Read()
         {

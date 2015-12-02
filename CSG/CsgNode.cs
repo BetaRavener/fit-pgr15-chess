@@ -1,10 +1,4 @@
 ﻿using RayMath;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using OpenTK;
 
 namespace CSG
 {
@@ -17,12 +11,8 @@ namespace CSG
             Difference
         }
 
-        public Operations Operation { get; set; }
-        public CSGNode Left { get; set; }
-        public CSGNode Right { get; set; }
-
         /// <summary>
-        /// Constructs CSG node from 2 previous nodes and operation between them. 
+        ///     Constructs CSG node from 2 previous nodes and operation between them.
         /// </summary>
         /// <param name="operation">Operation that is performed between the nodes.</param>
         /// <param name="left">Left node (Operand A)</param>
@@ -35,7 +25,7 @@ namespace CSG
         }
 
         /// <summary>
-        /// Constructs a CSG leaf.
+        ///     Constructs a CSG leaf.
         /// </summary>
         public CSGNode()
         {
@@ -43,27 +33,33 @@ namespace CSG
             Right = null;
         }
 
+        public Operations Operation { get; set; }
+        public CSGNode Left { get; set; }
+        public CSGNode Right { get; set; }
+
         /// <summary>
-        /// Find first intersection with ray.
+        ///     Find first intersection with ray.
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <returns>First intersection.</returns>
         public virtual Intersection IntersectFirst(Ray ray)
         {
-            RangesShape r = Intersect(ray);
-            RangeEdgeShape re = r.FirstEdgeGreater(0);
+            var r = Intersect(ray);
+            var re = r.FirstEdgeGreater(0);
             switch (re.Kind)
             {
-                case IntersectionKind.Into: return new Intersection(IntersectionKind.Into, re.Node, re.Distance);
-                case IntersectionKind.Outfrom: return new Intersection(IntersectionKind.Outfrom, re.Node, re.Distance);
+                case IntersectionKind.Into:
+                    return new Intersection(IntersectionKind.Into, re.Node, re.Distance);
+                case IntersectionKind.Outfrom:
+                    return new Intersection(IntersectionKind.Outfrom, re.Node, re.Distance);
                 default:
                     return null;
             }
         }
 
         /// <summary>
-        /// Find set of spans at which the ray intersects this shape.
-        /// This is an abstract method and must be implemented.
+        ///     Find set of spans at which the ray intersects this shape.
+        ///     This is an abstract method and must be implemented.
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <returns>Set of spans.</returns>

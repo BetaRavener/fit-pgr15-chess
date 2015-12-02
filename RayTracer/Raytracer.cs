@@ -7,7 +7,7 @@ using System.Drawing.Imaging;
 using System.Threading;
 using System.Threading.Tasks;
 using CSG;
-using CSG.Shapes;
+using Math3d;
 using OpenTK;
 using OpenTK.Graphics;
 using RayMath;
@@ -21,19 +21,32 @@ namespace Raytracer
         private const double NearPlaneDist = 1.0f;
         private const double FovY = Math.PI/4.0f;
 
+        private int _antialiasFactor = 1;
+        private readonly List<Color4> _colorCache;
+
         private int _heightInPixels;
+
+        private readonly List<Ray> _rayCache;
+
         private int _widthInPixels;
 
-        private List<SceneObject> _sceneObjects;
 
-        private List<Ray> _rayCache;
-        private List<Color4> _colorCache;
-
-        public List<SceneObject> SceneObjects
+        public Raytracer()
         {
-            get { return _sceneObjects; }
-            set { _sceneObjects = value; }
+            _heightInPixels = 0;
+            _widthInPixels = 0;
+            Eye = new Camera(100, 400, 200)
+            {
+                LookAt = new Vector3d(400, 0, 400)
+            };
+            Light = new LightSource(-300, 300, -700);
+
+            SceneObjects = new List<SceneObject>();
+            _rayCache = new List<Ray>();
+            _colorCache = new List<Color4>();
         }
+
+        public List<SceneObject> SceneObjects { get; set; }
 
         private static Color4 Background
         {
@@ -48,7 +61,7 @@ namespace Raytracer
 
         public bool OnlyBoundingBoxes { get; set; }
 
-        double Ratio
+        private double Ratio
         {
             get { return _widthInPixels/(double) _heightInPixels; }
         }
@@ -65,10 +78,8 @@ namespace Raytracer
 
         private double PixelSize
         {
-            get { return (1.0f/_heightInPixels)*NearPlaneHeight; }
+            get { return 1.0f/_heightInPixels*NearPlaneHeight; }
         }
-
-        private int _antialiasFactor = 1;
 
         public int AntialiasFactor
         {
@@ -83,28 +94,23 @@ namespace Raytracer
 
         public bool ShininessFactor { get; set; } = true;
 
-        private int AntialiasedWidth { get { return _widthInPixels * AntialiasFactor; } }
+        private int AntialiasedWidth
+        {
+            get { return _widthInPixels*AntialiasFactor; }
+        }
 
-        private int AntialiasedHeight { get { return _heightInPixels * AntialiasFactor; } }
+        private int AntialiasedHeight
+        {
+            get { return _heightInPixels*AntialiasFactor; }
+        }
 
         public int NumberOfThreads { get; set; } = 1;
 
-
-        public Raytracer()
-        {
-            _heightInPixels = 0;
-            _widthInPixels = 0;
-            Eye = new Camera(100, 400, 200)
-            {
-                LookAt = new Vector3d(400, 0, 400)
-            };
-            Light = new LightSource(-300, 300, -700);
-
-            _sceneObjects = new List<SceneObject>();
-            _rayCache = new List<Ray>();
-            _colorCache = new List<Color4>();
-        }
-
+        /// <summary>
+        /// When window is resized this handles correct recounting of pixels
+        /// </summary>
+        /// <param name="widthInPixels"></param>
+        /// <param name="heightInPixels"></param>
         public void Resize(int widthInPixels, int heightInPixels)
         {
             _heightInPixels = heightInPixels;
@@ -127,14 +133,19 @@ namespace Raytracer
         }
 
 
+        /// <summary>
+        /// Checks if exists any intersection with specified ray and returns closest one
+        /// </summary>
+        /// <param name="ray"></param>
+        /// <returns>closest intersection with specified ray</returns>
         private Intersection GetClosestIntersection(Ray ray)
         {
             // Search for closest intersection
             var closestIntersection = new Intersection(IntersectionKind.None);
 
-            for (int index = 0; index < _sceneObjects.Count; index++)
+            for (var index = 0; index < SceneObjects.Count; index++)
             {
-                SceneObject sceneObject = _sceneObjects[index];
+                var sceneObject = SceneObjects[index];
                 var intersection = sceneObject.IntersectFirst(ray, OnlyBoundingBoxes);
                 if (intersection != null && intersection.Distance < closestIntersection.Distance)
                 {
@@ -146,16 +157,16 @@ namespace Raytracer
         }
 
         /// <summary>
-        /// Check if specified ray intersects any object on the way to light
+        ///     Check if specified ray intersects any object on the way to light
         /// </summary>
         /// <param name="ray"></param>
         /// <param name="lightDistance"></param>
         /// <returns></returns>
         private bool IsInShadow(Ray ray, double lightDistance)
         {
-            for (int index = 0; index < _sceneObjects.Count; index++)
+            for (var index = 0; index < SceneObjects.Count; index++)
             {
-                var sceneObject = _sceneObjects[index];
+                var sceneObject = SceneObjects[index];
                 var inters = sceneObject.IntersectFirst(ray);
 
                 if (inters != null && inters.Distance < lightDistance)
@@ -168,7 +179,7 @@ namespace Raytracer
         }
 
         /// <summary>
-        /// Traces single ray throughout the scene. 
+        ///     Traces single ray throughout the scene.
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <param name="depth">Actual level of recurse</param>
@@ -186,12 +197,12 @@ namespace Raytracer
                 return noHitColor;
             }
 
-            Shape hitShape = closestIntersection.Shape;
+            var hitShape = closestIntersection.Shape;
 
-            Vector3d hitPosition = ray.PointAt(closestIntersection.Distance);
-            Vector3d hitNormal = closestIntersection.ShapeNormal(hitPosition);
-            Vector3d lightDirection = (Light.Position - hitPosition);
-            double lightDistance = lightDirection.Length;
+            var hitPosition = ray.PointAt(closestIntersection.Distance);
+            var hitNormal = closestIntersection.ShapeNormal(hitPosition);
+            var lightDirection = Light.Position - hitPosition;
+            var lightDistance = lightDirection.Length;
             lightDirection.Normalize();
 
             var phongInfo = hitShape.GetMaterial().GetPhongInfo(hitPosition, hitNormal);
@@ -199,55 +210,58 @@ namespace Raytracer
 
             if (OnlyBoundingBoxes)
             {
-                return phongInfo.Ambient.Times((float)angleToLight);
+                return phongInfo.Ambient.Times((float) angleToLight);
             }
 
-            Color4 finalColor = Light.AmbientColor;
-            Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
+            var finalColor = Light.AmbientColor;
+            var shadowRay = new Ray(hitPosition, lightDirection).Shift();
             if (!IsInShadow(shadowRay, lightDistance))
             {
                 // diffuse light (default shape color)
-                var diffuseColor = Color4Extension.Multiply(phongInfo.Diffuse, Light.Color).Times((float)Math.Max(0.0, angleToLight));
+                var diffuseColor =
+                    Color4Extension.Multiply(phongInfo.Diffuse, Light.Color).Times((float) Math.Max(0.0, angleToLight));
                 finalColor = finalColor.Add(diffuseColor);
 
                 // specular
                 if (ShininessFactor && phongInfo.Shininess > 0)
                 {
-                    Vector3d lightReflection = lightDirection.Reflect(hitNormal).Normalized();
-                    double specularRatio = Vector3d.Dot(lightReflection, ray.Direction);
+                    var lightReflection = lightDirection.Reflect(hitNormal).Normalized();
+                    var specularRatio = Vector3d.Dot(lightReflection, ray.Direction);
                     if (specularRatio > 0)
                     {
-                        var specularColor = Color4Extension.Multiply(phongInfo.Specular, Light.Color).Times((float)Math.Pow(specularRatio, phongInfo.Shininess));
+                        var specularColor =
+                            Color4Extension.Multiply(phongInfo.Specular, Light.Color)
+                                .Times((float) Math.Pow(specularRatio, phongInfo.Shininess));
                         finalColor = finalColor.Add(specularColor);
                     }
                 }
             }
 
-            // reflected ray (recursion)
-            if (phongInfo.Reflectance > 0 && depth > 0)
-            {
-                Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
-                Color4 reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
+            // if not reflected or recursion reached specified maximum
+            if (!(phongInfo.Reflectance > 0) || depth <= 0) return finalColor;
 
-                finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, phongInfo.Reflectance));
-            }
+            // reflected ray (recursion)
+            var reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();
+            var reflectedColor = TraceRay(reflectedRay, depth - 1, Color4.Black);
+
+            finalColor = finalColor.Add(Color4Extension.Multiply(reflectedColor, phongInfo.Reflectance));
 
             return finalColor;
         }
 
         private void Index1d(int x, int y, int width, out int idx)
         {
-            idx = y * width + x;
+            idx = y*width + x;
         }
 
         private void Index2d(int idx, int width, out int x, out int y)
         {
-            x = idx % width;
-            y = idx / width;
+            x = idx%width;
+            y = idx/width;
         }
 
         /// <summary>
-        /// Renders image of scene using raytracing.
+        ///     Renders image of scene using raytracing.
         /// </summary>
         /// <param name="cancelToken">Cancelation token which can be used to end computation.</param>
         /// <param name="reportFunc">Function to report progress of rendering.</param>
@@ -291,7 +305,7 @@ namespace Raytracer
             }
 #endif
             // Reduce colorCache to antialiased image
-            for (int i = 0; i < totalPixels; i++)
+            for (var i = 0; i < totalPixels; i++)
             {
                 var color = Color4.Black;
                 int x, y, idx;
@@ -300,32 +314,32 @@ namespace Raytracer
                 {
                     for (var dy = 0; dy < AntialiasFactor; dy++)
                     {
-                        Index1d(x * AntialiasFactor + dx, y * AntialiasFactor + dy, AntialiasedWidth, out idx);
+                        Index1d(x*AntialiasFactor + dx, y*AntialiasFactor + dy, AntialiasedWidth, out idx);
                         color = color.Add(_colorCache[idx]);
                     }
                 }
-                color = color.Times((float)(1.0 / (AntialiasFactor * AntialiasFactor)));
-                image.EfficientSetPixel(i * ComponentsPerPixel, color.ToColor());
+                color = color.Times((float) (1.0/(AntialiasFactor*AntialiasFactor)));
+                image.EfficientSetPixel(i*ComponentsPerPixel, color.ToColor());
             }
             image.UnlockBits();
             return sourceImg;
         }
 
         /// <summary>
-        /// Builds cache for rays so that they don't have to be computed for each rendering.
+        ///     Builds cache for rays so that they don't have to be computed for each rendering.
         /// </summary>
         public void BuildRayCache()
         {
-            var rightIncrement = Eye.RightVector*(PixelSize / AntialiasFactor);
+            var rightIncrement = Eye.RightVector*(PixelSize/AntialiasFactor);
             var rightIncrementHalf = rightIncrement*0.5f;
-            var downIncrement = Eye.UpVector*-(PixelSize / AntialiasFactor);
+            var downIncrement = Eye.UpVector*-(PixelSize/AntialiasFactor);
             var downIncrementHalf = downIncrement*0.5f;
             var nearPlaneHeightHalf = NearPlaneHeight*0.5f;
             var nearPlaneWidthtHalf = NearPlaneWidth*0.5f;
 
             // (0,0) in pixels is top left corner
-            var firstPixelCenter = (Eye.Position + Eye.UpVector*nearPlaneHeightHalf) +
-                                   (Eye.RightVector*-nearPlaneWidthtHalf);
+            var firstPixelCenter = Eye.Position + Eye.UpVector*nearPlaneHeightHalf +
+                                   Eye.RightVector*-nearPlaneWidthtHalf;
 
             // Move the plane at NearPlaneDist from eye
             firstPixelCenter += Eye.ViewVector*NearPlaneDist;

@@ -1,19 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using OpenTK;
-using OpenTK.Graphics;
 using RayMath;
 
 namespace CSG.Shapes
 {
     public class Box : Shape
     {
-        public Vector3d Min { get; protected set; }
-        public Vector3d Max { get; protected set; }
-
         public Box(Vector3d min, Vector3d max, SceneObject sceneObject)
             : base(sceneObject)
         {
@@ -21,8 +13,11 @@ namespace CSG.Shapes
             Max = max;
         }
 
+        public Vector3d Min { get; protected set; }
+        public Vector3d Max { get; protected set; }
+
         /// <summary>
-        /// Finds intersection between ray and axis-aligned bounding box.
+        ///     Finds intersection between ray and axis-aligned bounding box.
         /// </summary>
         /// <param name="ray">Tracing ray.</param>
         /// <param name="bb">Bounding box.</param>
@@ -37,12 +32,12 @@ namespace CSG.Shapes
 
             // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
             // r.org is origin of ray
-            var t1 = (Min.X - origin.X) * dirfrac.X;
-            var t2 = (Max.X - origin.X) * dirfrac.X;
-            var t3 = (Min.Y - origin.Y) * dirfrac.Y;
-            var t4 = (Max.Y - origin.Y) * dirfrac.Y;
-            var t5 = (Min.Z - origin.Z) * dirfrac.Z;
-            var t6 = (Max.Z - origin.Z) * dirfrac.Z;
+            var t1 = (Min.X - origin.X)*dirfrac.X;
+            var t2 = (Max.X - origin.X)*dirfrac.X;
+            var t3 = (Min.Y - origin.Y)*dirfrac.Y;
+            var t4 = (Max.Y - origin.Y)*dirfrac.Y;
+            var t5 = (Min.Z - origin.Z)*dirfrac.Z;
+            var t6 = (Max.Z - origin.Z)*dirfrac.Z;
 
             var tmin = Math.Max(Math.Max(Math.Min(t1, t2), Math.Min(t3, t4)), Math.Min(t5, t6));
             var tmax = Math.Min(Math.Min(Math.Max(t1, t2), Math.Max(t3, t4)), Math.Max(t5, t6));
@@ -69,16 +64,16 @@ namespace CSG.Shapes
         {
             var origin = ray.Origin;
             var dirfrac = ray.Dirfrac;
-            RangesShape ranges = new RangesShape();
+            var ranges = new RangesShape();
 
             // lb is the corner of AABB with minimal coordinates - left bottom, rt is maximal corner
             // r.org is origin of ray
-            var t1 = (Min.X - origin.X) * dirfrac.X;
-            var t2 = (Max.X - origin.X) * dirfrac.X;
-            var t3 = (Min.Y - origin.Y) * dirfrac.Y;
-            var t4 = (Max.Y - origin.Y) * dirfrac.Y;
-            var t5 = (Min.Z - origin.Z) * dirfrac.Z;
-            var t6 = (Max.Z - origin.Z) * dirfrac.Z;
+            var t1 = (Min.X - origin.X)*dirfrac.X;
+            var t2 = (Max.X - origin.X)*dirfrac.X;
+            var t3 = (Min.Y - origin.Y)*dirfrac.Y;
+            var t4 = (Max.Y - origin.Y)*dirfrac.Y;
+            var t5 = (Min.Z - origin.Z)*dirfrac.Z;
+            var t6 = (Max.Z - origin.Z)*dirfrac.Z;
 
             var tmin = Math.Max(Math.Max(Math.Min(t1, t2), Math.Min(t3, t4)), Math.Min(t5, t6));
             var tmax = Math.Min(Math.Min(Math.Max(t1, t2), Math.Max(t3, t4)), Math.Max(t5, t6));
@@ -98,16 +93,15 @@ namespace CSG.Shapes
 
             if (Math.Abs(minDif.X) < eps)
                 return -Vector3d.UnitX;
-            else if (Math.Abs(maxDif.X) < eps)
+            if (Math.Abs(maxDif.X) < eps)
                 return Vector3d.UnitX;
-            else if (Math.Abs(minDif.Z) < eps)
+            if (Math.Abs(minDif.Z) < eps)
                 return -Vector3d.UnitZ;
-            else if (Math.Abs(maxDif.Z) < eps)
+            if (Math.Abs(maxDif.Z) < eps)
                 return Vector3d.UnitZ;
-            else if (Math.Abs(minDif.Y) < eps)
+            if (Math.Abs(minDif.Y) < eps)
                 return -Vector3d.UnitY;
-            else
-                return Vector3d.UnitY;
+            return Vector3d.UnitY;
         }
     }
 }

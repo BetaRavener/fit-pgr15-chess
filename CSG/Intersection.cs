@@ -1,31 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CSG.Shapes;
+﻿using CSG.Shapes;
 using OpenTK;
 
 namespace CSG
 {
     /// <summary>
-    /// Represents an intersection with shape.
+    ///     Represents an intersection with shape.
     /// </summary>
     public class Intersection
     {
-
         /// <summary>
-        /// Kind of intersection.
-        /// </summary>
-        public IntersectionKind Kind { get; private set; }
-
-        /// <summary>
-        /// Intersected shape.
-        /// </summary>
-        public Shape Shape { get; private set; }
-
-        /// <summary>
-        /// Distance from origin along ray at which the intersection occured.
+        ///     Distance from origin along ray at which the intersection occured.
         /// </summary>
         public double Distance;
 
@@ -33,17 +17,27 @@ namespace CSG
         {
             Kind = kind;
             Shape = shape;
-            Distance = dist; 
+            Distance = dist;
         }
 
         /// <summary>
-        /// Gets normal from the shape in the point of intersection, normalizes it and recalculates from inside if necessary
+        ///     Kind of intersection.
+        /// </summary>
+        public IntersectionKind Kind { get; }
+
+        /// <summary>
+        ///     Intersected shape.
+        /// </summary>
+        public Shape Shape { get; }
+
+        /// <summary>
+        ///     Gets normal from the shape in the point of intersection, normalizes it and recalculates from inside if necessary
         /// </summary>
         /// <param name="hitPosition"></param>
         /// <returns></returns>
         public Vector3d ShapeNormal(Vector3d hitPosition)
         {
-            Vector3d normal = Shape.Normal(hitPosition).Normalized();
+            var normal = Shape.Normal(hitPosition).Normalized();
             if (Kind == IntersectionKind.Outfrom)
             {
                 normal = -normal;

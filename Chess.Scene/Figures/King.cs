@@ -43,9 +43,11 @@ namespace Chess.Scene.Figures
             var cylinderPosition2 = cylinderPosition1 + new Vector3d(0, -2, 0);
             var cylinder2 = new Cylinder(cylinderPosition2, dir, 10, 14, sceneObject);
 
-            var cross1 = new Box(cylinderPosition2 + new Vector3d(-3, 0, -3), cylinderPosition2 + new Vector3d(3, 26, 3), sceneObject);
+            var cross1 = new Box(cylinderPosition2 + new Vector3d(-3, 0, -3), cylinderPosition2 + new Vector3d(3, 26, 3),
+                sceneObject);
 
-            var cross2 = new Box(cylinderPosition2 + new Vector3d(-7, 18, -3), cylinderPosition2 + new Vector3d(7, 22, 3), sceneObject);
+            var cross2 = new Box(cylinderPosition2 + new Vector3d(-7, 18, -3),
+                cylinderPosition2 + new Vector3d(7, 22, 3), sceneObject);
 
             var cross = new CSGNode(CSGNode.Operations.Union, cross1, cross2);
 

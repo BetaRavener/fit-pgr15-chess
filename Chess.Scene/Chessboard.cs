@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Text;
-using System.Threading.Tasks;
-using CSG;
+﻿using CSG;
 using CSG.Materials;
 using CSG.Shapes;
 using OpenTK;
@@ -24,7 +18,7 @@ namespace Chess.Scene
         public static readonly Color4 BlackColor = Color4.Black;
 
 
-        public Chessboard() 
+        public Chessboard()
         {
             CsgTree = ObjectBuilder.BuildChessboard(this);
             MasterBoundingBox = new Box(new Vector3d(-100, 0, -100), new Vector3d(900, 50, 900), null);

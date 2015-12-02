@@ -1,27 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CSG.Shapes;
+﻿using CSG.Shapes;
 using OpenTK;
 
 namespace RayTracer
 {
-    class HitInfo
+    internal class HitInfo
     {
-        private Shape _normalShape;
-
-        public double Distance { get; private set; }
-        public Material Material { get; set; }
+        private readonly Shape _normalShape;
 
 
-        HitInfo(double dist, Shape normalShape = null, Material material = null)
+        private HitInfo(double dist, Shape normalShape = null, Material material = null)
         {
             _normalShape = normalShape;
             Distance = dist;
             Material = material;
         }
+
+        public double Distance { get; private set; }
+        public Material Material { get; set; }
 
         public Vector3d Normal(Vector3d pos)
         {

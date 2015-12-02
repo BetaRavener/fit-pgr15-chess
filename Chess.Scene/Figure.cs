@@ -1,10 +1,4 @@
-﻿using System;
-using System.Media;
-using CSG;
-using CSG.Materials;
-using OpenTK;
-using OpenTK.Graphics;
-using RayMath;
+﻿using CSG;
 
 namespace Chess.Scene
 {
@@ -12,6 +6,16 @@ namespace Chess.Scene
     {
         private ChessboardPosition position;
         private FigureType type;
+
+        public Figure(ChessboardPosition position, FigureType type)
+        {
+            Type = type;
+            Position = position;
+        }
+
+        public Figure()
+        {
+        }
 
         public ChessboardPosition Position
         {
@@ -39,16 +43,6 @@ namespace Chess.Scene
                     CreateFigureOnScene();
                 }
             }
-        }
-
-        public Figure(ChessboardPosition position, FigureType type)
-        {
-            Type = type;
-            Position = position;
-        }
-
-        public Figure()
-        {
         }
 
         private void CreateFigureOnScene()
