@@ -40,10 +40,10 @@ namespace Chess.Gui
             InitializeComponent();
 
             _game = new GameSceneLayout();
-            _game.BuildBaseLayout();
-            //_game.Chessboard = new Chessboard();
-            //_game.Player1 = new Player() {Color = Color4.White};
-            //_game.Player2 = new Player() { Color = Color4.White };
+            //_game.BuildBaseLayout();
+            _game.Chessboard = new Chessboard();
+            _game.Player1 = new Player() {Color = Color4.White};
+            _game.Player2 = new Player() { Color = Color4.White };
             //_game.Player1.CreateFigure(new ChessboardPosition(3,3), FigureType.Knight);
             
             _game.Light.Position = new Vector3d(400, 400, 400);

@@ -19,9 +19,18 @@ namespace CSG.Material
             direction.Normalize();
             k = coef;
         }
+        public Wood(PhongMap map)
+        {
+            pmap = map;
+            centre = new Vector3d(500, 50, 500);
+            direction = Vector3d.UnitX;
+            k = 1.0;
+        }
         public override PhongInfo GetPhongInfo(Vector3d position, Vector3d normal)
         {
-            Vector3d a = position - centre;
+            var test = position / 50;
+
+            Vector3d a = test - centre;
             Vector3d proj = (a * direction) * direction;
             Vector3d dist = a - proj;
             double x = k * dist.Length;

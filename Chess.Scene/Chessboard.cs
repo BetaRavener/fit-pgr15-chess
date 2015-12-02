@@ -24,7 +24,7 @@ namespace Chess.Scene
         public static readonly Color4 BlackColor = Color4.Black;
 
 
-        public Chessboard() 
+        public Chessboard()
         {
             CsgTree = ObjectBuilder.BuildChessboard(this);
             var chessBox = (CSG.Shapes.Box)CsgTree;
@@ -33,28 +33,7 @@ namespace Chess.Scene
             var phong1 = new PhongInfo(new CSG.Color.Color(WhiteColor), new CSG.Color.Color(WhiteColor), 0.5, 100);
             var phong2 = new PhongInfo(new CSG.Color.Color(BlackColor), new CSG.Color.Color(BlackColor), 0.5, 100);
             Material = new Checker(phong1, phong2, CroftWidth, CroftHeight);
-            
-    }
 
-        public override Color4 ComputeColor(Vector3d position, Vector3d normal)
-        {
-            // ToDo: implement faster algorithm
-            // Normal vector is pointing to the top
-            if (normal.Y > 0 && (int)normal.X == 0)
-            {
-                var evenX = (int)(position.X / CroftWidth) % 2 == 0;
-                var evenZ = (int)(position.Z / CroftWidth) % 2 == 0;
-                if((evenX && evenZ) || (!evenX && !evenZ))
-                {
-                    return BlackColor;
-                }
-                else
-                {
-                    return WhiteColor;
-                }
-            }
-
-            return BackgroundColor;
         }
     }
 }

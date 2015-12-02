@@ -17,7 +17,8 @@ namespace Chess.Scene.Color
         }
         public PhongMap(ColorMap diffuse, ColorMap ambient, double reflectance = 0.0)
         {
-            this.diffuse = diffuse; this.ambient = ambient; this.shininess = 0;
+            this.diffuse = diffuse; this.ambient = ambient;
+            shininess = 0;
             this.reflectance = reflectance;
             specular = new ColorMap();
         }

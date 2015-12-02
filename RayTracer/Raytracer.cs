@@ -206,7 +206,7 @@ namespace Raytracer
             var angleToLight = Vector3d.Dot(hitNormal, lightDirection);
             if (OnlyBoundingBoxes)
             {
-                return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
+                //return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
             }
 
             PhongInfo phongInfo = hitShape.Material.GetPhongInfo(hitPosition, hitNormal);
@@ -280,7 +280,7 @@ namespace Raytracer
                 return hitShape.Color(hitPosition, hitNormal).Times((float)angleToLight);
             }
 
-            var phongInfo = hitShape.Material.GetPhongInfo(hitPosition, hitNormal);
+            var phongInfo = hitShape.Material.GetPhongInfo(hitPosition*50, hitNormal);
             Color4 finalColor = phongInfo.Ambient.ToColor4().Times(0.1f);
             Ray shadowRay = new Ray(hitPosition, lightDirection).Shift();
             Ray reflectedRay = new Ray(hitPosition, ray.Direction.Reflect(hitNormal).Normalized()).Shift();

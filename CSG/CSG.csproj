@@ -40,6 +40,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -58,6 +59,7 @@
     <Compile Include="Material\Checker.cs" />
     <Compile Include="Material\Clouds.cs" />
     <Compile Include="Material\GlassMaterial.cs" />
+    <Compile Include="Material\Marble.cs" />
     <Compile Include="Material\Material.cs" />
     <Compile Include="Material\NoiseDisplace.cs" />
     <Compile Include="Material\PhongMaterial.cs" />

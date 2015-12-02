@@ -15,16 +15,23 @@ namespace CSG.Shapes
     public abstract class Shape : CsgNode
     {
         public static Color4 FallbackColor = Color4.Red;
-        public static double FallbackShininess = 0;
-        public static double FallbackReflectance = 0;
 
-        private Material.Material material;
+        public Material.Material FallbackMaterial { get; set; }
 
         public SceneObject Parent { get; set; }
 
         protected Shape(SceneObject sceneObject)
         {
             Parent = sceneObject;
+
+            var colorMap = new ColorMap(); // diffuse
+            colorMap.AddSegment(new ColorMap.Segment(0, 0.6, new Color.Color(0.2, 0.25, 0.7), new Color.Color(0.2, 0.25, 0.7)));
+            colorMap.AddSegment(new ColorMap.Segment(0.6, 0.7, new Color.Color(0.2, 0.25, 0.7), new Color.Color(0.3, 0.3, 0.36)));
+            colorMap.AddSegment(new ColorMap.Segment(0.7, 1.0, new Color.Color(0.3, 0.3, 0.36), new Color.Color(0.8, 0.8, 0.8)));
+
+            var colorMap2 = new ColorMap(new Color.Color(0.15, 0.15, 0.15));
+
+            FallbackMaterial = new NoiseDisplace(new Wood(new PhongMap(colorMap, colorMap2)), new PerlinNoise<ImprovedNoise>(), 0);
 
 /*
             var colorMap = new ColorMap(); // diffuse
@@ -42,8 +49,8 @@ namespace CSG.Shapes
                 new Wood(cm, new Vector3d(0, -1.5, 0), new Vector3d(0.1, 0, 1), 5),
                 new PerlinNoise<ImprovedNoise>(), 
                 0.1);*/
-            //test = new Checker(new PhongInfo(new Color.Color(Color4.White), new Color.Color(Color4.White)),
-             //   new PhongInfo(new Color.Color(Color4.Black), new Color.Color(Color4.Black));
+//test = new Checker(new PhongInfo(new Color.Color(Color4.White), new Color.Color(Color4.White)),
+//   new PhongInfo(new Color.Color(Color4.Black), new Color.Color(Color4.Black));
 
         }
 
@@ -52,7 +59,7 @@ namespace CSG.Shapes
             return Parent?.ComputeColor(position, normal) ?? FallbackColor;
         }
 
-        public Material.Material Material => Parent?.Material ?? Material;
+        public Material.Material Material => /*Parent?.Material ??*/ FallbackMaterial;
         
 
         static Material.Material GetMatClouds()

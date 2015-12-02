@@ -54,11 +54,6 @@ namespace Chess.Scene
         {
         }
 
-        public override Color4 ComputeColor(Vector3d pos, Vector3d normal)
-        {
-            return Color;
-        }
-
         private void CreateBoundingBox(Vector3d pos)
         {
             var minX = pos.X - (MaxX / 2);

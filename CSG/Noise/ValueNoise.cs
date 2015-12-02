@@ -41,7 +41,8 @@ namespace CSG.Noise
             {
                 Random rnd = new Random();
                 for (int i = 0; i < Tabsize; i++)
-                    values[i] = 2 * rnd.Next(0, 32766);
+                    values[i] = (int) ((2* (float)rnd.Next(0, 32767)) / 32767 - 1.0);
+
             }
         }
 

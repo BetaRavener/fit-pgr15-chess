@@ -14,7 +14,8 @@ namespace CSG.Material
         {
             material = m; noise = n; this.strength = strength;
         }
-        public override PhongInfo GetPhongInfo(Vector3d position, Vector3d normal) {
+        public override PhongInfo GetPhongInfo(Vector3d position, Vector3d normal)
+        {
             double dx = strength * noise.Eval(position.X, position.Y, position.Z);
             double dy = strength * noise.Eval(position.Y + 3.5, position.Z + 7.3, position.X + 2.1);
             double dz = strength * noise.Eval(position.Z - 0.3, position.X + 6.8, position.Y + 1.2);
