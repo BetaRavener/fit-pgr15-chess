@@ -19,6 +19,8 @@
 \usepackage{natbib}
 \usepackage{float}
 
+\providecommand{\uv}[1]{\quotedblbase #1\textquotedblleft}
+
 % ----- vyberte jazyk -------------------------------------------------------
 \usepackage[english,czech]{babel}
 %\usepackage[english]{babel}
@@ -95,15 +97,15 @@ unicode=true,
 \newpage
 \chapter{Zadání}
 
-Úlohou bylo implementovat libovolný typ ray-traceru a s jeho pomocí vizualizovat scénu složenou ze šachovnice a šachových figurek. Důraz měl být kladen na kvalitu výsledného zobrazení a jevy, které se obtížně vizualizují pomocí klasických vykreslovacích technik. Dalším požadavkem bylo implementovat uložení stavu šachovnice, která by byla vhodná pro interakci se šachovým strojem nebo uživatelem přes GUI. Důležitá byla také parametrizovatelnost procesu vykreslování.
+Úlohou bylo implementovat metodu ray-tracingu\footnote{Ray-tracing - metoda  sledování paprsků} a s její pomocí vizualizovat scénu složenou ze šachovnice a šachových figurek. Důraz měl být kladen na kvalitu výsledného zobrazení a jevy, které se obtížně vizualizují pomocí klasických vykreslovacích technik. Dalším požadavkem bylo implementovat uložení stavu šachovnice, která by byla vhodná pro interakci se šachovým strojem nebo uživatelem přes GUI. Důležitá byla také parametrizovatelnost procesu vykreslování.
 
-Vzhledem na účel by bylo žádoucí také aby překreslování bylo plynulé, proto se také zaměříme na optimalizace a další techniky urychlení výpočtu. Dále by bylo určitě pro uživatele pohodlné mít možnost zachytiť snímek a uložit ho do souboru bez nutnosti dělat printscreen a ořezávání, a také mít možnost uložit rozehranou partii a později v ní pokračovat.   
+Vzhledem k účelu bylo žádoucí, aby překreslování bylo plynulé, proto byl také kladen důraz na optimalizace a další techniky urychlení výpočtu. Dále, pro prezentaci výsledků, bylo vhodné mít možnost zachytit snímek a uložit ho do souboru bez nutnosti dělat snímek celé obrazovky a poté ořezávat. 
 
 Celkově bylo tedy nutné věnovat se v rámci projektu těmto částem:
 \begin{itemize}
 	\item Raytracer
 	\begin{itemize}
-	    \item Tvorba komplexnějších modelů
+	    \item Tvorba 3D primitiv a jejich skládání
 		\item Odlesky a stíny
 		\item Antialiasing
 		\item Parametrizovatelnost
@@ -111,11 +113,12 @@ Celkově bylo tedy nutné věnovat se v rámci projektu těmto částem:
 			\item Změna pohledu kamery
 			\item Změna pozice světla
 			\item Stupeň antialiasingu
-			\item Počet odlesků
+			\item Úroveň odlesků
 		\end{itemize}
 	\end{itemize}
 	\item Šachová partie
 	\begin{itemize}
+	    \item Tvorba modelů figurek a scény
 		\item Vhodná reprezentace
 		\item Možnost uložení do souboru
 		\item Možnost uložit snímek 
@@ -126,17 +129,17 @@ Celkově bylo tedy nutné věnovat se v rámci projektu těmto částem:
 		\item Paralelizace výpočtu
 	\end{itemize}
 \end{itemize}
- %Z těchto jevů byly zvoleny stíny a odlesky.
-\chapter{Použité technologie}
-Program byl napsán v jazyku \texttt{C\#} pro \texttt{.Net 4.5} a kromě knihovny \texttt{OpenTK} nevyžaduje ke svému běhu žádné další. Uživatelské rozhraní bylo implementované pomocí frameworku \texttt{WinForms}. Ten je již poměrně zastaralý, ale, díky přenositelnosti na jiné platformy, pro účely aplikace postačující.
 
-Při vývoji bylo použito \texttt{Visual Studio} a verzovací systém \texttt{git} s repozitářem na službě \texttt{GitHub}. Vývoj probíhal pod operačními systémy \texttt{Windows} a testování výsledného programu proběhlo také na systémech \texttt{Linux} a \texttt{OS X}, kde bylo pro skompilování použito \texttt{MonoDevelop}.
+\chapter{Použité technologie}
+Program byl napsán v jazyku \texttt{C\#} pro \texttt{.Net 4.5} a kromě knihovny \texttt{OpenTK} nevyžaduje ke svému běhu žádné další. Uživatelské rozhraní bylo implementováno pomocí frameworku \texttt{WinForms}. Ten je již poměrně zastaralý, ale, díky přenositelnosti na jiné platformy, pro účely aplikace postačující.
+
+Při vývoji bylo použito \texttt{Visual Studio} a verzovací systém \texttt{git} s repozitářem na službě \texttt{GitHub}. Vývoj probíhal pod operačními systémy \texttt{Windows} a testování výsledného programu proběhlo také na systému \texttt{Linux}, kde bylo pro zkompilování použito \texttt{MonoDevelop}.
 
 
 \begingroup
 \let\clearpage\relax
 \chapter{Použité zdroje}
-Projekt byl značně inspirován ray-tracerem Aurelius dostupného ze stránek předmětu PGR \cite{aurelius}, který byl dále rozšiřován. implentováním dalších 3D primitiv (konečný válec, kužel) a také pokročilejšími operacemi s těmito primitivy. Obecný kužel byl implementován pomocí rovnic uvedených v přednášce ze zahraniční univerzity \cite{cone}. Dále rovnice pro odlesk byla přebrána ze stránek \cite{reflect} a Phongův osvětlovací model byl ozřejmen pomocí webu \cite{phong}. Efektivní test průniku paprsku s obalovacím kvádrem byly nalezeny na stránce \cite{aabb}.
+Teorie ray-tracingu byla získána z přednášek předmětu PGR a ze stránky \cite{scratchapixel}. Projekt byl značně inspirován ray-tracerem Aurelius probíraném na přednáškách předmětu PGR \cite{aurelius}, který byl dále rozšiřován implementováním dalších 3D primitiv (konečný válec, kužel) a také pokročilejšími operacemi s těmito primitivy. Obecný kužel byl implementován pomocí rovnic uvedených v přednášce ze zahraniční univerzity \cite{cone}. Dále rovnice pro odlesk byla přebrána ze stránek \cite{reflect} a Phongův osvětlovací model byl ozřejmen pomocí webu \cite{phong}. Efektivní test průniku paprsku s obalovacím kvádrem byl nalezen na stránce \cite{aabb}.
 
 \endgroup
 
@@ -146,7 +149,7 @@ Aplikace byla implementována a optimalizována tak, aby dosažené výsledky by
 
 \section{Krása výsledku}
 
-Výsledného hezkého vizuálního efektu (viz obrázky \ref{fig:chess1}, \ref{fig:chess2}, \ref{fig:chess3}) bylo dosaženo pomocí Phongova osvětlovacího modelu, odlesků, odrazů, stínů a antialiasingu. Dále byly vytvořeny nevšední modely šachových figurek spojením 3D primitiv pomocí CSG stromů. Přiřazení barvy, odlesků a dalších parametrů figurek a jiných objektů byly voleny tak, aby celá scéna byla co nejzajímavější a byly prezentovány různé efekty povrchů.
+Výsledného hezkého vizuálního efektu (viz obrázky \ref{fig:chess1}, \ref{fig:chess2}, \ref{fig:chess3}) bylo dosaženo pomocí Phongova osvětlovacího modelu, odlesků, odrazů, stínů a antialiasingu. Dále byly vytvořeny nevšední modely šachových figurek spojením 3D primitiv pomocí \texttt{Constructive Solid Geometry} (dále jen CSG) stromů. Přiřazení barvy, odlesků a dalších parametrů figurek a jiných objektů byly voleny tak, aby celá scéna byla co nejzajímavější a byly prezentovány různé efekty povrchů.
 
 \begin{center}
 	\captionsetup{type=figure}
@@ -175,11 +178,12 @@ Kombinace rotace a posunu podél osy kamery umožňuje přesun na libovolnou poz
 
 Pomocí pravého tlačítka myši je také možné měnit pozici světla a tedy interaktivně vizualizovat různé stíny a odlesky.
 
-Jelikož metoda ray-tracing je pomalejší a na některých přístrojích nemusí být možné pozorovat scénu v reálném čase, je také možno výše uvedené parametry měnit pomocí změny čísla v komponentě okna a tudíž je možné přímo změnit souřadnice na požadované.
+Jelikož metoda ray-tracing je velmi náročná a na některých přístrojích nemusí být možné pozorovat scénu v reálném čase, je také možno výše uvedené parametry měnit pomocí změny čísla v komponentách okna a tudíž je možné přímo změnit souřadnice na požadované.
 
 \section{Překreslovací frekvence}
-\label{prvni_pokus}
-Při prvním pokusu o vytvoření funkčního ray-traceru byl použit způsob popisu scény pomocí hraniční reprezentace, tj. síti trojúhelníků. Čas vytvoření jednoho snímku pro jednoduchý model konvice\footnote{Utah Teapot - viz \url{https://en.wikipedia.org/wiki/Utah_teapot}} bez jakýchkoliv efektů a pouze s plochým stínováním se pohyboval okolo 40-ti sekund. Na základě této zkušenosti byl proveden průzkum možností zobrazení modelů a zvolen byl způsob reprezentace \texttt{Constructive Solid Geometry}. Tento způsob urychlil samotný výpočet přibližně stonásobně. V principu se jedná o to, že bylo potřeba najít takové modely, které lze jednoduše popsat analytickými rovnicemi, pro které bylo možné spočítat průsečík a najít tak bod, na kterém světlo ve scéně dopadne. Pro další urychlení výpočtu byl zvolen způsob aproximace počítání průsečíků s modely ve scéně pomocí obalovacích těles, konkrétně \texttt{AABB}\footnote{AABB - Axis-aligned bounding box}. Nakonec byla také zavedena paralelizace výpočtu na CPU pomocí vláken, kter ale neměla už tak výrazný vliv na zrychlení.
+\label{sec:fps}
+
+Při prvním pokusu o vytvoření funkčního ray-traceru byl použit způsob popisu scény pomocí hraniční reprezentace, tj. síti trojúhelníků. Čas vytvoření jednoho snímku pro jednoduchý model konvice\footnote{Utah Teapot - viz \url{https://en.wikipedia.org/wiki/Utah_teapot}} bez jakýchkoliv efektů a pouze s plochým stínováním se pohyboval okolo 40-ti sekund. Na základě této zkušenosti byl proveden průzkum možností zobrazení modelů a zvolen byl způsob reprezentace pomocí CSG. Tento způsob urychlil samotný výpočet přibližně stonásobně. V principu se jedná o to, že bylo potřeba najít takové modely, které lze jednoduše popsat analytickými rovnicemi, pro které bylo možné spočítat průsečík a najít tak bod, na kterém světlo ve scéně dopadne. Pro další urychlení výpočtu byl zvolen způsob aproximace počítání průsečíků s modely ve scéně pomocí obalovacích těles, konkrétně \texttt{AABB}\footnote{AABB - Axis-aligned bounding box}. Nakonec byla také zavedena paralelizace výpočtu na CPU pomocí vláken, která ale neměla tak výrazný vliv na zrychlení.
 
 Pro plynulou interakci s uživatelem však byl zaveden \emph{odlehčený} vykreslovací mód, jak je možné vidět na obrázku \ref{camera}, který se zapne při pohybu kamerou a vypne po dokončení změny. Po zapnutí se pak vykreslují pouze stínovaná obalovací tělesa, která pro uživatele obvykle stačí pro představu, kde ve scéně se kamera nachází a vykreslování je pak mnohem rychlejší. 
 
@@ -193,7 +197,7 @@ Dalším zrychlovacím mechanismem je použití cache objektů, např. v přípa
 	\label{camera}
 \end{figure}
 
-Výsledkem těchto optimalizací je vcelku uspokojivá překreslovací frekvence vzhledem k nárokům na prostředky počítače této metody vykreslování. Následující tabulka představuje rychlost překreslování programu na základě různých parametrů a rozlišení.
+Výsledkem těchto optimalizací je vcelku uspokojivá překreslovací frekvence vzhledem k nárokům na prostředky počítače této metody vykreslování. Následující tabulka představuje rychlost překreslování programu na základě různých parametrů a rozlišení\footnote{Testování proběhlo na počítači s procesorem Intel i7-3630QM a 8 GB RAM}.
 
 \begin{table}[H]
 	\begin{center}
@@ -235,8 +239,6 @@ Výsledkem těchto optimalizací je vcelku uspokojivá překreslovací frekvence
 %---------------------------------------------------------------------------
 \section{Co bylo nejpracnější}
 
-\paragraph{Rozsah:} 5-10 řádků \textcolor{red}{\textbf{TODO pryč}}
-
 \begin{itemize}
 \item \textbf{\AuthorA}: vytvoření hezky vyhlížejících modelů pro figurky a scénu
 \item \textbf{\AuthorB}: nedoplést se při skládání metody ray-traceru, tzn. který vektor se sčítá a násobí jiným
@@ -247,7 +249,7 @@ Výsledkem těchto optimalizací je vcelku uspokojivá překreslovací frekvence
 %---------------------------------------------------------------------------
 \section{Zkušenosti získané řešením projektu}
 
-Při řešení projektu jsme zjistili, že když se projekt dobře naplánuje a rozdělí (na půl podrobně) úkoly, pak řešení projektu jde plynulým tempem dopředu. Také jsme zjistili, že neznalost problematiky může vést k nadbytečnému předělávání kódu (viz sekce \ref{prvni_pokus}).
+Při řešení projektu jsme zjistili, že když se projekt dobře naplánuje a rozdělí (celkem podrobně) úkoly, pak řešení projektu jde plynulým tempem dopředu. Také jsme zjistili, že neznalost problematiky může vést k nadbytečnému předělávání kódu (viz strana \pageref{sec:fps}).
 
 Z hlediska počítačové grafiky jsme si odzkoušeli jeden ze způsobu reprezentace modelů ve scéně, tj. CSG. Také jsme si uvědomili rozdíly ve vykreslovacích metodách a k čemu se hodí jednotlivé metody používat (tj. pomocí ray-tracingu nikdy nedostaneme realtime aplikaci, ale na druhou stranu dosáhneme téměř realisticky vyhlížejících modelů pomocí jednoduchého programu). 
 
@@ -270,23 +272,22 @@ obecnost řešení, znovupoužitelnost, $\ldots$)
 \paragraph{Vzhled vytvořeného řešení (75\%):} (uvěřitelnost zobrazení,
 estetická kvalita, vhled GUI, $\ldots$)
 
-GUI bylo kvůli přenositelnosti na jiné systémy voleno velmi jednoduše, nicméně rozmístění komponent a reakce na uživatelovy podněty by měly být přehledné a srozumitelné. Výsledná vizualizace šachů je velmi hezká a scéna budí dojem realističnosti. 
+GUI bylo, kvůli přenositelnosti na jiné systémy, konstruováno velmi jednoduše, nicméně rozmístění komponent a reakce na uživatelovy podněty by měly být přehledné a srozumitelné. Výsledná vizualizace šachů je velmi hezká a scéna budí dojem realističnosti. 
 
-\paragraph{Využití zdrojů (80\%):} (využití existujícího kódu a dat, využití
+\paragraph{Využití zdrojů (65\%):} (využití existujícího kódu a dat, využití
 literatury, $\ldots$)
-\textcolor{red}{to hodnocení nějak nerozumím - jakože 100\% = úplně cizí kód?}
 
 Při tvorbě projektu jsme se inspirovali zdrojovým kódem programu Aurelius, dále spíše teoretickým popisem problematiky nebo pseudokódem.
 
 \paragraph{Hospodaření s časem (90\%):} (rovnoměrné dotažení částí projektu,
 míra spěchu, chybějící části řešení, $\ldots$)
 
-Projekt byl z hlediska času rozvržen vhodně, kde práce probíhala na začátku semestru, pak v průběhu půlsemestrálních zkoušek byla pauza a následně, ke konci semestru a načerpaní informací z přednášky, byl projekt dokončen.
+Projekt byl z hlediska času rozvržen vhodně, kde práce probíhala na začátku semestru, pak v průběhu půlsemestrálních zkoušek byla pauza a následně, ke konci semestru a načerpaní informací z přednášek, byl projekt dokončen.
 
 \paragraph{Spolupráce v týmu (80\%):} (komunikace, dodržování dohod, vzájemné
 spolehnutí, rovnoměrnost, $\ldots$)
 
-Komunikace probíhala vesměs skrze internet s občasnými schůzkami, kde se obvykle probraly problémy s předchozí iterací a prodiskutovaly se úkoly, které bylo potřeba dále řešit. Každý z řešitelů vložil přibližně rovnoměrné úsilí do projektu, ať už programátorsky, organizačně či teoreticky.
+Komunikace probíhala vesměs skrze internet s občasnými schůzkami, kde se obvykle probraly problémy z předchozí iterace a prodiskutovaly se úkoly, které bylo potřeba dále řešit. Každý z řešitelů vložil přibližně rovnoměrné úsilí do projektu, ať už programátorsky, organizačně či teoreticky.
 
 \paragraph{Celkový dojem (75\%):} (pracnost, získané dovednosti, užitečnost,
 volba zadání, cokoliv, $\ldots$)
@@ -296,10 +297,10 @@ Volba zadání se jevila jako vhodná, protože se jednalo z našeho hlediska o 
 
 %---------------------------------------------------------------------------
 \chapter{Ovládání vytvořeného programu}
-Aplikaci je možné přeložit a spustit pomocí programu Visual Studio. V případě zkopírování přeložených knihoven aplikace, je možné ji spustit i na jiných počítačích bez překladového studia.
+Aplikaci je možné přeložit a spustit pomocí programu Visual Studio. V případě zkopírování přeložených knihoven aplikace, je možné ji spustit i na jiných počítačích bez překladového systému.
 
 \subsection{Nahrávání scény}
-Pro zobrazení scény, tj. vyrenderování stavu šachů slouží tlačítko "Render", které ve výchozím stavu zobrazí základní rozmístění šachovnice. Toto rozmístění je možné upravovat na základě načtení souboru, který obsahuje informace o scéně.
+Pro zobrazení scény, tj. vyrenderování stavu šachů slouží tlačítko \uv{Render}, které ve výchozím stavu zobrazí základní rozmístění šachovnice. Toto rozmístění je možné upravovat na základě načtení souboru, který obsahuje informace o scéně.
 Dále je možné načtenou scénu uložit nebo exportovat jako obrázek.
 
 \subsection{Manipulace se scénou}
