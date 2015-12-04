@@ -18,6 +18,7 @@
 \setlength{\parindent}{1cm}	
 \usepackage{natbib}
 \usepackage{float}
+\usepackage[hyphenbreaks]{breakurl}
 
 \providecommand{\uv}[1]{\quotedblbase #1\textquotedblleft}
 
@@ -37,6 +38,7 @@
 \newcommand\Faculty{Fakulta Informačních Technologií}
 \newcommand\School{Vysoké Učení Technické v Brně}
 
+\PassOptionsToPackage{hyphens}{url}
 \usepackage[
 pdftitle={\WorkTitle},
 pdfauthor={\AuthorA, \AuthorB, \AuthorC},
@@ -133,7 +135,7 @@ Celkově bylo tedy nutné věnovat se v rámci projektu těmto částem:
 \chapter{Použité technologie}
 Program byl napsán v jazyku \texttt{C\#} pro \texttt{.Net 4.5} a kromě knihovny \texttt{OpenTK} nevyžaduje ke svému běhu žádné další. Uživatelské rozhraní bylo implementováno pomocí frameworku \texttt{WinForms}. Ten je již poměrně zastaralý, ale díky přenositelnosti na jiné platformy, pro účely aplikace postačující.
 
-Při vývoji bylo použito \texttt{Visual Studio} a verzovací systém \texttt{git} s repozitářem na službě \texttt{GitHub}. Vývoj probíhal pod operačními systémy \texttt{Windows} a testování výsledného programu proběhlo také na systému \texttt{Linux}, kde bylo pro zkompilování použito \texttt{MonoDevelop}.
+Při vývoji bylo použito \texttt{Visual Studio 2015} a verzovací systém \texttt{git} s repozitářem na službě \texttt{GitHub}. Vývoj probíhal pod operačními systémy \texttt{Windows} a testování výsledného programu proběhlo také na systému \texttt{Linux}, kde bylo pro zkompilování použito \texttt{MonoDevelop}.
 
 
 \begingroup
